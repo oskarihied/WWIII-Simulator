@@ -1,7 +1,8 @@
 # Angry Birds
 
-This is the template for the projects. Please copy the project description here. 
-You can use Markdown language to render it as formatted **HTML** file.
+The player hurls birds or similar objects towards a fortress to destroy enemy targets. Player should use as few throws as possible for the higher score. Fortresses are built of destroyable and non-destroyable construction elements. Failing, i.e not destroying all of the enemies, typically means the level is reset and all points are lost.
+
+The game has very simple rules, but as in any well-crafted game, the player’s points should correlate with their throwing skills. This project subject does not require you to make a clone of an existing game, but to implement a one with the same general idea.
 
 # Group
 - Leo Blomqvist
