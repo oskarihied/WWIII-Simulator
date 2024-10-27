@@ -8,6 +8,58 @@ In each meeting, you are required to discuss:
 4. Deviations and changes to the project plan, if any
 
 
+# Meeting 23.10.2024 14::00
+
+**Participants**: 
+1. Leo Blomqvist
+2. Oskari Hiedanpää
+3. Oskari Kokkonen
+4. Väinö Ristimäki 
+
+## Summary of works
+1. Blomqvist
+   
+   Studying the project assignment.
+
+2. Hiedanpää
+
+   Studying the project assignment.
+
+3. Kokkonen
+   
+   Studying the project assignment.
+
+4. Ristimäki
+   
+   Studying the project assignment.
+   Creating plan document
+
+
+## Challenges
+
+1. None
+
+## Actions
+1. Blomqvist is going to fill the section "Using the program" to the project plan
+2. Hiedanpää is going to fill the section "Sprint planning" to the project plan
+3. Kokkonen is going to fill the section "External Libraries" to the project plan
+4. Ristimäki is going to fill the section "Modules and Classes" to the project plan
+
+## Project status 
+We have a clear idea for the project
+
+### TODOs
+1. Blomqvist: Using the program
+2. Hiedanpää: Sprint planning
+3. Kokkonen: External Libraries
+4. Ristimäki: Modules and Classes
+
+
+
+
+
+
+
 # Meeting dd.mm.2021 HH::MM
 
 **Participants**: 
@@ -27,6 +79,8 @@ In each meeting, you are required to discuss:
    Same as above
 
 3. ...
+
+
 
 ## Challenges
 
