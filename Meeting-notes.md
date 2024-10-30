@@ -8,7 +8,7 @@ In each meeting, you are required to discuss:
 4. Deviations and changes to the project plan, if any
 
 
-# Meeting 23.10.2024 14::00
+# Meeting 24.10.2024 14::00
 
 **Participants**: 
 1. Leo Blomqvist
@@ -56,7 +56,51 @@ We have a clear idea for the project
 
 
 
+# Meeting 30.10.2024 14::00
 
+**Participants**: 
+1. Leo Blomqvist
+2. Oskari Hiedanpää
+3. Oskari Kokkonen
+4. Väinö Ristimäki 
+
+## Summary of works
+1. Blomqvist
+   
+   Worked on the project plan
+
+2. Hiedanpää
+
+   Worked on the project plan
+
+3. Kokkonen
+   
+   Worked on the project plan
+
+4. Ristimäki
+   
+   Worked on the project plan
+
+
+
+## Challenges
+
+1. None
+
+## Actions
+1. Blomqvist is going to make the CMake
+2. Hiedanpää is going to make Game, Level and Pos classes and maybe add a few functions
+3. Kokkonen is going to study the physics library
+4. Ristimäki is going to work with graphics
+
+## Project status 
+Project plan is almost ready
+
+### TODOs
+1. Blomqvist: CMake
+2. Hiedanpää: Game, Level, Pos
+3. Kokkonen: Physics
+4. Ristimäki: Graphics
 
 
 
