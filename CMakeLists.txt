@@ -46,7 +46,7 @@ target_link_libraries(${EXECUTABLE_NAME} ${SFML_LIBRARIES} ${SFML_DEPENDENCIES})
 
 
 find_package(Box2D REQUIRED)
-include_directories(${SFML_INCLUDE_DIR})
+include_directories(${Box2D_INCLUDE_DIR})
 target_link_libraries(${EXECUTABLE_NAME} ${BOX2D_LIBRARY})
 
 # For installing targets (not mandatory)
