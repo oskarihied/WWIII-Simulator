@@ -16,6 +16,9 @@
 *.gch
 *.pch
 
+# Workspace
+*.code-workspace
+
 # Libraries
 
 
