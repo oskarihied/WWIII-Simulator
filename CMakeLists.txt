@@ -27,7 +27,7 @@ target_sources(MyGame PUBLIC ${SOURCES})
 target_include_directories(MyGame PUBLIC .)
 target_include_directories(MyGame PUBLIC src)
 
-# get a lot of warnings
+# Get a lot of warnings
 if(MSVC)
     target_compile_options(MyGame PRIVATE /Wall)
 else()
@@ -35,15 +35,19 @@ else()
     target_compile_options(MyGame PRIVATE -Wall -Wextra -pedantic -Wno-missing-field-initializers)
 endif()
 
-# Detect and add SFML
+# Detect and add SFML and Box2D
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake_modules" ${CMAKE_MODULE_PATH})
-#Find any version 2.X of SFML
-#See the FindSFML.cmake file for additional details and instructions
+
+# Find any version 2.X of SFML
+# See the FindSFML.cmake file for additional details and instructions
 find_package(SFML 2 REQUIRED network audio graphics window system)
-if(SFML_FOUND)
-  include_directories(${SFML_INCLUDE_DIR})
-  target_link_libraries(${EXECUTABLE_NAME} ${SFML_LIBRARIES} ${SFML_DEPENDENCIES})
-endif()
+include_directories(${SFML_INCLUDE_DIR})
+target_link_libraries(${EXECUTABLE_NAME} ${SFML_LIBRARIES} ${SFML_DEPENDENCIES})
+
+
+find_package(Box2D REQUIRED)
+include_directories(${SFML_INCLUDE_DIR})
+target_link_libraries(${EXECUTABLE_NAME} ${BOX2D_LIBRARY})
 
 # For installing targets (not mandatory)
 install (TARGETS ${EXECUTABLE_NAME} DESTINATION bin)

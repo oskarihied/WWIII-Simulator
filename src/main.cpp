@@ -1,9 +1,12 @@
+#include <box2d/box2d.h>
+
 #include <SFML/Graphics.hpp>
 #include <iostream>
 
 int main() {
   // Create the main window
   sf::RenderWindow window(sf::VideoMode(800, 600), "SFML window");
+  b2Vec2 v = b2Vec2(4.5, 6.8);
 
   // Start the game loop
   while (window.isOpen()) {
