@@ -7,6 +7,14 @@ Entity::Entity()
 Entity::Entity(float x, float y) 
     : pos_(Pos(x, y)) {}
 
+Entity::Entity(float x, float y, std::string image) 
+    : image_(image), pos_(Pos(x, y)) {
+
+    texture_.loadFromFile(image_);
+    sprite_.setTexture(texture_);
+    sprite_.setOrigin(0, 0);
+}
+
 Pos Entity::GetPos() {
     return pos_;
 }
@@ -25,4 +33,8 @@ std::pair<float, float> Entity::Move(float x, float y) {
 
 std::pair<float, float> Entity::Move(Pos pos) {
     return pos_.Add(pos);
+}
+
+sf::Sprite &Entity::GetSprite() {
+    return (sprite_);
 }
