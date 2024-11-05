@@ -1,3 +1,6 @@
+#ifndef RIGID_HPP
+#define RIGID_HPP
+
 #include "physical.hpp"
 
 class Rigid : public Physical {
@@ -9,3 +12,5 @@ class Rigid : public Physical {
         int maxHP_;
         int currentHP_;
 };
+
+#endif

@@ -12,6 +12,7 @@ int main() {
   Physics physics;
   
   physics.AddBox(Box(1, 4000));
+  physics.AddGround(Ground());
 
   // Start the game loop
   while (window.isOpen()) {

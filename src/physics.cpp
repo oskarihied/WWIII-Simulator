@@ -9,8 +9,6 @@ void Physics::SimulateWorld(float simulationStep) {
     // Update simulation Objects locations
     simulationWorld_.Step(simulationStep, 1, 1);
 
-    // std::cout << "testi" << std::endl;
-    // printf("test\n");
     // Verify that all entities match simulation bodies
     if (b2bodies_.size() != entities_.size()) {
         throw std::invalid_argument("Vectors entities and b2bodies must be the same size.");
@@ -24,7 +22,7 @@ void Physics::SimulateWorld(float simulationStep) {
     }
 };
 
-bool Physics::AddBox(Box box) {
+b2Body* Physics::AddBox(Box box) {
     entities_.push_back(box);
     b2BodyDef bodyDef;
     bodyDef.type = b2_dynamicBody;
@@ -38,4 +36,26 @@ bool Physics::AddBox(Box box) {
     fixtureDef.friction = 0.3f;
     dynamicBody->CreateFixture(&fixtureDef);
     b2bodies_.push_back(dynamicBody);
+    return dynamicBody;
 };
+
+b2Body* Physics::AddGround(Ground ground) {
+    b2BodyDef groundBodyDef;
+    groundBodyDef.position.Set(0.0f, -10.0f);
+    b2Body* groundBody = simulationWorld_.CreateBody(&groundBodyDef);
+    b2PolygonShape groundBox;
+    groundBox.SetAsBox(50.0f, 10.0f);
+    groundBody->CreateFixture(&groundBox, 0.0f);
+    b2bodies_.push_back(groundBody);
+    entities_.push_back(ground);
+    return groundBody;
+};
+
+void Physics::SetVelocity(b2Body* body, float xVel, float yVel) {
+    body->SetLinearVelocity(b2Vec2(xVel, yVel));
+};
+
+void Physics::SetPosition(b2Body* body, float xPos, float yPos, float rotation) {
+    body->SetTransform(b2Vec2(xPos, yPos), rotation);
+};
+
