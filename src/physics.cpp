@@ -18,7 +18,7 @@ void Physics::SimulateWorld(float simulationStep) {
     for (uint i = 0; i < entities_.size(); i++) {
         b2Vec2 pos = b2bodies_[i]->GetPosition();
         entities_[i].MoveTo(Pos(pos.x, pos.y));
-        std::cout << "x: " << pos.x << " y: " << pos.y << std::endl;
+        // std::cout << "x: " << pos.x << " y: " << pos.y << std::endl;
     }
 };
 
