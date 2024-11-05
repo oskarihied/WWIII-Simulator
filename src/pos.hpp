@@ -1,3 +1,5 @@
+#ifndef POS_HPP
+#define POS_HPP
 
 #include <utility>
 
@@ -20,3 +22,5 @@ class Pos {
         float x_;
         float y_;
 };
+
+#endif
