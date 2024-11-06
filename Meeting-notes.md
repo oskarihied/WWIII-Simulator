@@ -8,7 +8,7 @@ In each meeting, you are required to discuss:
 4. Deviations and changes to the project plan, if any
 
 
-# Meeting 24.10.2024 14::00
+# Meeting 24.10.2024 14:00
 
 **Participants**: 
 1. Leo Blomqvist
@@ -34,7 +34,6 @@ In each meeting, you are required to discuss:
    Studying the project assignment.
    Creating plan document
 
-
 ## Challenges
 
 1. None
@@ -56,7 +55,7 @@ We have a clear idea for the project
 
 
 
-# Meeting 30.10.2024 14::00
+# Meeting 30.10.2024 14:00
 
 **Participants**: 
 1. Leo Blomqvist
@@ -81,8 +80,6 @@ We have a clear idea for the project
    
    Worked on the project plan
 
-
-
 ## Challenges
 
 1. None
@@ -102,9 +99,52 @@ Project plan is almost ready
 3. Kokkonen: Physics
 4. Ristimäki: Graphics
 
+# Meeting 06.11.2024 12:40
+
+**Participants**: 
+1. Leo Blomqvist
+2. Oskari Kokkonen
+3. Väinö Ristimäki 
+
+## Summary of works
+1. Blomqvist
+   
+   Implemented initial version of CMake, so that the project could be built.
+
+2. Hiedanpää
+
+   Had a fever and was sick :(
+
+3. Kokkonen
+   
+   Studied the physics library and implemented initial physics.
+
+4. Ristimäki
+   
+   Begun work on the grapchics and implemented essential elements for some of the classes.
+
+## Challenges
+
+1. CMake sucks :|
+
+## Actions
+1. Blomqvist makes configurations to CMake and begins implementing the bullet-class.
+2. Hiedanpää begins working on file management.
+3. Kokkonen continues work with the physics library.
+4. Ristimäki makes it possible to render entities, put them in the correct place and rotate them.
+
+## Project status 
+The project is well underway even though the grasp on the libraries and CMake is not yet at its best.
+
+### TODOs
+1. Blomqvist: CMake and bullet
+2. Hiedanpää: Files
+3. Kokkonen: Physics
+4. Ristimäki: Graphics
 
 
-# Meeting dd.mm.2021 HH::MM
+
+# Meeting dd.mm.2021 HH:MM
 
 **Participants**: 
 1. Member 1
@@ -124,8 +164,6 @@ Project plan is almost ready
 
 3. ...
 
-
-
 ## Challenges
 
 1. The integration of UI with the monsters requires an abstract interface.
@@ -136,8 +174,8 @@ Project plan is almost ready
    to enable easy UI integration.
 2. Member 2 is going to work with Member 1 to use abstract interface in derived 
    monster classes.
-3. Member 2 is going to test the interface.
-4. Member 3 is going to use ...
+3. Member 3 is going to test the interface.
+4. Member 4 is going to use ...
 
 > Please reflect these action decisions in your git commit messages so that 
 > your group members and advisor can follow the progress.
