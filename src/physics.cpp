@@ -17,19 +17,19 @@ void Physics::SimulateWorld(float simulationStep) {
     // Update entity location from simulation bodies locations
     for (uint i = 0; i < entities_.size(); i++) {
         b2Vec2 pos = b2bodies_[i]->GetPosition();
-        entities_[i].MoveTo(Pos(pos.x, pos.y));
-        // std::cout << "x: " << pos.x << " y: " << pos.y << std::endl;
+        entities_[i]->MoveTo(Pos(pos.x, pos.y));
+        //std::cout << "x: " << pos.x << " y: " << pos.y << std::endl;
     }
 };
 
-b2Body* Physics::AddBox(Box box) {
+b2Body* Physics::AddBox(Box* box) {
     entities_.push_back(box);
     b2BodyDef bodyDef;
     bodyDef.type = b2_dynamicBody;
-    bodyDef.position.Set(box.GetPos().GetX(), box.GetPos().GetY());
+    bodyDef.position.Set(box->GetPos().GetX(), box->GetPos().GetY());
     b2Body* dynamicBody = simulationWorld_.CreateBody(&bodyDef);
     b2PolygonShape dynamicBox;
-    dynamicBox.SetAsBox(box.GetWidth() / 2.0, box.GetHeight() / 2.0);
+    dynamicBox.SetAsBox(box->GetWidth() / 2.0, box->GetHeight() / 2.0);
     b2FixtureDef fixtureDef;
     fixtureDef.shape = &dynamicBox;
     fixtureDef.density = 1.0f;
@@ -39,7 +39,7 @@ b2Body* Physics::AddBox(Box box) {
     return dynamicBody;
 };
 
-b2Body* Physics::AddGround(Ground ground) {
+b2Body* Physics::AddGround(Ground* ground) {
     b2BodyDef groundBodyDef;
     groundBodyDef.position.Set(0.0f, -10.0f);
     b2Body* groundBody = simulationWorld_.CreateBody(&groundBodyDef);

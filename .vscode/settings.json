@@ -87,6 +87,8 @@
         "*.tcc": "cpp",
         "functional": "cpp",
         "memory_resource": "cpp",
-        "random": "cpp"
+        "random": "cpp",
+        "text_encoding": "cpp",
+        "thread": "cpp"
     }
 }

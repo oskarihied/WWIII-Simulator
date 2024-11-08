@@ -3,8 +3,8 @@
 
 Game::Game(int w, int h) : windowWidth_(w), windowHeight_(h) {}
 
-Level Game::startLevel() {
-    currentLevel_ = Level();
+Level* Game::startLevel() {
+    currentLevel_ = new Level();
     return currentLevel_;
 }
 
@@ -15,8 +15,8 @@ std::pair<int, int> Game::ToScreenPos(Pos pos, Camera cam) {
     x -= cam.GetPos().GetX();
     y -= cam.GetPos().GetY();
 
-    x *= windowWidth_ / cam.GetZoom();
-    y *= windowHeight_ / cam.GetZoom();
+    x *= windowWidth_ / cam.GetZoom() * 1.2;
+    y *= windowHeight_ / cam.GetZoom() * 1.2;
 
     return (std::pair((int)x, (int)y));
 }

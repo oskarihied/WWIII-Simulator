@@ -5,33 +5,40 @@
 
 #include "game.hpp"
 #include "background.hpp"
+#include "boxes.hpp"
 
 #include "physics.hpp"
 
 int main() {
   // Create the main window
 
-  int w = 800;
-  int h = 600;
+  int w = 1000;
+  int h = 800;
 
   Game game = Game(w, h);
 
-  Level level = game.startLevel();
+  Level* level = game.startLevel();
 
-  std::pair<int, int> pos = game.ToScreenPos(Pos(1, 1), level.GetCam());
+  std::pair<int, int> pos = game.ToScreenPos(Pos(1, 1), level->GetCam());
 
-  Background background = Background("background.jpg");
+  //Background background = Background("background.jpg");
 
-  level.AddEntity((Entity &)background);
+  Box box = Concrete(-5, 3);
+  
+  //std::cout << box.GetSprite() << std::endl;
+
+  level->AddBox(&box);
+  level->AddBox(new Wood(0, 3));
+  level->AddBox(new Glass(0, 6));
 
   std::cout << "pos: " << pos.first << " " << pos.second << std::endl << std::endl << std::endl;
 
-  sf::RenderWindow window(sf::VideoMode(800, 600), "WW-III Simulator");
+  sf::RenderWindow window(sf::VideoMode(w, h), "WW-III Simulator");
   //b2Vec2 v = b2Vec2(4.5, 6.8);
-  Physics physics;
+  Physics* physics = level->GetPhysics();
   
-  physics.AddBox(Box(1, 4000));
-  physics.AddGround(Ground());
+  physics->AddBox( new Box(1, 4000));
+  physics->AddGround( new Ground());
 
   // Start the game loop
   while (window.isOpen()) {
@@ -39,7 +46,7 @@ int main() {
     sf::Event event;
     
     // Advance simulation
-    physics.SimulateWorld(0.002);
+    physics->SimulateWorld(0.002);
 
     while (window.pollEvent(event)) {
       // Close window: exit
@@ -50,19 +57,35 @@ int main() {
     window.clear();
 
     sf::Texture texture;
-    std::cout << texture.loadFromFile("src/background.jpg") << std::endl;
+    texture.loadFromFile("images/background.jpg");
+    //std::cout << texture.loadFromFile("images/background.jpg") << std::endl;
 
     sf::Sprite sprite;
     sprite.setTexture(texture);
 
     window.draw(sprite);
 
+    for (Entity* entity : physics->GetEntities()) {
+      //std::cout << entity->GetSprite() << std::endl;
+      float scale = 1.0f / level->GetCam().GetZoom() * 5;
+      //entity->GetSprite()->setScale(sf::Vector2(scale, scale));
+
+      std::pair<int, int> pos = game.ToScreenPos(entity->GetPos(), level->GetCam());
+      entity->GetSprite()->setOrigin(pos.first, pos.second);
+
+      entity->GetSprite()->setScale(sf::Vector2(scale, scale));
+    
+      window.draw(*(entity->GetSprite()));
 
 
-    for (auto entity : level.GetEntities()) {
-      std::cout << "hello" << std::endl;
-      window.draw(entity.GetSprite());
+      //std::cout << entity->GetImage() << " pos: " << entity->GetPos().GetX() << " " << entity->GetPos().GetY() << " screen: " << pos.first << " " << pos.second << std::endl;
     }
+
+    for (b2Body* body : physics->GetBodies()) {
+      //std::cout << "physic: " << body->GetPosition().x << " " << body->GetPosition().y << std::endl;
+    }
+
+
 
     // Update the window
     window.display();

@@ -4,6 +4,7 @@
 #include<vector>
 #include "entity.hpp"
 #include "camera.hpp"
+#include "physics.hpp"
 
 class Level{
     public:
@@ -11,9 +12,13 @@ class Level{
 
         Camera GetCam();
         
-        void AddEntity(Entity entity);
+        void AddEntity(Entity* entity);
+        void AddPhysicalEntity(Entity* entity);
+        void AddBox(Box* box);
 
-        std::vector<Entity> GetEntities();
+        Physics* GetPhysics();
+
+        std::vector<Entity*> GetEntities();
 
 
 
@@ -21,8 +26,11 @@ class Level{
 
 
     private:
-        std::vector<Entity> entities_;
         Camera camera_;
+        Physics* physics_;
+        const std::vector<Entity*>& entities_;
+        
+        
         
 };
 

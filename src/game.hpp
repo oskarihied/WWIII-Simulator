@@ -8,18 +8,18 @@ class Game {
     public:
         Game(int w, int h);
 
-        Level startLevel();
+        Level* startLevel();
 
         std::pair<int, int> ToScreenPos(Pos pos, Camera cam);
 
-        std::vector<Entity> levelEntities() {
-            return currentLevel_.GetEntities();
+        std::vector<Entity*> levelEntities() {
+            return currentLevel_->GetEntities();
         }
 
     
     private:
         std::string playerName_;
-        Level currentLevel_;
+        Level* currentLevel_;
 
         int windowWidth_;
         int windowHeight_;

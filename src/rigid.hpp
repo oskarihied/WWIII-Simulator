@@ -6,7 +6,7 @@
 class Rigid : public Physical {
     public:
         Rigid(float x, float y);
-        Rigid(float x, float y, float mass, int hp);
+        Rigid(float x, float y, std::string image, float mass, int hp);
     
     protected:
         int maxHP_;

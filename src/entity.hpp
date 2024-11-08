@@ -6,6 +6,8 @@
 #include <vector>
 #include <string>
 
+#include <iostream>
+
 #include <SFML/Graphics.hpp>
 
 class Entity{
@@ -18,13 +20,15 @@ class Entity{
         void MoveTo(float x, float y);
         void MoveTo(Pos pos);
 
-        sf::Sprite &GetSprite();
+        std::string GetImage();
+
+        sf::Sprite* GetSprite();
 
         std::pair<float, float> Move(float x, float y);
         std::pair<float, float> Move(Pos pos);
 
     protected:
-        std::string image_;
+        std::string image_ = "";
         Pos pos_;
         sf::Texture texture_;
         sf::Sprite sprite_;
