@@ -21,10 +21,14 @@ Physics* Level::GetPhysics() {
     return physics_;
 }
 
-void Level::AddPhysicalEntity(Entity* entity) {
-    //physics_.AddBox(entity);
+void Level::AddNonPhysicalEntity(Entity* entity) {
+    nonPhysicals_.push_back(entity);
 }
 
 std::vector<Entity*> Level::GetEntities() {
     return entities_;
+}
+
+std::vector<Entity*> Level::GetNonPhysicalEntities(){
+    return nonPhysicals_;
 }

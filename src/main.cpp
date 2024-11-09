@@ -21,12 +21,19 @@ int main() {
 
   Level* level = game.startLevel();
 
-  level->AddBox(new Concrete(1, 1));
-  level->AddBox(new Wood(1, 0));
+  level->AddBox(new Concrete(3, 1));
+  level->AddBox(new Wood(4, 0));
   level->AddBox(new Wood(4.5, 3));
-  level->AddBox(new Glass(2, 5));
-  level->AddBox(new Glass(4, 1));
-  level->AddBox(new Glass(2, 2));
+  level->AddBox(new Glass(4, 5));
+  level->AddBox(new Glass(5, 1));
+  level->AddBox(new Glass(7.5, 4.6));
+  level->AddNonPhysicalEntity(new Entity(0, 0, "images/trump.png"));
+  level->AddNonPhysicalEntity(new Entity(0, -0.2, "images/rifle.png"));
+  level->AddNonPhysicalEntity(new Entity(1.5, -0.2, "images/rifle_bullet.png"));
+  level->AddNonPhysicalEntity(new Entity(-1, 0, "images/marin.png"));
+  level->AddNonPhysicalEntity(new Entity(-1, -0.2, "images/rifle.png"));
+  level->AddNonPhysicalEntity(new Entity(-2, 0, "images/putin.png"));
+  level->AddNonPhysicalEntity(new Entity(-2, -0.2, "images/rifle.png"));
 
   sf::RenderWindow window(sf::VideoMode(w, h), "WWIII Simulator");
   // b2Vec2 v = b2Vec2(4.5, 6.8);
@@ -84,12 +91,24 @@ int main() {
 
     window.draw(background);
 
+
+    for (Entity* entity : level->GetNonPhysicalEntities()) {
+      float scale = (w / 200.0f) / level->GetCam()->GetZoom();
+
+      entity->GetSprite()->setScale(sf::Vector2(scale, scale));
+
+      std::pair<int, int> pos = game.ToScreenPos(entity->GetPos(), *level->GetCam());
+      entity->GetSprite()->setPosition(pos.first, -pos.second);
+
+      
+      window.draw(*(entity->GetSprite()));
+
+    }
+
+
+
     for (Entity* entity : physics->GetEntities()) {
       // std::cout << entity->GetSprite() << std::endl;
-      Pos pos2 = entity->GetPos();
-      Pos pos3 = pos2;
-      pos3.Add(1, 0);
-      pos2.GetX();
 
       float scale = (w / 200.0f) / level->GetCam()->GetZoom();
 

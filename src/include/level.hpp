@@ -13,15 +13,13 @@ class Level{
         Camera* GetCam();
         
         void AddEntity(Entity* entity);
-        void AddPhysicalEntity(Entity* entity);
+        void AddNonPhysicalEntity(Entity* entity);
         void AddBox(Box* box);
 
         Physics* GetPhysics();
 
         std::vector<Entity*> GetEntities();
-
-
-
+        std::vector<Entity*> GetNonPhysicalEntities();
 
 
 
@@ -29,8 +27,7 @@ class Level{
         Camera* camera_;
         Physics* physics_;
         const std::vector<Entity*>& entities_;
-        
-        
+        std::vector<Entity*> nonPhysicals_;
         
 };
 
