@@ -8,6 +8,9 @@
 #include "game.hpp"
 #include "physics.hpp"
 
+
+
+
 int main() {
   // Create the main window
 
@@ -23,6 +26,7 @@ int main() {
   level->AddBox(new Wood(4.5, 3));
   level->AddBox(new Glass(2, 5));
   level->AddBox(new Glass(4, 1));
+  level->AddBox(new Glass(2, 2));
 
   sf::RenderWindow window(sf::VideoMode(w, h), "WWIII Simulator");
   // b2Vec2 v = b2Vec2(4.5, 6.8);
@@ -31,13 +35,14 @@ int main() {
   physics->AddBox(new Box(1, 4000));
   physics->AddGround(new Ground());
 
+  window.setFramerateLimit(60);
   // Start the game loop
   while (window.isOpen()) {
     // Process events
     sf::Event event;
 
     // Advance simulation
-    physics->SimulateWorld(0.01);
+    physics->SimulateWorld(1 / 60.0f);
 
     while (window.pollEvent(event)) {
       
