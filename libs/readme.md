@@ -1,19 +1,35 @@
 # LIBS directory
-In this directory, you are required to place all the external libraries your project depends on. 
-Although, in principle, you can use git submodules (and place them under this directory), 
-for the sake of easily compiling your application, placing the source code of the 
-open source libraries is also fine. However, this approach is not applicable to
-large dependencies, such as QT.
 
-
+In this directory, you are required to place all the external libraries your
+project depends on. Although, in principle, you can use git submodules (and
+place them under this directory), for the sake of easily compiling your
+application, placing the source code of the open source libraries is also fine.
+However, this approach is not applicable to large dependencies, such as QT.
 
 # List of External Libs
 
-1. [Project1](https://someproject.com/download)
-2. [Project2](https://anotherproject.com/download)
+1. [SFML](https://github.com/SFML/SFML.git)
 
+Linux users need to install SFML's dependencies using their system package
+manager. On Ubuntu and other Debian-based distributions the following commands
+can be used:
 
-> If you are using already compiled library, place it in this folder, and set the linker options appropriately.
-> The inlcude files of the dependent library should also be placed in this folder.
+```
+sudo apt update
+sudo apt install \
+    libxrandr-dev \
+    libxcursor-dev \
+    libudev-dev \
+    libfreetype-dev \
+    libopenal-dev \
+    libflac-dev \
+    libvorbis-dev \
+    libgl1-mesa-dev \
+    libegl1-mesa-dev
+```
 
+2. [Box2D](https://github.com/erincatto/box2d.git)
 
+> If you are using already compiled library, place it in this folder, and set
+> the linker options appropriately. The inlcude files of the dependent library
+> should also be placed in this folder.

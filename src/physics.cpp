@@ -1,61 +1,75 @@
 #include "physics.hpp"
-#include <box2d/box2d.h>
+
+#include <box2d/base.h>
+
 #include <iostream>
 
-Physics::Physics() : simulationWorld_(b2World(b2Vec2(0.0f, -9.81f))) {};
+Physics::Physics() {
+  b2WorldDef worldDef = b2DefaultWorldDef();
+  worldDef.gravity = (b2Vec2){0.0f, -9.81f};
+  simulationWorld_ = b2CreateWorld(&worldDef);
+}
 
 void Physics::SimulateWorld(float simulationStep) {
-    
-    // Update simulation Objects locations
-    simulationWorld_.Step(simulationStep, 1, 1);
+  // Update simulation Objects locations
+  b2World_Step(simulationWorld_, simulationStep, 4);
 
-    // Verify that all entities match simulation bodies
-    if (b2bodies_.size() != entities_.size()) {
-        throw std::invalid_argument("Vectors entities and b2bodies must be the same size.");
-    }
+  // Verify that all entities match simulation bodies
+  if (b2bodies_.size() != entities_.size()) {
+    throw std::invalid_argument(
+        "Vectors entities and b2bodies must be the same size.");
+  }
 
-    // Update entity location from simulation bodies locations
-    for (uint i = 0; i < entities_.size(); i++) {
-        b2Vec2 pos = b2bodies_[i]->GetPosition();
-        entities_[i]->MoveTo(Pos(pos.x, pos.y));
-        //std::cout << "x: " << pos.x << " y: " << pos.y << std::endl;
-    }
+  // Update entity location from simulation bodies locations
+  for (uint i = 0; i < entities_.size(); i++) {
+    b2Vec2 pos = b2Body_GetPosition(b2bodies_[i]);
+    entities_[i]->MoveTo(Pos(pos.x, pos.y));
+    // std::cout << "x: " << pos.x << " y: " << pos.y << std::endl;
+  }
 };
 
-b2Body* Physics::AddBox(Box* box) {
-    entities_.push_back(box);
-    b2BodyDef bodyDef;
-    bodyDef.type = b2_dynamicBody;
-    bodyDef.position.Set(box->GetPos().GetX(), box->GetPos().GetY());
-    b2Body* dynamicBody = simulationWorld_.CreateBody(&bodyDef);
-    b2PolygonShape dynamicBox;
-    dynamicBox.SetAsBox(box->GetWidth() / 2.0, box->GetHeight() / 2.0);
-    b2FixtureDef fixtureDef;
-    fixtureDef.shape = &dynamicBox;
-    fixtureDef.density = 1.0f;
-    fixtureDef.friction = 0.3f;
-    dynamicBody->CreateFixture(&fixtureDef);
-    b2bodies_.push_back(dynamicBody);
-    return dynamicBody;
+b2BodyId Physics::AddBox(Box* box) {
+  b2BodyDef bodyDef = b2DefaultBodyDef();
+  bodyDef.type = b2_dynamicBody;
+  bodyDef.position = (b2Vec2){box->GetPos().GetX(), box->GetPos().GetY()};
+  b2BodyId bodyId = b2CreateBody(simulationWorld_, &bodyDef);
+
+  b2Polygon dynamicBox =
+      b2MakeBox(box->GetWidth() / 2.0, box->GetHeight() / 2.0);
+
+  b2ShapeDef shapeDef = b2DefaultShapeDef();
+  shapeDef.density = 1.0f;
+  shapeDef.friction = 0.3f;
+
+  b2CreatePolygonShape(bodyId, &shapeDef, &dynamicBox);
+
+  b2bodies_.push_back(bodyId);
+  entities_.push_back(box);
+
+  return bodyId;
 };
 
-b2Body* Physics::AddGround(Ground* ground) {
-    b2BodyDef groundBodyDef;
-    groundBodyDef.position.Set(0.0f, -10.0f);
-    b2Body* groundBody = simulationWorld_.CreateBody(&groundBodyDef);
-    b2PolygonShape groundBox;
-    groundBox.SetAsBox(50.0f, 10.0f);
-    groundBody->CreateFixture(&groundBox, 0.0f);
-    b2bodies_.push_back(groundBody);
-    entities_.push_back(ground);
-    return groundBody;
+b2BodyId Physics::AddGround(Ground* ground) {
+  b2BodyDef groundBodyDef = b2DefaultBodyDef();
+  groundBodyDef.position = (b2Vec2){0.0f, -10.0f};
+  b2BodyId groundId = b2CreateBody(simulationWorld_, &groundBodyDef);
+
+  b2Polygon groundBox = b2MakeBox(50.0f, 10.0f);
+
+  b2ShapeDef groundShapeDef = b2DefaultShapeDef();
+  b2CreatePolygonShape(groundId, &groundShapeDef, &groundBox);
+
+  b2bodies_.push_back(groundId);
+  entities_.push_back(ground);
+
+  return groundId;
 };
 
-void Physics::SetVelocity(b2Body* body, float xVel, float yVel) {
-    body->SetLinearVelocity(b2Vec2(xVel, yVel));
+void Physics::SetVelocity(b2BodyId* body, float xVel, float yVel) {
+  b2Body_SetLinearVelocity(*body, (b2Vec2){xVel, yVel});
 };
 
-void Physics::SetPosition(b2Body* body, float xPos, float yPos, float rotation) {
-    body->SetTransform(b2Vec2(xPos, yPos), rotation);
+void Physics::SetPosition(b2BodyId* body, float xPos, float yPos,
+                          b2Rot rotation) {
+  b2Body_SetTransform(*body, (b2Vec2){xPos, yPos}, rotation);
 };
-
