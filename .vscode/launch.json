@@ -8,6 +8,7 @@
         "name": "(gdb) Launch",
         "type": "cppdbg",
         "request": "launch",
+        "preLaunchTask": "CMake: build",
         // Resolved by CMake Tools:
         "program": "${command:cmake.launchTargetPath}",
         "args": [],
