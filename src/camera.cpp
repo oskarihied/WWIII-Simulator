@@ -10,3 +10,12 @@ Pos Camera::GetPos() {
 float Camera::GetZoom() {
     return zoom_;
 }
+
+float Camera::Zoom(float add) {
+    zoom_ *= add;
+    return zoom_;
+}
+
+std::pair<int, int> Camera::Move(float x, float y) {
+    return pos_.Add(x, y);
+}

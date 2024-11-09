@@ -11,28 +11,18 @@
 int main() {
   // Create the main window
 
-  int w = 1000;
+  int w = 1200;
   int h = 800;
 
   Game game = Game(w, h);
 
   Level* level = game.startLevel();
 
-  std::pair<int, int> pos = game.ToScreenPos(Pos(1, 1), level->GetCam());
-
-  // Background background = Background("background.jpg");
-
-  Box box = Concrete(-5, 3);
-
-  // std::cout << box.GetSprite() << std::endl;
-
-  level->AddBox(&box);
-  level->AddBox(new Wood(0, 3));
-  level->AddBox(new Glass(0, 6));
-
-  std::cout << "pos: " << pos.first << " " << pos.second << std::endl
-            << std::endl
-            << std::endl;
+  level->AddBox(new Concrete(1, 1));
+  level->AddBox(new Wood(1, 0));
+  level->AddBox(new Wood(4.5, 3));
+  level->AddBox(new Glass(2, 5));
+  level->AddBox(new Glass(4, 1));
 
   sf::RenderWindow window(sf::VideoMode(w, h), "WWIII Simulator");
   // b2Vec2 v = b2Vec2(4.5, 6.8);
@@ -47,11 +37,33 @@ int main() {
     sf::Event event;
 
     // Advance simulation
-    physics->SimulateWorld(0.002);
+    physics->SimulateWorld(0.01);
 
     while (window.pollEvent(event)) {
-      // Close window: exit
+      
+      if (event.type == sf::Event::KeyPressed) {
+        if (event.key.scancode == sf::Keyboard::Scan::Up) {
+          level->GetCam()->Move(0.0f, 1.0f);
+        }
+        if (event.key.scancode == sf::Keyboard::Scan::Down) {
+          level->GetCam()->Move(0.0f, -1.0f);
+        }
+        if (event.key.scancode == sf::Keyboard::Scan::Right) {
+          level->GetCam()->Move(1.0f, 0.0f);
+        }
+        if (event.key.scancode == sf::Keyboard::Scan::Left) {
+          level->GetCam()->Move(-1.0f, 0.0f);
+        }
+        if (event.key.scancode == sf::Keyboard::Scan::Comma) {
+          level->GetCam()->Zoom(0.95);
+        }
+        if (event.key.scancode == sf::Keyboard::Scan::Period) {
+          level->GetCam()->Zoom(1.05);
+        }
+        
+      }
 
+      // Close window: exit
       if (event.type == sf::Event::Closed) window.close();
     }
     // Clear screen
@@ -61,32 +73,30 @@ int main() {
     texture.loadFromFile("images/background.jpg");
     // std::cout << texture.loadFromFile("images/background.jpg") << std::endl;
 
-    sf::Sprite sprite;
-    sprite.setTexture(texture);
+    sf::Sprite background;
+    background.setTexture(texture);
+    background.setScale(sf::Vector2(2.0f, 2.0f));
 
-    window.draw(sprite);
+    window.draw(background);
 
     for (Entity* entity : physics->GetEntities()) {
       // std::cout << entity->GetSprite() << std::endl;
-      float scale = 1.0f / level->GetCam().GetZoom() * 5;
-      // entity->GetSprite()->setScale(sf::Vector2(scale, scale));
+      Pos pos2 = entity->GetPos();
+      Pos pos3 = pos2;
+      pos3.Add(1, 0);
+      pos2.GetX();
 
-      std::pair<int, int> pos =
-          game.ToScreenPos(entity->GetPos(), level->GetCam());
-      entity->GetSprite()->setOrigin(pos.first, pos.second);
+      float scale = (w / 200.0f) / level->GetCam()->GetZoom();
 
       entity->GetSprite()->setScale(sf::Vector2(scale, scale));
+      entity->GetSprite()->setRotation(entity->GetRotation());
 
+      std::pair<int, int> pos = game.ToScreenPos(entity->GetPos(), *level->GetCam());
+      entity->GetSprite()->setPosition(pos.first, -pos.second);
+
+      
       window.draw(*(entity->GetSprite()));
 
-      // std::cout << entity->GetImage() << " pos: " << entity->GetPos().GetX()
-      // << " " << entity->GetPos().GetY() << " screen: " << pos.first << " " <<
-      // pos.second << std::endl;
-    }
-
-    for (b2BodyId body : physics->GetBodies()) {
-      // std::cout << "physic: " << body->GetPosition().x << " " <<
-      // body->GetPosition().y << std::endl;
     }
 
     // Update the window

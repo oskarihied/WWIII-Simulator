@@ -8,6 +8,10 @@ class Camera {
         Pos GetPos();
         float GetZoom();
 
+        std::pair<int, int> Move(float x, float y);
+
+        float Zoom(float add);
+
     private:
         Pos pos_;
         float zoom_ = 10;

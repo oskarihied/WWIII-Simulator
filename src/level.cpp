@@ -1,10 +1,10 @@
 #include "level.hpp"
 
-Level::Level() : camera_(Camera(0, 5)), physics_(new Physics()), entities_(physics_->GetEntities())  {
+Level::Level() : camera_(new Camera(0, 5)), physics_(new Physics()), entities_(physics_->GetEntities())  {
     //entities_ = physics_->GetEntities();
 }
 
-Camera Level::GetCam() {
+Camera* Level::GetCam() {
     return camera_;
 }
 

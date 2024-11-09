@@ -24,6 +24,7 @@ void Physics::SimulateWorld(float simulationStep) {
   for (uint i = 0; i < entities_.size(); i++) {
     b2Vec2 pos = b2Body_GetPosition(b2bodies_[i]);
     entities_[i]->MoveTo(Pos(pos.x, pos.y));
+    entities_[i]->RotationTo(acos(b2Body_GetRotation(b2bodies_[i]).c) * (180/M_PI));
     // std::cout << "x: " << pos.x << " y: " << pos.y << std::endl;
   }
 };
@@ -51,7 +52,7 @@ b2BodyId Physics::AddBox(Box* box) {
 
 b2BodyId Physics::AddGround(Ground* ground) {
   b2BodyDef groundBodyDef = b2DefaultBodyDef();
-  groundBodyDef.position = (b2Vec2){0.0f, -10.0f};
+  groundBodyDef.position = (b2Vec2){0.0f, -10.5f};
   b2BodyId groundId = b2CreateBody(simulationWorld_, &groundBodyDef);
 
   b2Polygon groundBox = b2MakeBox(50.0f, 10.0f);

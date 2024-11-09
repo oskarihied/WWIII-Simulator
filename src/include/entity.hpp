@@ -18,6 +18,10 @@ class Entity {
   void MoveTo(float x, float y);
   void MoveTo(Pos pos);
 
+  void RotationTo(float x);
+
+  float GetRotation();
+
   std::string GetImage();
 
   sf::Sprite* GetSprite();
@@ -28,6 +32,7 @@ class Entity {
  protected:
   std::string image_ = "";
   Pos pos_;
+  float rotation_ = 0.0f;
   sf::Texture texture_;
   sf::Sprite sprite_;
 };

@@ -10,7 +10,7 @@ class Level{
     public:
         Level();
 
-        Camera GetCam();
+        Camera* GetCam();
         
         void AddEntity(Entity* entity);
         void AddPhysicalEntity(Entity* entity);
@@ -26,7 +26,7 @@ class Level{
 
 
     private:
-        Camera camera_;
+        Camera* camera_;
         Physics* physics_;
         const std::vector<Entity*>& entities_;
         

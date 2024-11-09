@@ -89,6 +89,8 @@
         "memory_resource": "cpp",
         "random": "cpp",
         "text_encoding": "cpp",
-        "thread": "cpp"
+        "thread": "cpp",
+        "set": "cpp",
+        "cinttypes": "cpp"
     }
 }

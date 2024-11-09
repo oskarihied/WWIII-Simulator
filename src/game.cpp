@@ -15,8 +15,8 @@ std::pair<int, int> Game::ToScreenPos(Pos pos, Camera cam) {
     x -= cam.GetPos().GetX();
     y -= cam.GetPos().GetY();
 
-    x *= windowWidth_ / cam.GetZoom() * 1.2;
-    y *= windowHeight_ / cam.GetZoom() * 1.2;
+    x *= windowWidth_ / (cam.GetZoom());
+    y *= windowWidth_ / (cam.GetZoom());
 
     return (std::pair((int)x, (int)y));
 }

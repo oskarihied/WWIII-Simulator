@@ -13,9 +13,8 @@ Entity::Entity(float x, float y, std::string image)
     if (image_ != "") {
         texture_.loadFromFile(image_);
         sprite_.setTexture(texture_);
-        sprite_.setOrigin(x, y);
-
-        std::cout << &sprite_ << std::endl;
+        sprite_.setOrigin(texture_.getSize().x/2, texture_.getSize().y/2);
+        //std::cout << &sprite_ << std::endl;
     }
 }
 
@@ -46,4 +45,12 @@ std::pair<float, float> Entity::Move(Pos pos) {
 sf::Sprite* Entity::GetSprite() {
     sprite_.setTexture(texture_);
     return (&sprite_);
+}
+
+void Entity::RotationTo(float x) {
+    rotation_ = x;
+}
+
+float Entity::GetRotation() {
+    return rotation_;
 }
