@@ -3,9 +3,8 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 
-#include "game.hpp"
 #include "background.hpp"
-
+#include "game.hpp"
 #include "physics.hpp"
 
 int main() {
@@ -24,12 +23,14 @@ int main() {
 
   level.AddEntity((Entity &)background);
 
-  std::cout << "pos: " << pos.first << " " << pos.second << std::endl << std::endl << std::endl;
+  std::cout << "pos: " << pos.first << " " << pos.second << std::endl
+            << std::endl
+            << std::endl;
 
-  sf::RenderWindow window(sf::VideoMode(800, 600), "WW-III Simulator");
-  //b2Vec2 v = b2Vec2(4.5, 6.8);
+  sf::RenderWindow window(sf::VideoMode(800, 600), "WWIII Simulator");
+  // b2Vec2 v = b2Vec2(4.5, 6.8);
   Physics physics;
-  
+
   physics.AddBox(Box(1, 4000));
   physics.AddGround(Ground());
 
@@ -37,7 +38,7 @@ int main() {
   while (window.isOpen()) {
     // Process events
     sf::Event event;
-    
+
     // Advance simulation
     physics.SimulateWorld(0.002);
 
@@ -56,8 +57,6 @@ int main() {
     sprite.setTexture(texture);
 
     window.draw(sprite);
-
-
 
     for (auto entity : level.GetEntities()) {
       std::cout << "hello" << std::endl;
