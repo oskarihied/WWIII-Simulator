@@ -13,8 +13,11 @@ class Entity {
   Entity();
   Entity(float x, float y);
   Entity(float x, float y, std::string sprite);
+  Entity(float x, float y, float xVel, float yVel, std::string sprite);
 
   Pos GetPos();
+  void UpdateVel(float xVel, float yVel);
+
   void MoveTo(float x, float y);
   void MoveTo(Pos pos);
 
@@ -32,6 +35,7 @@ class Entity {
  protected:
   std::string image_ = "";
   Pos pos_;
+  Pos vel_;
   float rotation_ = 0.0f;
   sf::Texture texture_;
   sf::Sprite sprite_;
