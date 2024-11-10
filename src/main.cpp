@@ -8,9 +8,6 @@
 #include "game.hpp"
 #include "physics.hpp"
 
-
-
-
 int main() {
   // Create the main window
 
@@ -27,6 +24,7 @@ int main() {
   level->AddBox(new Glass(2, 5));
   level->AddBox(new Glass(4, 1));
   level->AddBox(new Glass(2, 2));
+  level->Fire();
 
   sf::RenderWindow window(sf::VideoMode(w, h), "WWIII Simulator");
   // b2Vec2 v = b2Vec2(4.5, 6.8);
@@ -45,7 +43,6 @@ int main() {
     physics->SimulateWorld(1 / 60.0f);
 
     while (window.pollEvent(event)) {
-      
       if (event.type == sf::Event::KeyPressed) {
         if (event.key.scancode == sf::Keyboard::Scan::Up) {
           level->GetCam()->Move(0.0f, 1.0f);
@@ -65,7 +62,6 @@ int main() {
         if (event.key.scancode == sf::Keyboard::Scan::Period) {
           level->GetCam()->Zoom(1.05);
         }
-        
       }
 
       // Close window: exit
@@ -96,12 +92,11 @@ int main() {
       entity->GetSprite()->setScale(sf::Vector2(scale, scale));
       entity->GetSprite()->setRotation(entity->GetRotation());
 
-      std::pair<int, int> pos = game.ToScreenPos(entity->GetPos(), *level->GetCam());
+      std::pair<int, int> pos =
+          game.ToScreenPos(entity->GetPos(), *level->GetCam());
       entity->GetSprite()->setPosition(pos.first, -pos.second);
 
-      
       window.draw(*(entity->GetSprite()));
-
     }
 
     // Update the window

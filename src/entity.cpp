@@ -26,6 +26,8 @@ Entity::Entity(float x, float y, float xVel, float yVel, std::string image)
 
 Pos Entity::GetPos() { return pos_; }
 
+Pos Entity::GetVel() { return vel_; }
+
 void Entity::UpdateVel(float xVel, float yVel) { vel_ = Pos(xVel, yVel); }
 
 std::string Entity::GetImage() { return image_; }

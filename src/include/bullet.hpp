@@ -1,4 +1,5 @@
-#include <box2d/box2d.h>
+#ifndef BULLET_HPP
+#define BULLET_HPP
 
 #include "rigid.hpp"
 
@@ -9,3 +10,5 @@ class Bullet : public Rigid {
 
   float CalculateDmg();
 };
+
+#endif

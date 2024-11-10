@@ -73,19 +73,24 @@ b2BodyId Physics::AddGround(Ground* ground) {
 };
 
 b2BodyId Physics::AddBullet(Bullet* bullet) {
+  float bx = bullet->GetPos().GetX();
+  float by = bullet->GetPos().GetX();
+
   b2BodyDef bulletBodyDef = b2DefaultBodyDef();
-  bulletBodyDef.position =
-      (b2Vec2){bullet->GetPos().GetX(), bullet->GetPos().GetX()};
+  bulletBodyDef.type = b2_dynamicBody;
+  bulletBodyDef.position = (b2Vec2){bx, by};
   b2BodyId bulletId = b2CreateBody(simulationWorld_, &bulletBodyDef);
 
   b2Capsule capsule;
-  capsule.center1 = (b2Vec2){1.0f, 1.0f};
-  capsule.center1 = (b2Vec2){2.0f, 3.0f};
+  capsule.center1 = (b2Vec2){bx, by};
+  capsule.center2 = (b2Vec2){bx + 1.0f, by + 1.0f};
   capsule.radius = 0.25f;
 
   b2ShapeDef bulletShapeDef = b2DefaultShapeDef();
 
   b2CreateCapsuleShape(bulletId, &bulletShapeDef, &capsule);
+
+  SetVelocity(bulletId, bullet->GetVel().GetX(), bullet->GetVel().GetX());
 
   b2bodies_.push_back(bulletId);
   entities_.push_back(bullet);
@@ -93,11 +98,11 @@ b2BodyId Physics::AddBullet(Bullet* bullet) {
   return bulletId;
 };
 
-void Physics::SetVelocity(b2BodyId* body, float xVel, float yVel) {
-  b2Body_SetLinearVelocity(*body, (b2Vec2){xVel, yVel});
+void Physics::SetVelocity(b2BodyId body, float xVel, float yVel) {
+  b2Body_SetLinearVelocity(body, (b2Vec2){xVel, yVel});
 };
 
-void Physics::SetPosition(b2BodyId* body, float xPos, float yPos,
+void Physics::SetPosition(b2BodyId body, float xPos, float yPos,
                           b2Rot rotation) {
-  b2Body_SetTransform(*body, (b2Vec2){xPos, yPos}, rotation);
+  b2Body_SetTransform(body, (b2Vec2){xPos, yPos}, rotation);
 };

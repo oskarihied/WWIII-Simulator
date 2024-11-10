@@ -3,6 +3,7 @@
 
 #include <vector>
 
+#include "bullets.hpp"
 #include "camera.hpp"
 #include "entity.hpp"
 #include "physics.hpp"
@@ -16,6 +17,7 @@ class Level {
   void AddEntity(Entity* entity);
   void AddPhysicalEntity(Entity* entity);
   void AddBox(Box* box);
+  void Fire();
 
   Physics* GetPhysics();
 
@@ -24,6 +26,7 @@ class Level {
  private:
   Camera* camera_;
   Physics* physics_;
+  std::vector<Bullet*> bullets_;
   const std::vector<Entity*>& entities_;
 };
 

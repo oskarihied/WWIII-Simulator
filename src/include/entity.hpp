@@ -16,6 +16,8 @@ class Entity {
   Entity(float x, float y, float xVel, float yVel, std::string sprite);
 
   Pos GetPos();
+  Pos GetVel();
+
   void UpdateVel(float xVel, float yVel);
 
   void MoveTo(float x, float y);
