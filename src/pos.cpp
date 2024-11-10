@@ -1,5 +1,6 @@
-
 #include "pos.hpp"
+
+Pos::Pos() : x_(0), y_(0) {}
 
 Pos::Pos(float x, float y) : x_(x), y_(y) {}
 
