@@ -8,4 +8,4 @@ add_executable(WWIIISimulator src/main.cpp)
 add_subdirectory(src)
 add_subdirectory(libs)
 
-target_link_libraries(WWIIISimulator PUBLIC src libs)
+target_link_libraries(WWIIISimulator PUBLIC src)
