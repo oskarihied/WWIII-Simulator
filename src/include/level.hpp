@@ -29,7 +29,7 @@ class Level{
         Camera* camera_;
         Physics* physics_;
         const std::vector<Entity*>& entities_;
-        
+        std::vector<std::pair<std::string,int>> leaderboard_;
         
         
 };
