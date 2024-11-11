@@ -58,10 +58,10 @@ b2BodyId Physics::AddBox(Box* box) {
 
 b2BodyId Physics::AddGround(Ground* ground) {
   b2BodyDef groundBodyDef = b2DefaultBodyDef();
-  groundBodyDef.position = (b2Vec2){0.0f, -10.5f};
+  groundBodyDef.position = (b2Vec2){ground->GetPos().GetX(), ground->GetPos().GetY() - 0.5f};
   b2BodyId groundId = b2CreateBody(simulationWorld_, &groundBodyDef);
 
-  b2Polygon groundBox = b2MakeBox(50.0f, 10.0f);
+  b2Polygon groundBox = b2MakeBox(10.0f, 1.0f);
 
   b2ShapeDef groundShapeDef = b2DefaultShapeDef();
   b2CreatePolygonShape(groundId, &groundShapeDef, &groundBox);

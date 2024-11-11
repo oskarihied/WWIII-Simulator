@@ -30,8 +30,28 @@ void Level::Fire() {
 
 Physics* Level::GetPhysics() { return physics_; }
 
-void Level::AddPhysicalEntity(Entity* entity) {
-  // physics_.AddBox(entity);
+void Level::AddNonPhysicalEntity(Entity* entity) {
+    nonPhysicals_.push_back(entity);
 }
 
-std::vector<Entity*> Level::GetEntities() { return entities_; }
+std::vector<Entity*> Level::GetEntities() {
+    return entities_;
+}
+
+std::vector<Entity*> Level::GetNonPhysicalEntities(){
+    return nonPhysicals_;
+}
+
+Entity* Level::CurrentGun() {
+    return nonPhysicals_[guns_[0]];
+}
+/*
+std::vector<Entity*> Level::GetGuns() {
+    return guns_;
+}
+*/
+
+void Level::AddGun(Entity* gun) {
+    guns_.push_back(nonPhysicals_.size());
+    nonPhysicals_.push_back(gun);
+}

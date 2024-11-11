@@ -12,22 +12,32 @@ class Level {
  public:
   Level();
 
-  Camera* GetCam();
-
-  void AddEntity(Entity* entity);
-  void AddPhysicalEntity(Entity* entity);
-  void AddBox(Box* box);
-  void Fire();
+        Camera* GetCam();
+        
+        void AddEntity(Entity* entity);
+        void AddNonPhysicalEntity(Entity* entity);
+        void AddBox(Box* box);
+        void Fire();
 
   Physics* GetPhysics();
 
-  std::vector<Entity*> GetEntities();
+        std::vector<Entity*> GetEntities();
+        std::vector<Entity*> GetNonPhysicalEntities();
 
- private:
-  Camera* camera_;
-  Physics* physics_;
-  std::vector<Bullet*> bullets_;
-  const std::vector<Entity*>& entities_;
+        Entity* CurrentGun();
+        //std::vector<Entity*> GetGuns();
+        void AddGun(Entity* gun);
+
+
+
+    private:
+        Camera* camera_;
+        Physics* physics_;
+        std::vector<Bullet*> bullets_;
+        const std::vector<Entity*>& entities_;
+        std::vector<Entity*> nonPhysicals_;
+        std::vector<int> guns_;
+        
 };
 
 #endif
