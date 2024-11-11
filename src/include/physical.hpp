@@ -1,3 +1,6 @@
+#ifndef PHYSICAL_HPP
+#define PHYSICAL_HPP
+
 
 #include "entity.hpp"
 
@@ -14,3 +17,5 @@ class Physical : public Entity {
         float width_;
         float height_;
 };
+
+#endif

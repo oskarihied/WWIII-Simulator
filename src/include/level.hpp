@@ -21,6 +21,10 @@ class Level{
         std::vector<Entity*> GetEntities();
         std::vector<Entity*> GetNonPhysicalEntities();
 
+        Entity* CurrentGun();
+        //std::vector<Entity*> GetGuns();
+        void AddGun(Entity* gun);
+
 
 
     private:
@@ -28,6 +32,7 @@ class Level{
         Physics* physics_;
         const std::vector<Entity*>& entities_;
         std::vector<Entity*> nonPhysicals_;
+        std::vector<int> guns_;
         
 };
 
