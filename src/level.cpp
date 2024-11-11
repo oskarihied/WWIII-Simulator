@@ -23,7 +23,7 @@ void Level::Fire() {
   if (!bullets_.empty()) {
     Bullet* b = bullets_.back();
     bullets_.pop_back();
-    b->UpdateVel(10, 0);
+    b->UpdateVel(20, 10);
     physics_->AddBullet(b);
   }
 }

@@ -74,7 +74,7 @@ b2BodyId Physics::AddGround(Ground* ground) {
 
 b2BodyId Physics::AddBullet(Bullet* bullet) {
   float bx = bullet->GetPos().GetX();
-  float by = bullet->GetPos().GetX();
+  float by = bullet->GetPos().GetY();
 
   b2BodyDef bulletBodyDef = b2DefaultBodyDef();
   bulletBodyDef.type = b2_dynamicBody;
@@ -90,7 +90,7 @@ b2BodyId Physics::AddBullet(Bullet* bullet) {
 
   b2CreateCapsuleShape(bulletId, &bulletShapeDef, &capsule);
 
-  SetVelocity(bulletId, bullet->GetVel().GetX(), bullet->GetVel().GetX());
+  SetVelocity(bulletId, bullet->GetVel().GetX(), bullet->GetVel().GetY());
 
   b2bodies_.push_back(bulletId);
   entities_.push_back(bullet);
