@@ -18,15 +18,29 @@ int main() {
 
   Level* level = game.startLevel();
 
-  level->AddBox(new Concrete(3, 1));
+  level->AddBox(new Concrete(3, 0));
   level->AddBox(new Wood(4, 0));
-  level->AddBox(new Wood(4.5, 3));
-  level->AddBox(new Glass(4, 5));
+  level->AddBox(new Wood(5, 0));
+
+  level->AddBox(new Wood(7, 0));
+  level->AddBox(new Wood(7, 1));
+  level->AddBox(new Wood(7, 2));
+  level->AddBox(new Wood(7, 3));
+  level->AddBox(new Wood(7, 4));
+  level->AddBox(new Wood(7, 5));
+  level->AddBox(new Wood(7, 6));
+  level->AddBox(new Wood(7, 7));
+
+
+
+
+  level->AddBox(new Wood(4, 2));
+  level->AddBox(new Glass(4, 1));
   level->AddBox(new Glass(5, 1));
-  level->AddBox(new Glass(7.5, 4.6));
+  level->AddBox(new Glass(6, 0));
   level->AddNonPhysicalEntity(new Entity(0, 0, "images/trump.png"));
 
-  level->AddNonPhysicalEntity(new Entity(1.5, -0.2, "images/rifle_bullet.png"));
+  //level->AddNonPhysicalEntity(new Entity(1.5, -0.2, "images/rifle_bullet.png"));
   level->AddNonPhysicalEntity(new Entity(-1, 0, "images/marin.png"));
   //level->AddNonPhysicalEntity(new Entity(-1, -0.2, "images/rifle.png"));
   level->AddNonPhysicalEntity(new Entity(-2, 0, "images/putin.png"));
@@ -78,7 +92,7 @@ int main() {
     float gunY = -(float)mousePos.y - gunPos.second;
     float gunX = (float)mousePos.x - gunPos.first;
 
-    std::cout << gunX << std::endl;
+    //std::cout << gunX << std::endl;
 
     float gunRotation = -atan(gunY/gunX);
 
@@ -86,7 +100,7 @@ int main() {
       gunRotation += M_PI;
     }
 
-    std::cout << gunRotation * (180.0f/M_PI) << std::endl;
+    //std::cout << gunRotation * (180.0f/M_PI) << std::endl;
 
     level->CurrentGun()->RotationTo(gunRotation * (180.0f/M_PI));
     gun2->RotationTo(gunRotation * (180.0f/M_PI));
@@ -138,7 +152,6 @@ int main() {
 
     window.draw(background);
 
-
     for (Entity* entity : level->GetNonPhysicalEntities()) {
       float scale = (w / 200.0f) / level->GetCam()->GetZoom();
 
@@ -150,23 +163,6 @@ int main() {
 
       
       window.draw(*(entity->GetSprite()));
-
-    }
-
-
-    for (Entity* entity : level->GetNonPhysicalEntities()) {
-    
-      float scale = (w / 200.0f) / level->GetCam()->GetZoom();
-
-      entity->GetSprite()->setScale(sf::Vector2(scale, scale));
-      entity->GetSprite()->setRotation(entity->GetRotation());
-
-      std::pair<int, int> pos = game.ToScreenPos(entity->GetPos(), *level->GetCam());
-      entity->GetSprite()->setPosition(pos.first, -pos.second);
-
-      
-      window.draw(*(entity->GetSprite()));
-
     }
 
     for (Entity* entity : physics->GetEntities()) {
@@ -179,11 +175,15 @@ int main() {
 
       std::pair<int, int> pos =
           game.ToScreenPos(entity->GetPos(), *level->GetCam());
+
+      //std::cout << pos.first << " " << pos.second << std::endl;
+
       entity->GetSprite()->setPosition(pos.first, -pos.second);
 
       window.draw(*(entity->GetSprite()));
     }
 
+    std::cout << std::endl;
     // Update the window
     window.display();
   }

@@ -44,6 +44,7 @@
         "name": "(lldb) Launch",
         "type": "lldb",
         "request": "launch",
+        "preLaunchTask": "CMake: build",
         // Resolved by CMake Tools:
         "program": "${command:cmake.launchTargetPath}",
         "args": [],

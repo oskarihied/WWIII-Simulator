@@ -1,7 +1,7 @@
 #include "level.hpp"
 
 Level::Level()
-    : camera_(new Camera(0, 5)),
+    : camera_(new Camera(-1, 4)),
       physics_(new Physics()),
       entities_(physics_->GetEntities()) {
   bullets_.push_back(new RegularBullet(-3, -2, 0, 0));
@@ -23,7 +23,7 @@ void Level::Fire() {
   if (!bullets_.empty()) {
     Bullet* b = bullets_.back();
     bullets_.pop_back();
-    b->UpdateVel(30, 30);
+    b->UpdateVel(10, 0);
     physics_->AddBullet(b);
   }
 }
