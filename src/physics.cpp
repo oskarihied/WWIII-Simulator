@@ -5,12 +5,45 @@
 Physics::Physics() {
   b2WorldDef worldDef = b2DefaultWorldDef();
   worldDef.gravity = (b2Vec2){0.0f, -9.81f};
+  // worldDef.restitutionThreshold = 0.0f;
+  worldDef.hitEventThreshold = 1.0f;
   simulationWorld_ = b2CreateWorld(&worldDef);
+  // b2World_SetHitEventThreshold(simulationWorld_, 1);
 }
 
 void Physics::SimulateWorld(float simulationStep) {
   // Update simulation Objects locations
   b2World_Step(simulationWorld_, simulationStep, 4);
+
+  // Calculate bulletdamage
+  for (auto i : bullets_) {
+    b2ContactEvents events = b2World_GetContactEvents(simulationWorld_); 
+    for (int j = 0; j < events.hitCount; j++) {
+      b2BodyId bid = b2Shape_GetBody(events.hitEvents[j].shapeIdA);
+      b2BodyId bid2 = b2Shape_GetBody(events.hitEvents[j].shapeIdB);
+      float bulletDamage = -events.hitEvents[j].approachSpeed * 100; 
+      if (bid.index1 == i ) {
+        std::cout << "bullet1: " << entities_[bid.index1]->GetHealth() << std::endl;
+        entities_[bid2.index1]->ChangeHealth(bulletDamage);
+      } else if (bid2.index1 == i) {
+        entities_[bid.index1]->ChangeHealth(bulletDamage);
+        std::cout << "bullet2: " << entities_[bid.index1]->GetHealth() << std::endl;
+      } 
+      
+      bool tf = false;
+      for (auto it : grounds_) {
+        if (bid.index1 == it || bid2.index1 == it) {
+          tf = true;
+          break;
+        }
+      }
+      if (!tf) {
+        entities_[bid.index1]->ChangeHealth(bulletDamage);
+        entities_[bid2.index1]->ChangeHealth(bulletDamage);
+      
+      }
+    }    
+  }
 
   // Verify that all entities match simulation bodies
   if (b2bodies_.size() != entities_.size()) {
@@ -44,7 +77,7 @@ b2BodyId Physics::AddBox(Box* box) {
   b2ShapeDef shapeDef = b2DefaultShapeDef();
   shapeDef.density = 1.0f;
   shapeDef.friction = 0.3f;
-
+  shapeDef.enableHitEvents = true;
   b2CreatePolygonShape(bodyId, &shapeDef, &dynamicBox);
 
   b2bodies_.push_back(bodyId);
@@ -66,6 +99,7 @@ b2BodyId Physics::AddGround(Ground* ground) {
 
   b2bodies_.push_back(groundId);
   entities_.push_back(ground);
+  grounds_.push_back(groundId.index1);
 
   return groundId;
 };
@@ -79,12 +113,13 @@ b2BodyId Physics::AddBullet(Bullet* bullet) {
   bulletBodyDef.position = (b2Vec2){bx, by};
   b2BodyId bulletId = b2CreateBody(simulationWorld_, &bulletBodyDef);
 
+  b2ShapeDef bulletShapeDef = b2DefaultShapeDef();
+  bulletShapeDef.enableHitEvents = true;
+
   b2Capsule capsule;
   capsule.center1 = (b2Vec2){bx, by};
   capsule.center2 = (b2Vec2){bx + 1.0f, by + 1.0f};
   capsule.radius = 0.25f;
-
-  b2ShapeDef bulletShapeDef = b2DefaultShapeDef();
 
   b2CreateCapsuleShape(bulletId, &bulletShapeDef, &capsule);
 
@@ -92,7 +127,7 @@ b2BodyId Physics::AddBullet(Bullet* bullet) {
 
   b2bodies_.push_back(bulletId);
   entities_.push_back(bullet);
-
+  bullets_.push_back(bulletId.index1);
   return bulletId;
 };
 
@@ -104,3 +139,6 @@ void Physics::SetPosition(b2BodyId body, float xPos, float yPos,
                           b2Rot rotation) {
   b2Body_SetTransform(body, (b2Vec2){xPos, yPos}, rotation);
 };
+
+void Physics::Contact(b2ContactHitEvent contact) {
+}

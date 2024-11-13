@@ -179,7 +179,7 @@ int main() {
       window.draw(*(entity->GetSprite()));
     }
 
-    std::cout << std::endl;
+    // std::cout << std::endl;
     // Update the window
     window.display();
   }

@@ -25,9 +25,13 @@ class Physics {
   const std::vector<b2BodyId>& GetBodies() const { return b2bodies_; }
 
  private:
+  void Contact(b2ContactHitEvent hit);
+
   b2WorldId simulationWorld_;
   std::vector<Entity*> entities_;
   std::vector<b2BodyId> b2bodies_;
+  std::vector<int32_t> bullets_;
+  std::vector<int32_t> grounds_;
 };
 
 #endif
