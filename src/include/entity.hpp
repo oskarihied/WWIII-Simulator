@@ -27,6 +27,11 @@ class Entity {
 
   float GetRotation();
 
+  float GetHealth();
+  void SetHealth(float health); 
+  float ChangeHealth(float amount);
+  
+
   std::string GetImage();
 
   sf::Sprite* GetSprite();
@@ -41,6 +46,8 @@ class Entity {
   float rotation_ = 0.0f;
   sf::Texture texture_;
   sf::Sprite sprite_;
+  float health_ = 1000;
+  float maxHealth = 1000;
 };
 
 #endif

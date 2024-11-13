@@ -50,3 +50,25 @@ sf::Sprite* Entity::GetSprite() {
 void Entity::RotationTo(float x) { rotation_ = x; }
 
 float Entity::GetRotation() { return rotation_; }
+  
+float Entity::ChangeHealth(float amount) {
+  health_ += amount;
+  if (health_ < 0) {
+    health_ = 0;
+    return 0; 
+  } else if (health_ > maxHealth) {
+    health_ = maxHealth;
+    return maxHealth;
+  } else {
+    health_ += amount;
+    return health_;
+  }
+}
+
+float Entity::GetHealth() {return health_;};
+
+void Entity::SetHealth(float health) {
+  health_ = health;
+  if (health_ > maxHealth) health_ = maxHealth;
+  if (health_ < 0) health = 0;
+  }

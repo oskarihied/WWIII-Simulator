@@ -2,7 +2,9 @@
 #define PHYSICS_HPP
 
 #include <box2d/box2d.h>
-
+#include <box2d/collision.h>
+#include <box2d/id.h>
+#include <box2d/base.h>
 #include "box.hpp"
 #include "bullet.hpp"
 #include "ground.hpp"
@@ -25,9 +27,15 @@ class Physics {
   const std::vector<b2BodyId>& GetBodies() const { return b2bodies_; }
 
  private:
+
+  void Contact(b2ContactHitEvent hit);
+
   b2WorldId simulationWorld_;
   std::vector<Entity*> entities_;
   std::vector<b2BodyId> b2bodies_;
+  std::vector<int32_t> bullets_;  
+  std::vector<int32_t> grounds_; 
+  
 };
 
 #endif
