@@ -142,7 +142,50 @@ The project is well underway even though the grasp on the libraries and CMake is
 3. Kokkonen: Physics
 4. Ristimäki: Graphics
 
+# Meeting 13.11.2024 14:10
 
+**Participants**: 
+1. Leo Blomqvist
+2. Oskari Kokkonen
+3. Oskari Hiedanpää
+
+## Summary of works
+1. Blomqvist
+   
+   CMake is ready, worked on bullet
+
+2. Kokkonen
+
+   Tried to get physics to work but they don't
+
+3. Hiedanpää
+
+   Worked on file management
+
+4. Ristimäki
+
+   Worked on graphics, and made objects spin
+
+## Challenges
+
+1. Collision physics don't work as expected. Might have to change to another library
+
+
+## Actions
+1. Blomqvist is going to try to solve our problems with physics, and then begin implementing the slingshot
+2. Kokkonen is also trying to get the physics working
+3. Ristimäki is working with graphics
+4. Hiedanpää is going to finalize the file manager and then start working on enemies
+
+
+## Project status 
+Funny images and other stuff. Physics are getting better 
+
+### TODOs
+1. Blomqvist: physics and slingshot
+2. Kokkonen: physics
+3. Ristimäki: graphics
+4. Hiedanpää: file manager and enemies
 
 # Meeting dd.mm.2021 HH:MM
 
