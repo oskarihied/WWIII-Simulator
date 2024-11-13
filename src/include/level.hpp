@@ -23,7 +23,6 @@ class Level {
         Physics* GetPhysics();
         void Fire();
 
-        Physics* GetPhysics();
 
         std::vector<Entity*> GetEntities();
         std::vector<Entity*> GetNonPhysicalEntities();

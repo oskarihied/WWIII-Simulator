@@ -38,8 +38,6 @@ void Level::Fire() {
   }
 }
 
-Physics* Level::GetPhysics() { return physics_; }
-
 void Level::AddNonPhysicalEntity(Entity* entity) {
     nonPhysicals_.push_back(entity);
 }
@@ -60,6 +58,7 @@ void Level::AddScores(std::vector<std::pair<std::string,int>> scores) {
     for(auto it : scores) {
         leaderboard_.push_back(it);
     }
+}
 
 std::vector<Entity*> Level::GetNonPhysicalEntities(){
     return nonPhysicals_;
