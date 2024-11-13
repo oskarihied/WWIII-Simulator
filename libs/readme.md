@@ -30,6 +30,8 @@ sudo apt install \
 
 2. [Box2D](https://github.com/erincatto/box2d.git)
 
+3. [Box2CPP](https://github.com/HolyBlackCat/box2cpp.git)
+
 > If you are using already compiled library, place it in this folder, and set
 > the linker options appropriately. The inlcude files of the dependent library
 > should also be placed in this folder.
