@@ -19,6 +19,16 @@ void Level::AddBox(Box* box) {
   // entities_.push_back(box);
 }
 
+void Level::AddBoxes(std::vector<Box*> boxes) {
+    for(auto it : boxes){
+        physics_->AddBox(it);
+    }
+}
+
+Physics* Level::GetPhysics() {
+    return physics_;
+}
+
 void Level::Fire() {
   if (!bullets_.empty()) {
     Bullet* b = bullets_.back();
@@ -28,14 +38,26 @@ void Level::Fire() {
   }
 }
 
-Physics* Level::GetPhysics() { return physics_; }
-
 void Level::AddNonPhysicalEntity(Entity* entity) {
     nonPhysicals_.push_back(entity);
 }
 
 std::vector<Entity*> Level::GetEntities() {
     return entities_;
+}
+
+std::vector<std::pair<std::string,int>> Level::GetLeaderboard() {
+    return leaderboard_;
+}
+
+void Level::AddScore(std::string name, int score) {
+    leaderboard_.push_back(std::make_pair(name,score));
+}
+
+void Level::AddScores(std::vector<std::pair<std::string,int>> scores) {
+    for(auto it : scores) {
+        leaderboard_.push_back(it);
+    }
 }
 
 std::vector<Entity*> Level::GetNonPhysicalEntities(){
