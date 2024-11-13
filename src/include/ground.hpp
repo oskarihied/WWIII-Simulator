@@ -1,11 +1,11 @@
 #ifndef GROUND_HPP
 #define GROUND_HPP
 
-#include "rigid.hpp"
+#include "static.hpp"
 
-class Ground : public Rigid {
+class Ground : public Static {
     public:
-        Ground();
+        Ground(float x, float y);
 };
 
 #endif

@@ -1,3 +1,3 @@
 #include "ground.hpp"
 
-Ground::Ground() : Rigid(10, 10) {}
+Ground::Ground(float x, float y) : Static(x, y, "images/ground.png") {}
