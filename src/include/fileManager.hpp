@@ -3,7 +3,7 @@
 
 #include <string>
 #include <vector>
-#include "entity.hpp"
+#include "box.hpp"
 
 class FileManager {
  public:
@@ -12,7 +12,8 @@ class FileManager {
     std::vector<std::pair<std::string,int>> LoadScore(const std::string& filename);
 
     bool SaveLevel(const std::string& filename, const std::vector<Entity*>& entities);
-    std::vector<Entity*>& LoadLevel(const std::string& filename);
-}
+    std::vector<Box*> LoadLevel(const std::string& filename);
+
+};
 
 #endif

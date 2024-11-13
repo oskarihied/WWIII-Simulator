@@ -15,13 +15,14 @@ class Level{
         void AddEntity(Entity* entity);
         void AddPhysicalEntity(Entity* entity);
         void AddBox(Box* box);
-
+        void AddScore(std::string name, int score);
+        void AddBoxes(std::vector<Box*> boxes);
+        void AddScores(std::vector<std::pair<std::string,int>> scores);
         Physics* GetPhysics();
 
         std::vector<Entity*> GetEntities();
 
-
-
+        std::vector<std::pair<std::string,int>> GetLeaderboard();
 
 
 
