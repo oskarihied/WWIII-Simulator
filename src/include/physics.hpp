@@ -1,7 +1,7 @@
 #ifndef PHYSICS_HPP
 #define PHYSICS_HPP
 
-#include <box2d/box2d.h>
+#include <box2cpp/box2cpp.h>
 
 #include "box.hpp"
 #include "bullet.hpp"

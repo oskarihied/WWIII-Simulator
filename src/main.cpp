@@ -1,5 +1,3 @@
-#include <box2d/box2d.h>
-
 #include <SFML/Graphics.hpp>
 #include <iostream>
 
@@ -31,24 +29,22 @@ int main() {
   level->AddBox(new Wood(7, 6));
   level->AddBox(new Wood(7, 7));
 
-
-
-
   level->AddBox(new Wood(4, 2));
   level->AddBox(new Glass(4, 1));
   level->AddBox(new Glass(5, 1));
   level->AddBox(new Glass(6, 0));
   level->AddNonPhysicalEntity(new Entity(0, 0, "images/trump.png"));
 
-  //level->AddNonPhysicalEntity(new Entity(1.5, -0.2, "images/rifle_bullet.png"));
+  // level->AddNonPhysicalEntity(new Entity(1.5, -0.2,
+  // "images/rifle_bullet.png"));
   level->AddNonPhysicalEntity(new Entity(-1, 0, "images/marin.png"));
-  //level->AddNonPhysicalEntity(new Entity(-1, -0.2, "images/rifle.png"));
+  // level->AddNonPhysicalEntity(new Entity(-1, -0.2, "images/rifle.png"));
   level->AddNonPhysicalEntity(new Entity(-2, 0, "images/putin.png"));
   level->AddNonPhysicalEntity(new Entity(-3, 0, "images/kim.png"));
   level->AddNonPhysicalEntity(new Entity(-4, 0, "images/xi.png"));
   level->AddNonPhysicalEntity(new Entity(-5, 0, "images/biden.png"));
 
-  //level->AddNonPhysicalEntity(new Entity(-2, -0.2, "images/rifle.png"));
+  // level->AddNonPhysicalEntity(new Entity(-2, -0.2, "images/rifle.png"));
 
   Entity* gun1 = new Entity(0, -0.2, "images/rifle.png");
   Entity* gun2 = new Entity(-1, -0.2, "images/rifle.png");
@@ -56,7 +52,7 @@ int main() {
   Entity* gun4 = new Entity(-3, -0.2, "images/rifle.png");
   Entity* gun5 = new Entity(-4, -0.2, "images/rifle.png");
   Entity* gun6 = new Entity(-5, -0.2, "images/rifle.png");
-  //level->AddNonPhysicalEntity(level->CurrentGun());
+  // level->AddNonPhysicalEntity(level->CurrentGun());
   level->AddGun(gun1);
   level->AddGun(gun2);
   level->AddGun(gun3);
@@ -70,7 +66,7 @@ int main() {
   // b2Vec2 v = b2Vec2(4.5, 6.8);
   Physics* physics = level->GetPhysics();
 
-  //physics->AddBox(new Box(1, 4000));
+  // physics->AddBox(new Box(1, 4000));
   physics->AddGround(new Ground(0, -1));
   physics->AddGround(new Ground(10, -1));
 
@@ -87,34 +83,34 @@ int main() {
 
     Entity* currentGun = level->CurrentGun();
 
-    std::pair<int, int> gunPos = game.ToScreenPos(currentGun->GetPos(), *level->GetCam());
+    std::pair<int, int> gunPos =
+        game.ToScreenPos(currentGun->GetPos(), *level->GetCam());
 
     float gunY = -(float)mousePos.y - gunPos.second;
     float gunX = (float)mousePos.x - gunPos.first;
 
-    //std::cout << gunX << std::endl;
+    // std::cout << gunX << std::endl;
 
-    float gunRotation = -atan(gunY/gunX);
+    float gunRotation = -atan(gunY / gunX);
 
     if (gunX < 0) {
       gunRotation += M_PI;
     }
 
-    //std::cout << gunRotation * (180.0f/M_PI) << std::endl;
+    // std::cout << gunRotation * (180.0f/M_PI) << std::endl;
 
-    level->CurrentGun()->RotationTo(gunRotation * (180.0f/M_PI));
-    gun2->RotationTo(gunRotation * (180.0f/M_PI));
-    gun3->RotationTo(gunRotation * (180.0f/M_PI));
-    gun4->RotationTo(gunRotation * (180.0f/M_PI));
-    gun5->RotationTo(gunRotation * (180.0f/M_PI));
-    gun6->RotationTo(gunRotation * (180.0f/M_PI));
-    //gun3->RotationTo(gunRotation * (180.0f/M_PI));
+    level->CurrentGun()->RotationTo(gunRotation * (180.0f / M_PI));
+    gun2->RotationTo(gunRotation * (180.0f / M_PI));
+    gun3->RotationTo(gunRotation * (180.0f / M_PI));
+    gun4->RotationTo(gunRotation * (180.0f / M_PI));
+    gun5->RotationTo(gunRotation * (180.0f / M_PI));
+    gun6->RotationTo(gunRotation * (180.0f / M_PI));
+    // gun3->RotationTo(gunRotation * (180.0f/M_PI));
 
     while (window.pollEvent(event)) {
-
       float speed = 0.5f;
       float zoomSpeed = 0.05f;
-      
+
       if (event.type == sf::Event::KeyPressed) {
         if (event.key.scancode == sf::Keyboard::Scan::Up) {
           level->GetCam()->Move(0.0f, speed);
@@ -158,10 +154,10 @@ int main() {
       entity->GetSprite()->setScale(sf::Vector2(scale, scale));
       entity->GetSprite()->setRotation(entity->GetRotation());
 
-      std::pair<int, int> pos = game.ToScreenPos(entity->GetPos(), *level->GetCam());
+      std::pair<int, int> pos =
+          game.ToScreenPos(entity->GetPos(), *level->GetCam());
       entity->GetSprite()->setPosition(pos.first, -pos.second);
 
-      
       window.draw(*(entity->GetSprite()));
     }
 
@@ -176,7 +172,7 @@ int main() {
       std::pair<int, int> pos =
           game.ToScreenPos(entity->GetPos(), *level->GetCam());
 
-      //std::cout << pos.first << " " << pos.second << std::endl;
+      // std::cout << pos.first << " " << pos.second << std::endl;
 
       entity->GetSprite()->setPosition(pos.first, -pos.second);
 

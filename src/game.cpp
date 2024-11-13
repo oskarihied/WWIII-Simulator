@@ -1,23 +1,21 @@
-
 #include "game.hpp"
 
 Game::Game(int w, int h) : windowWidth_(w), windowHeight_(h) {}
 
 Level* Game::startLevel() {
-    currentLevel_ = new Level();
-    return currentLevel_;
+  currentLevel_ = new Level();
+  return currentLevel_;
 }
 
 std::pair<int, int> Game::ToScreenPos(Pos pos, Camera cam) {
-    float x = pos.GetX();
-    float y = pos.GetY();
+  float x = pos.GetX();
+  float y = pos.GetY();
 
-    x -= cam.GetPos().GetX();
-    y -= cam.GetPos().GetY();
+  x -= cam.GetPos().GetX();
+  y -= cam.GetPos().GetY();
 
-    x *= windowWidth_ / (cam.GetZoom());
-    y *= windowWidth_ / (cam.GetZoom());
+  x *= windowWidth_ / (cam.GetZoom());
+  y *= windowWidth_ / (cam.GetZoom());
 
-    return (std::pair((int)x, (int)y));
+  return (std::pair((int)x, (int)y));
 }
-

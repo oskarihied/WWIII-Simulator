@@ -1,6 +1,6 @@
 #include "bullet.hpp"
 
-#include <box2d/math_functions.h>
+#include <box2cpp/box2cpp.h>
 
 Bullet::Bullet(float x, float y, float xVel, float yVel, std::string image,
                float mass, int hp)
