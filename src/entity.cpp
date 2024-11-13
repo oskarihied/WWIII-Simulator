@@ -49,4 +49,14 @@ sf::Sprite* Entity::GetSprite() {
 
 void Entity::RotationTo(float x) { rotation_ = x; }
 
-float Entity::GetRotation() { return rotation_; }
+float Entity::GetRotation() {
+    return rotation_;
+}
+
+void Entity::setType(enum Type type){
+    type_ = type;
+}
+
+enum Type Entity::getType(){
+    return type_;
+}
