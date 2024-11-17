@@ -82,3 +82,25 @@ std::vector<Box*> FileManager::LoadLevel(const std::string& filename){
     file.close();
     return boxes;
 }
+
+void FileManager::LoadTextures(std::map<std::string, sf::Texture>& map, std::string path) {
+
+    map.clear();
+
+    int i = 0;
+
+    for (const auto & entry : std::filesystem::directory_iterator(path)) {
+        sf::Texture thisTexture;
+        thisTexture.loadFromFile(entry.path());
+
+        std::string name = entry.path();
+        name.erase(0, (int)(path.length() + 1));
+        name.erase(name.length() - 4);
+
+        map.insert({name, thisTexture});
+
+        //std::cout << name  << " " << i << std::endl;
+
+        i++;
+    }
+}

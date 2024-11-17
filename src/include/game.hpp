@@ -2,7 +2,9 @@
 #define GAME_HPP
 
 #include <string>
+#include <map>
 #include "level.hpp"
+#include "fileManager.hpp"
 
 class Game {
     public:
@@ -16,6 +18,10 @@ class Game {
             return currentLevel_->GetEntities();
         }
 
+        void LoadTextures(FileManager& manager);
+
+        sf::Texture& GetTexture(std::string name);
+
     
     private:
         std::string playerName_;
@@ -23,5 +29,7 @@ class Game {
 
         int windowWidth_;
         int windowHeight_;
+
+        std::map<std::string, sf::Texture> textures_;
 };
 #endif

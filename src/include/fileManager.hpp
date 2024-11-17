@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include <map>
 #include "box.hpp"
 
 class FileManager {
@@ -13,6 +14,8 @@ class FileManager {
 
     /*bool SaveLevel(const std::string& filename, const std::vector<Entity*>& entities);*/
     std::vector<Box*> LoadLevel(const std::string& filename);
+
+    void LoadTextures(std::map<std::string, sf::Texture>& map, std::string path);
 
 };
 

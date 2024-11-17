@@ -50,3 +50,6 @@ dkms.conf
 
 # Build directory
 build
+
+# Apple stuff
+*.DS_Store

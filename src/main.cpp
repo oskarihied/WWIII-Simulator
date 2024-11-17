@@ -16,42 +16,45 @@ int main() {
 
   Level* level = game.startLevel();
 
-  level->AddBox(new Concrete(3, 0));
-  level->AddBox(new Wood(4, 0));
-  level->AddBox(new Wood(5, 0));
+  FileManager manager = FileManager();
+  game.LoadTextures(manager);
 
-  level->AddBox(new Wood(7, 0));
-  level->AddBox(new Wood(7, 1));
-  level->AddBox(new Wood(7, 2));
-  level->AddBox(new Wood(7, 3));
-  level->AddBox(new Wood(7, 4));
-  level->AddBox(new Wood(7, 5));
-  level->AddBox(new Wood(7, 6));
-  level->AddBox(new Wood(7, 7));
+  level->AddBox(new Concrete(3, 0, game));
+  level->AddBox(new Wood(4, 0, game));
+  level->AddBox(new Wood(5, 0, game));
 
-  level->AddBox(new Wood(4, 2));
-  level->AddBox(new Glass(4, 1));
-  level->AddBox(new Glass(5, 1));
-  level->AddBox(new Glass(6, 0));
-  level->AddNonPhysicalEntity(new Entity(0, 0, "images/trump.png"));
+  level->AddBox(new Wood(7, 0, game));
+  level->AddBox(new Wood(7, 1, game));
+  level->AddBox(new Wood(7, 2, game));
+  level->AddBox(new Wood(7, 3, game));
+  level->AddBox(new Wood(7, 4, game));
+  level->AddBox(new Wood(7, 5, game));
+  level->AddBox(new Wood(7, 6, game));
+  level->AddBox(new Wood(7, 7, game));
+
+  level->AddBox(new Wood(4, 2, game));
+  level->AddBox(new Glass(4, 1, game));
+  level->AddBox(new Glass(5, 1, game));
+  level->AddBox(new Glass(6, 0, game));
+  level->AddNonPhysicalEntity(new Entity(0, 0, game.GetTexture("trump")));
 
   // level->AddNonPhysicalEntity(new Entity(1.5, -0.2,
   // "images/rifle_bullet.png"));
-  level->AddNonPhysicalEntity(new Entity(-1, 0, "images/marin.png"));
+  level->AddNonPhysicalEntity(new Entity(-1, 0, game.GetTexture("marin")));
   // level->AddNonPhysicalEntity(new Entity(-1, -0.2, "images/rifle.png"));
-  level->AddNonPhysicalEntity(new Entity(-2, 0, "images/putin.png"));
-  level->AddNonPhysicalEntity(new Entity(-3, 0, "images/kim.png"));
-  level->AddNonPhysicalEntity(new Entity(-4, 0, "images/xi.png"));
-  level->AddNonPhysicalEntity(new Entity(-5, 0, "images/biden.png"));
+  level->AddNonPhysicalEntity(new Entity(-2, 0, game.GetTexture("putin")));
+  level->AddNonPhysicalEntity(new Entity(-3, 0, game.GetTexture("kim")));
+  level->AddNonPhysicalEntity(new Entity(-4, 0, game.GetTexture("xi")));
+  level->AddNonPhysicalEntity(new Entity(-5, 0, game.GetTexture("biden")));
 
   // level->AddNonPhysicalEntity(new Entity(-2, -0.2, "images/rifle.png"));
 
-  Entity* gun1 = new Entity(0, -0.2, "images/rifle.png");
-  Entity* gun2 = new Entity(-1, -0.2, "images/rifle.png");
-  Entity* gun3 = new Entity(-2, -0.2, "images/rifle.png");
-  Entity* gun4 = new Entity(-3, -0.2, "images/rifle.png");
-  Entity* gun5 = new Entity(-4, -0.2, "images/rifle.png");
-  Entity* gun6 = new Entity(-5, -0.2, "images/rifle.png");
+  Entity* gun1 = new Entity(0, -0.2, game.GetTexture("rifle"));
+  Entity* gun2 = new Entity(-1, -0.2, game.GetTexture("rifle"));
+  Entity* gun3 = new Entity(-2, -0.2, game.GetTexture("rifle"));
+  Entity* gun4 = new Entity(-3, -0.2, game.GetTexture("rifle"));
+  Entity* gun5 = new Entity(-4, -0.2, game.GetTexture("rifle"));
+  Entity* gun6 = new Entity(-5, -0.2, game.GetTexture("rifle"));
   // level->AddNonPhysicalEntity(level->CurrentGun());
   level->AddGun(gun1);
   level->AddGun(gun2);

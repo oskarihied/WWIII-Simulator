@@ -14,6 +14,14 @@ Entity::Entity(float x, float y, std::string image)
   }
 }
 
+Entity::Entity(float x, float y, sf::Texture& texture)
+    : image_(""), texture_(texture), pos_(Pos(x, y)) {
+    
+  sprite_.setTexture(texture_);
+  sprite_.setOrigin(texture_.getSize().x / 2, texture_.getSize().y / 2);
+    // std::cout << &sprite_ << std::endl;
+}
+
 Entity::Entity(float x, float y, float xVel, float yVel, std::string image)
     : image_(image), pos_(Pos(x, y)), vel_(Pos(xVel, yVel)) {
   if (image_ != "") {

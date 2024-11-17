@@ -19,3 +19,16 @@ std::pair<int, int> Game::ToScreenPos(Pos pos, Camera cam) {
 
   return (std::pair((int)x, (int)y));
 }
+
+void Game::LoadTextures(FileManager& manager) {
+  manager.LoadTextures(textures_, "images");
+/*
+  for (auto texture : textures_) {
+    std::cout << texture.first << std::endl;
+  }
+  */
+};
+
+sf::Texture& Game::GetTexture(std::string name) {
+  return textures_.at(name);
+}
