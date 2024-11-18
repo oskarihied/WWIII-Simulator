@@ -8,15 +8,23 @@
 
 #include "pos.hpp"
 
-enum Type {
-  CONCRETE,
-  WOOD,
-  GLASS,
-  ENEMY
-};
+// enum Type {
+//   CONCRETE,
+//   WOOD,
+//   GLASS,
+//   ENEMY
+// };
 
 class Entity {
  public:
+
+  enum class EntityType {
+    UNDEFINED,
+    BOX,
+    GROUND,
+    BULLET
+  };
+
   Entity();
   Entity(float x, float y);
   Entity(float x, float y, std::string sprite);
@@ -47,8 +55,8 @@ class Entity {
   std::pair<float, float> Move(float x, float y);
   std::pair<float, float> Move(Pos pos);
 
-  void setType(enum Type type);
-  enum Type getType();
+  void SetType(enum EntityType type);
+  enum EntityType GetType();
 
  protected:
   std::string image_ = "";
@@ -57,7 +65,7 @@ class Entity {
   float rotation_ = 0.0f;
   sf::Texture texture_;
   sf::Sprite sprite_;
-  enum Type type_;
+  enum EntityType type_ = EntityType::UNDEFINED;
   float health_ = 1000;
   float maxHealth = 1000;
 };
