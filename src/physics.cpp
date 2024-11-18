@@ -2,6 +2,10 @@
 
 #include <iostream>
 
+constexpr int BULLET_DAMAGE = 50;
+constexpr int ENTITY_DAMAGE = 20;
+
+
 Physics::Physics() {
   b2WorldDef worldDef = b2DefaultWorldDef();
   worldDef.gravity = (b2Vec2){0.0f, -9.81f};
@@ -16,33 +20,82 @@ void Physics::SimulateWorld(float simulationStep) {
   b2World_Step(simulationWorld_, simulationStep, 4);
 
   // Calculate bulletdamage
-  for (auto i : bullets_) {
-    b2ContactEvents events = b2World_GetContactEvents(simulationWorld_); 
-    for (int j = 0; j < events.hitCount; j++) {
-      b2BodyId bid = b2Shape_GetBody(events.hitEvents[j].shapeIdA);
-      b2BodyId bid2 = b2Shape_GetBody(events.hitEvents[j].shapeIdB);
-      float bulletDamage = -events.hitEvents[j].approachSpeed * 100; 
-      if (bid.index1 == i ) {
-        std::cout << "bullet1: " << entities_[bid.index1]->GetHealth() << std::endl;
-        entities_[bid2.index1]->ChangeHealth(bulletDamage);
-      } else if (bid2.index1 == i) {
-        entities_[bid.index1]->ChangeHealth(bulletDamage);
-        std::cout << "bullet2: " << entities_[bid.index1]->GetHealth() << std::endl;
+  // for (auto i : bullets_) {
+  //   b2ContactEvents events = b2World_GetContactEvents(simulationWorld_); 
+  //   for (int j = 0; j < events.hitCount; j++) {
+  //     b2BodyId bid = b2Shape_GetBody(events.hitEvents[j].shapeIdA);
+  //     b2BodyId bid2 = b2Shape_GetBody(events.hitEvents[j].shapeIdB);
+  //     float bulletDamage = -events.hitEvents[j].approachSpeed * BULLET_DAMAGE; 
+  //     bool tf = false;
+  //     for (auto it : grounds_) {
+  //       if (bid.index1 == it || bid2.index1 == it) {
+  //         tf = true;
+  //         break;
+  //       }
+  //     }
+  //     if (bid.index1 == i ) {
+  //       entities_[bid2.index1]->ChangeHealth(bulletDamage);
+  //       std::cout << "bullet1: " << entities_[bid2.index1]->GetHealth() << std::endl;
+  //     } else if (bid2.index1 == i) {
+  //       entities_[bid.index1]->ChangeHealth(bulletDamage);
+  //       std::cout << "bullet2: " << entities_[bid.index1]->GetHealth() << std::endl;
+  //     } 
+  //     if (!tf) {
+  //       entities_[bid.index1]->ChangeHealth(bulletDamage);
+  //       entities_[bid2.index1]->ChangeHealth(bulletDamage);
+  //     }
+  //   }    
+  // }
+
+  b2ContactEvents events = b2World_GetContactEvents(simulationWorld_); 
+  for (int j = 0; j < events.hitCount; j++) {
+    b2BodyId bid = b2Shape_GetBody(events.hitEvents[j].shapeIdA);
+    b2BodyId bid2 = b2Shape_GetBody(events.hitEvents[j].shapeIdB);
+    float bulletDamage = -events.hitEvents[j].approachSpeed * BULLET_DAMAGE; 
+    float entityDamage = -events.hitEvents[j].approachSpeed * ENTITY_DAMAGE; 
+    bool is1Ground = false;
+    bool is2Ground = false;
+    for (auto it : grounds_) {
+      if (bid.index1 == it) {
+        is1Ground = true;
+      }
+      if (bid2.index1 == it) {
+        is2Ground = true;
+      }
+    }
+    if (is1Ground && is2Ground) {continue;}
+    
+    bool is1Bullet = false;
+    bool is2Bullet = false;
+    for (auto it : bullets_) {
+      if (bid.index1 == it) {
+        is1Bullet = true;
+      }
+      if (bid2.index1 = it) {
+        is2Bullet = true;
       } 
-      
-      bool tf = false;
-      for (auto it : grounds_) {
-        if (bid.index1 == it || bid2.index1 == it) {
-          tf = true;
-          break;
-        }
-      }
-      if (!tf) {
-        entities_[bid.index1]->ChangeHealth(bulletDamage);
+    }
+    if (is1Ground + is2Ground + is1Bullet + is2Bullet > 1) {continue;}
+    if (!is1Ground && !is2Ground) {
+      if (is1Bullet) {
         entities_[bid2.index1]->ChangeHealth(bulletDamage);
-      
+      } else if (is2Bullet) {
+        entities_[bid.index1]->ChangeHealth(bulletDamage);
+      } else {
+        entities_[bid.index1]->ChangeHealth(entityDamage);
+        entities_[bid2.index1]->ChangeHealth(entityDamage);
       }
-    }    
+    } else {
+      if (is1Ground) {
+        entities_[bid2.index1]->ChangeHealth(entityDamage);
+      } else {
+        entities_[bid.index1]->ChangeHealth(entityDamage);
+      }
+    }
+    
+    std::cout << "ent1: " << entities_[bid.index1]->GetHealth() << std::endl;
+    std::cout << "ent2: " << entities_[bid2.index1]->GetHealth() << std::endl;
+
   }
 
   // Verify that all entities match simulation bodies

@@ -78,7 +78,6 @@ float Entity::ChangeHealth(float amount) {
     health_ = maxHealth;
     return maxHealth;
   } else {
-    health_ += amount;
     return health_;
   }
 }
