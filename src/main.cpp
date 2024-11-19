@@ -31,6 +31,7 @@ int main() {
   level->AddBox(new Wood(7, 5, game));
   level->AddBox(new Wood(7, 6, game));
   level->AddBox(new Wood(7, 7, game));
+  level->AddEnemy(new Enemy(6, 0, game.GetTexture("enemy")));
 
   // level->AddBox(new Wood(4, 2, game));
   // level->AddBox(new Glass(4, 1, game));

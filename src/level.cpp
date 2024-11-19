@@ -19,6 +19,10 @@ void Level::AddBox(Box* box) {
   // entities_.push_back(box);
 }
 
+void Level::AddEnemy(Enemy* enemy) {
+    physics_->AddEnemy(enemy);
+}
+
 void Level::AddBoxes(std::vector<Box*> boxes) {
     for(auto it : boxes){
         physics_->AddBox(it);
