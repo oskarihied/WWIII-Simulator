@@ -19,9 +19,9 @@ int main() {
   FileManager manager = FileManager();
   game.LoadTextures(manager);
 
-  level->AddBox(new Concrete(3, 0, game));
-  level->AddBox(new Wood(4, 0, game));
-  level->AddBox(new Wood(5, 0, game));
+  // level->AddBox(new Concrete(3, 0, game));
+  // level->AddBox(new Wood(4, 0, game));
+  // level->AddBox(new Wood(5, 0, game));
 
   level->AddBox(new Wood(7, 0, game));
   level->AddBox(new Wood(7, 1, game));
@@ -32,10 +32,10 @@ int main() {
   level->AddBox(new Wood(7, 6, game));
   level->AddBox(new Wood(7, 7, game));
 
-  level->AddBox(new Wood(4, 2, game));
-  level->AddBox(new Glass(4, 1, game));
-  level->AddBox(new Glass(5, 1, game));
-  level->AddBox(new Glass(6, 0, game));
+  // level->AddBox(new Wood(4, 2, game));
+  // level->AddBox(new Glass(4, 1, game));
+  // level->AddBox(new Glass(5, 1, game));
+  // level->AddBox(new Glass(6, 0, game));
   level->AddNonPhysicalEntity(new Entity(0, 0, game.GetTexture("trump")));
 
   // level->AddNonPhysicalEntity(new Entity(1.5, -0.2,
