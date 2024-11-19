@@ -22,7 +22,8 @@ class Entity {
     UNDEFINED,
     BOX,
     GROUND,
-    BULLET
+    BULLET,
+    ENEMY
   };
 
   Entity();

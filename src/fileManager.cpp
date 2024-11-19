@@ -2,6 +2,7 @@
 #include "boxes.hpp"
 #include <fstream>
 #include <sstream>
+#include <filesystem>
 
 bool FileManager::SaveScore(const std::string& filename, std::vector<std::pair<std::string,int>> scores){
     std::ofstream file(filename);
