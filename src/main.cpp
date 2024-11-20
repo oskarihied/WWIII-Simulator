@@ -20,12 +20,10 @@ int main() {
 
   Level* level = game.startLevel();
 
-
   Level* menu = game.StartMenu();
 
   menu->AddNonPhysicalEntity(new Entity(4, 2.5, game.GetTexture("logo")));
   menu->AddButton(new Button(2, 0, 1, 1, game.GetTexture("button")));
-
 
   Level* currentLevel = game.GetCurrentLevel();
 
@@ -139,7 +137,7 @@ int main() {
         if (event.key.scancode == sf::Keyboard::Scan::Left) {
           currentLevel->GetCam()->Move(-speed, 0.0f);
         }
-        
+
         if (event.key.scancode == sf::Keyboard::Scan::Comma) {
           currentLevel->GetCam()->Zoom(1 - zoomSpeed);
         }
@@ -154,12 +152,13 @@ int main() {
       }
 
       if (event.type == sf::Event::MouseButtonPressed) {
-        Pos gamePos = game.ToGamePos(mousePos.x, mousePos.y, *currentLevel->GetCam());
+        Pos gamePos =
+            game.ToGamePos(mousePos.x, mousePos.y, *currentLevel->GetCam());
         for (Button* button : currentLevel->GetButtons()) {
           if (button->IsTouching(gamePos.GetX(), gamePos.GetY())) {
             currentLevel = game.SwitchLevel(level);
             physics = currentLevel->GetPhysics();
-            //std::cout << "button" << std::endl;
+            // std::cout << "button" << std::endl;
           }
         }
       }
@@ -178,7 +177,7 @@ int main() {
     }
     // Clear screen
     window.clear();
-    
+
     /*
     sf::Texture texture;
     texture.loadFromFile("images/background1.jpg");
@@ -187,12 +186,11 @@ int main() {
     sf::Sprite background;
     background.setTexture(texture);
     background.setScale(sf::Vector2(2.0f, 2.0f));
-    
+
     window.draw(background);
     */
 
     window.draw(currentLevel->GetBackground());
-    
 
     for (Entity* entity : currentLevel->GetNonPhysicalEntities()) {
       float scale = (w / 200.0f) / currentLevel->GetCam()->GetZoom();
@@ -218,15 +216,13 @@ int main() {
       std::pair<int, int> pos =
           game.ToScreenPos(entity->GetPos(), *currentLevel->GetCam());
 
-      //std::cout << entity->GetHealth() << std::endl;
+      // std::cout << entity->GetHealth() << std::endl;
 
       entity->GetSprite()->setPosition(pos.first, -pos.second);
 
-
-
       window.draw(*(entity->GetSprite()));
     }
-    
+
     // std::cout << std::endl;
     // Update the window
     window.display();
