@@ -1,35 +1,39 @@
 #ifndef GAME_HPP
 #define GAME_HPP
 
-#include <string>
 #include <map>
-#include "level.hpp"
+
 #include "fileManager.hpp"
+#include "level.hpp"
+#include "menu.hpp"
 
 class Game {
-    public:
-        Game(int w, int h);
+ public:
+  Game(int w, int h);
 
-        Level* startLevel();
+  Level* startLevel();
+  Level* StartMenu();
 
-        std::pair<int, int> ToScreenPos(Pos pos, Camera cam);
+  Level* SwitchLevel(Level* level);
 
-        std::vector<Entity*> levelEntities() {
-            return currentLevel_->GetEntities();
-        }
+  Level* GetCurrentLevel();
 
-        void LoadTextures(FileManager& manager);
+  std::pair<int, int> ToScreenPos(Pos pos, Camera cam);
+  Pos ToGamePos(int x, int y, Camera cam);
 
-        sf::Texture& GetTexture(std::string name);
+  std::vector<Entity*> levelEntities() { return currentLevel_->GetEntities(); }
 
-    
-    private:
-        std::string playerName_;
-        Level* currentLevel_;
+  void LoadTextures(FileManager& manager);
 
-        int windowWidth_;
-        int windowHeight_;
+  sf::Texture& GetTexture(std::string name);
 
-        std::map<std::string, sf::Texture> textures_;
+ private:
+  std::string playerName_;
+  Level* currentLevel_;
+
+  int windowWidth_;
+  int windowHeight_;
+
+  std::map<std::string, sf::Texture> textures_;
 };
 #endif

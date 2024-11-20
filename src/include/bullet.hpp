@@ -5,8 +5,8 @@
 
 class Bullet : public Rigid {
  public:
-  Bullet(float x, float y, float xVel, float yVel, std::string image,
-         float mass, int hp);
+  Bullet(float x, float y, float xVel, float yVel, std::string image, float w,
+         float h, float mass, int hp);
 
   float CalculateDmg();
 };
