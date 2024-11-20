@@ -1,6 +1,11 @@
+#ifndef BACKGROUND_HPP
+#define BACKGROUND_HPP
+
 #include "nonPhysical.hpp"
 
 class Background : NonPhysical {
     public:
-        Background(std::string image) : NonPhysical(0, 0, image) {};
+        Background(sf::Texture& texture) : NonPhysical(0, 0, texture) {};
 };
+
+#endif
