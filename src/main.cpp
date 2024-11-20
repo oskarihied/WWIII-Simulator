@@ -13,6 +13,7 @@ int main() {
   int h = 700;
 
   Game game = Game(w, h);
+  sf::Clock timer;
 
   Level* level = game.startLevel();
 
@@ -64,8 +65,6 @@ int main() {
   level->AddGun(gun5);
   level->AddGun(gun6);
 
-  level->Fire();
-
   sf::RenderWindow window(sf::VideoMode(w, h), "WWIII Simulator");
   // b2Vec2 v = b2Vec2(4.5, 6.8);
   Physics* physics = level->GetPhysics();
@@ -81,7 +80,7 @@ int main() {
     sf::Event event;
 
     // Advance simulation
-    physics->SimulateWorld(1 / 60.0f);
+    physics->SimulateWorld(1.0f / 60.0f);
 
     sf::Vector2i mousePos = sf::Mouse::getPosition(window);
 
@@ -95,20 +94,23 @@ int main() {
 
     // std::cout << gunX << std::endl;
 
-    float gunRotation = -atan(gunY / gunX);
-
+    float gunRotation = atan(gunY / gunX);
     if (gunX < 0) {
-      gunRotation += M_PI;
+      if (gunY < 0) {
+        gunRotation = -M_PI + gunRotation;
+      } else {
+        gunRotation = M_PI + gunRotation;
+      }
     }
 
     // std::cout << gunRotation * (180.0f/M_PI) << std::endl;
 
-    level->CurrentGun()->RotationTo(gunRotation * (180.0f / M_PI));
-    gun2->RotationTo(gunRotation * (180.0f / M_PI));
-    gun3->RotationTo(gunRotation * (180.0f / M_PI));
-    gun4->RotationTo(gunRotation * (180.0f / M_PI));
-    gun5->RotationTo(gunRotation * (180.0f / M_PI));
-    gun6->RotationTo(gunRotation * (180.0f / M_PI));
+    level->CurrentGun()->RotationTo(-gunRotation * (180.0f / M_PI));
+    gun2->RotationTo(-gunRotation * (180.0f / M_PI));
+    gun3->RotationTo(-gunRotation * (180.0f / M_PI));
+    gun4->RotationTo(-gunRotation * (180.0f / M_PI));
+    gun5->RotationTo(-gunRotation * (180.0f / M_PI));
+    gun6->RotationTo(-gunRotation * (180.0f / M_PI));
     // gun3->RotationTo(gunRotation * (180.0f/M_PI));
 
     while (window.pollEvent(event)) {
@@ -134,6 +136,15 @@ int main() {
         if (event.key.scancode == sf::Keyboard::Scan::Period) {
           level->GetCam()->Zoom(1 + zoomSpeed);
         }
+      }
+
+      if (event.type == sf::Event::MouseButtonPressed) {
+        timer.restart();
+      }
+
+      if (event.type == sf::Event::MouseButtonReleased) {
+        float speed = timer.getElapsedTime().asSeconds();
+        level->Fire(speed);
       }
 
       // Close window: exit
@@ -171,7 +182,7 @@ int main() {
       float scale = (w / 200.0f) / level->GetCam()->GetZoom();
 
       entity->GetSprite()->setScale(sf::Vector2(scale, scale));
-      entity->GetSprite()->setRotation(entity->GetRotation());
+      entity->GetSprite()->setRotation(-entity->GetRotation());
 
       std::pair<int, int> pos =
           game.ToScreenPos(entity->GetPos(), *level->GetCam());

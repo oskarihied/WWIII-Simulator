@@ -5,46 +5,43 @@
 
 #include "bullets.hpp"
 #include "camera.hpp"
+#include "enemy.hpp"
 #include "entity.hpp"
 #include "physics.hpp"
-#include "enemy.hpp"
 
 class Level {
  public:
-        Level();
+  Level();
 
-        Camera* GetCam();
-        
-        void AddEntity(Entity* entity);
-        void AddNonPhysicalEntity(Entity* entity);
-        void AddBox(Box* box);
-        void AddEnemy(Enemy* enemy);
-        void AddScore(std::string name, int score);
-        void AddBoxes(std::vector<Box*> boxes);
-        void AddScores(std::vector<std::pair<std::string,int>> scores);
-        Physics* GetPhysics();
-        void Fire();
+  Camera* GetCam();
 
+  void AddEntity(Entity* entity);
+  void AddNonPhysicalEntity(Entity* entity);
+  void AddBox(Box* box);
+  void AddEnemy(Enemy* enemy);
+  void AddScore(std::string name, int score);
+  void AddBoxes(std::vector<Box*> boxes);
+  void AddScores(std::vector<std::pair<std::string, int>> scores);
+  Physics* GetPhysics();
 
-        std::vector<Entity*> GetEntities();
-        std::vector<Entity*> GetNonPhysicalEntities();
+  void Fire(float speed);
 
-        std::vector<std::pair<std::string,int>> GetLeaderboard();
-        Entity* CurrentGun();
-        //std::vector<Entity*> GetGuns();
-        void AddGun(Entity* gun);
+  std::vector<Entity*> GetEntities();
+  std::vector<Entity*> GetNonPhysicalEntities();
 
+  std::vector<std::pair<std::string, int>> GetLeaderboard();
+  Entity* CurrentGun();
+  // std::vector<Entity*> GetGuns();
+  void AddGun(Entity* gun);
 
-
-    private:
-        Camera* camera_;
-        Physics* physics_;
-        std::vector<Bullet*> bullets_;
-        const std::vector<Entity*>& entities_;
-        std::vector<std::pair<std::string,int>> leaderboard_;
-        std::vector<Entity*> nonPhysicals_;
-        std::vector<int> guns_;
-        
+ private:
+  Camera* camera_;
+  Physics* physics_;
+  std::vector<Bullet*> bullets_;
+  const std::vector<Entity*>& entities_;
+  std::vector<std::pair<std::string, int>> leaderboard_;
+  std::vector<Entity*> nonPhysicals_;
+  std::vector<int> guns_;
 };
 
 #endif
