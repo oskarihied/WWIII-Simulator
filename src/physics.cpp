@@ -152,6 +152,28 @@ b2BodyId Physics::AddBullet(Bullet* bullet) {
   return bulletId;
 };
 
+b2BodyId Physics::AddEnemy(Enemy* enemy) {
+  enemy->SetType(Entity::EntityType::ENEMY);
+  b2BodyDef bodyDef = b2DefaultBodyDef();
+  bodyDef.type = b2_dynamicBody;
+  bodyDef.position = (b2Vec2){enemy->GetPos().GetX(), enemy->GetPos().GetY()};
+  
+  b2BodyId bodyId = b2CreateBody(simulationWorld_, &bodyDef);
+  b2Polygon dynamicBox = b2MakeBox(enemy->GetWidth() / 2.0, enemy->GetHeight() / 2.0);
+  
+  b2ShapeDef shapeDef = b2DefaultShapeDef();
+  shapeDef.density = 1.0f;
+  shapeDef.friction = 0.3f;
+  shapeDef.enableHitEvents = true;
+
+  b2CreatePolygonShape(bodyId, &shapeDef, &dynamicBox);
+
+  b2bodies_.push_back(bodyId);
+  entities_.push_back(enemy);
+
+  return bodyId;
+};
+
 void Physics::SetVelocity(b2BodyId body, float xVel, float yVel) {
   b2Body_SetLinearVelocity(body, (b2Vec2){xVel, yVel});
 };

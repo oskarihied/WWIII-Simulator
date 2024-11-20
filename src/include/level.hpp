@@ -7,6 +7,7 @@
 #include "camera.hpp"
 #include "entity.hpp"
 #include "physics.hpp"
+#include "enemy.hpp"
 
 class Level {
  public:
@@ -17,6 +18,7 @@ class Level {
         void AddEntity(Entity* entity);
         void AddNonPhysicalEntity(Entity* entity);
         void AddBox(Box* box);
+        void AddEnemy(Enemy* enemy);
         void AddScore(std::string name, int score);
         void AddBoxes(std::vector<Box*> boxes);
         void AddScores(std::vector<std::pair<std::string,int>> scores);
