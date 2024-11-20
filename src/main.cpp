@@ -80,7 +80,7 @@ int main() {
     sf::Event event;
 
     // Advance simulation
-    physics->SimulateWorld(1 / 60.0f);
+    physics->SimulateWorld(1 / 60.0f / 10);
 
     sf::Vector2i mousePos = sf::Mouse::getPosition(window);
 

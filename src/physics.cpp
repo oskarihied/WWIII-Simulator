@@ -20,6 +20,7 @@ void Physics::SimulateWorld(float simulationStep) {
   // Update simulation Objects locations
   b2World_Step(simulationWorld_, simulationStep, 4);
 
+  // Calculate bullet and collision damage
   b2ContactEvents events = b2World_GetContactEvents(simulationWorld_); 
   for (int j = 0; j < events.hitCount; j++) {
     b2BodyId bid1 = b2Shape_GetBody(events.hitEvents[j].shapeIdA);
@@ -58,9 +59,6 @@ void Physics::SimulateWorld(float simulationStep) {
       if (PRINT_DEBUG) std::cout << "ent2: " << entities_[inx2]->GetHealth() << std::endl;
       if (PRINT_DEBUG) std::cout << events.hitEvents[j].approachSpeed << std::endl;
     }
-
-      // std::cout << "ground damage" << std::endl;
-    
 
   }
 
