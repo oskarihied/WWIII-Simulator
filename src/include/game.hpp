@@ -2,8 +2,8 @@
 #define GAME_HPP
 
 #include <map>
-#include <string>
-
+#include "level.hpp"
+#include "menu.hpp"
 #include "fileManager.hpp"
 #include "level.hpp"
 
@@ -11,9 +11,15 @@ class Game {
  public:
   Game(int w, int h);
 
-  Level* startLevel();
+        Level* startLevel();
+        Level* StartMenu();
 
-  std::pair<int, int> ToScreenPos(Pos pos, Camera cam);
+        Level* SwitchLevel(Level* level);
+
+        Level* GetCurrentLevel();
+
+        std::pair<int, int> ToScreenPos(Pos pos, Camera cam);
+        Pos ToGamePos(int x, int y, Camera cam);
 
   std::vector<Entity*> levelEntities() { return currentLevel_->GetEntities(); }
 

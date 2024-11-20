@@ -1,12 +1,15 @@
 #include "level.hpp"
 
-Level::Level()
+Level::Level(sf::Texture& background)
     : camera_(new Camera(-1, 4)),
       physics_(new Physics()),
       entities_(physics_->GetEntities()) {
-  for (int i = 0; i < 10; i++) {
-    bullets_.push_back(new RegularBullet(-3, -2, 0, 0));
-  }  // entities_ = physics_->GetEntities();
+
+    background_.setTexture(background);
+    background_.setScale(2.0f, 2.0f);
+    for (int i = 0; i < 10; i++) {
+      bullets_.push_back(new RegularBullet(-3, -2, 0, 0));
+    } 
 }
 
 Camera* Level::GetCam() { return camera_; }
@@ -20,7 +23,13 @@ void Level::AddBox(Box* box) {
   // entities_.push_back(box);
 }
 
-void Level::AddEnemy(Enemy* enemy) { physics_->AddEnemy(enemy); }
+void Level::AddGround(Ground* ground) {
+    physics_->AddGround(ground);
+}
+
+void Level::AddEnemy(Enemy* enemy) {
+    physics_->AddEnemy(enemy);
+}
 
 void Level::AddBoxes(std::vector<Box*> boxes) {
   for (auto it : boxes) {
@@ -28,7 +37,18 @@ void Level::AddBoxes(std::vector<Box*> boxes) {
   }
 }
 
-Physics* Level::GetPhysics() { return physics_; }
+void Level::AddButton(Button* button) {
+    buttons_.push_back(button);
+    nonPhysicals_.push_back(button->GetEntity());
+}
+
+sf::Sprite& Level::GetBackground() {
+    return background_;
+}
+
+Physics* Level::GetPhysics() {
+    return physics_;
+}
 
 void Level::Fire(float speed) {
   if (!bullets_.empty()) {
@@ -70,7 +90,13 @@ void Level::AddScores(std::vector<std::pair<std::string, int>> scores) {
 
 std::vector<Entity*> Level::GetNonPhysicalEntities() { return nonPhysicals_; }
 
-Entity* Level::CurrentGun() { return nonPhysicals_[guns_[0]]; }
+std::vector<Button*> Level::GetButtons(){
+    return buttons_;
+}
+
+Entity* Level::CurrentGun() {
+    return nonPhysicals_[guns_[0]];
+}
 /*
 std::vector<Entity*> Level::GetGuns() {
     return guns_;
