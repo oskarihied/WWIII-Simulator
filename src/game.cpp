@@ -44,13 +44,11 @@ Pos Game::ToGamePos(int x, int y, Camera cam) {
 
 void Game::LoadTextures(FileManager& manager) {
   manager.LoadTextures(textures_, "images");
-/*
-  for (auto texture : textures_) {
-    std::cout << texture.first << std::endl;
-  }
-  */
+  /*
+    for (auto texture : textures_) {
+      std::cout << texture.first << std::endl;
+    }
+    */
 };
 
-sf::Texture& Game::GetTexture(std::string name) {
-  return textures_.at(name);
-}
+sf::Texture& Game::GetTexture(std::string name) { return textures_.at(name); }

@@ -13,18 +13,17 @@ int main() {
   int h = 700;
 
   Game game = Game(w, h);
+  sf::Clock timer;
 
   FileManager manager = FileManager();
   game.LoadTextures(manager);
 
   Level* level = game.startLevel();
 
-
   Level* menu = game.StartMenu();
 
   menu->AddNonPhysicalEntity(new Entity(4, 2.5, game.GetTexture("logo")));
   menu->AddButton(new Button(2, 0, 1, 1, game.GetTexture("button")));
-
 
   Level* currentLevel = game.GetCurrentLevel();
 
@@ -73,8 +72,6 @@ int main() {
   level->AddGun(gun5);
   level->AddGun(gun6);
 
-  level->Fire();
-
   sf::RenderWindow window(sf::VideoMode(w, h), "WWIII Simulator");
   // b2Vec2 v = b2Vec2(4.5, 6.8);
   Physics* physics = currentLevel->GetPhysics();
@@ -90,7 +87,7 @@ int main() {
     sf::Event event;
 
     // Advance simulation
-    physics->SimulateWorld(1 / 60.0f);
+    physics->SimulateWorld(1.0f / 60.0f);
 
     sf::Vector2i mousePos = sf::Mouse::getPosition(window);
 
@@ -104,20 +101,23 @@ int main() {
 
     // std::cout << gunX << std::endl;
 
-    float gunRotation = -atan(gunY / gunX);
-
+    float gunRotation = atan(gunY / gunX);
     if (gunX < 0) {
-      gunRotation += M_PI;
+      if (gunY < 0) {
+        gunRotation = -M_PI + gunRotation;
+      } else {
+        gunRotation = M_PI + gunRotation;
+      }
     }
 
     // std::cout << gunRotation * (180.0f/M_PI) << std::endl;
 
-    level->CurrentGun()->RotationTo(gunRotation * (180.0f / M_PI));
-    gun2->RotationTo(gunRotation * (180.0f / M_PI));
-    gun3->RotationTo(gunRotation * (180.0f / M_PI));
-    gun4->RotationTo(gunRotation * (180.0f / M_PI));
-    gun5->RotationTo(gunRotation * (180.0f / M_PI));
-    gun6->RotationTo(gunRotation * (180.0f / M_PI));
+    level->CurrentGun()->RotationTo(-gunRotation * (180.0f / M_PI));
+    gun2->RotationTo(-gunRotation * (180.0f / M_PI));
+    gun3->RotationTo(-gunRotation * (180.0f / M_PI));
+    gun4->RotationTo(-gunRotation * (180.0f / M_PI));
+    gun5->RotationTo(-gunRotation * (180.0f / M_PI));
+    gun6->RotationTo(-gunRotation * (180.0f / M_PI));
     // gun3->RotationTo(gunRotation * (180.0f/M_PI));
 
     while (window.pollEvent(event)) {
@@ -137,7 +137,7 @@ int main() {
         if (event.key.scancode == sf::Keyboard::Scan::Left) {
           currentLevel->GetCam()->Move(-speed, 0.0f);
         }
-        
+
         if (event.key.scancode == sf::Keyboard::Scan::Comma) {
           currentLevel->GetCam()->Zoom(1 - zoomSpeed);
         }
@@ -152,14 +152,24 @@ int main() {
       }
 
       if (event.type == sf::Event::MouseButtonPressed) {
-        Pos gamePos = game.ToGamePos(mousePos.x, mousePos.y, *currentLevel->GetCam());
+        Pos gamePos =
+            game.ToGamePos(mousePos.x, mousePos.y, *currentLevel->GetCam());
         for (Button* button : currentLevel->GetButtons()) {
           if (button->IsTouching(gamePos.GetX(), gamePos.GetY())) {
             currentLevel = game.SwitchLevel(level);
             physics = currentLevel->GetPhysics();
-            //std::cout << "button" << std::endl;
+            // std::cout << "button" << std::endl;
           }
         }
+      }
+
+      if (event.type == sf::Event::MouseButtonPressed) {
+        timer.restart();
+      }
+
+      if (event.type == sf::Event::MouseButtonReleased) {
+        float speed = timer.getElapsedTime().asSeconds();
+        level->Fire(speed);
       }
 
       // Close window: exit
@@ -167,7 +177,7 @@ int main() {
     }
     // Clear screen
     window.clear();
-    
+
     /*
     sf::Texture texture;
     texture.loadFromFile("images/background1.jpg");
@@ -176,12 +186,11 @@ int main() {
     sf::Sprite background;
     background.setTexture(texture);
     background.setScale(sf::Vector2(2.0f, 2.0f));
-    
+
     window.draw(background);
     */
 
     window.draw(currentLevel->GetBackground());
-    
 
     for (Entity* entity : currentLevel->GetNonPhysicalEntities()) {
       float scale = (w / 200.0f) / currentLevel->GetCam()->GetZoom();
@@ -202,20 +211,18 @@ int main() {
       float scale = (w / 200.0f) / currentLevel->GetCam()->GetZoom();
 
       entity->GetSprite()->setScale(sf::Vector2(scale, scale));
-      entity->GetSprite()->setRotation(entity->GetRotation());
+      entity->GetSprite()->setRotation(-entity->GetRotation());
 
       std::pair<int, int> pos =
           game.ToScreenPos(entity->GetPos(), *currentLevel->GetCam());
 
-      //std::cout << entity->GetHealth() << std::endl;
+      // std::cout << entity->GetHealth() << std::endl;
 
       entity->GetSprite()->setPosition(pos.first, -pos.second);
 
-
-
       window.draw(*(entity->GetSprite()));
     }
-    
+
     // std::cout << std::endl;
     // Update the window
     window.display();

@@ -5,8 +5,8 @@
 // #include <box2d/box2d.h>
 #include "box.hpp"
 #include "bullet.hpp"
-#include "ground.hpp"
 #include "enemy.hpp"
+#include "ground.hpp"
 
 class Physics {
  public:

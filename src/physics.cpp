@@ -6,7 +6,6 @@ constexpr int BULLET_DAMAGE = 10;
 constexpr int ENTITY_DAMAGE = 10;
 constexpr bool PRINT_DEBUG = false;
 
-
 Physics::Physics() {
   b2WorldDef worldDef = b2DefaultWorldDef();
   worldDef.gravity = (b2Vec2){0.0f, -9.81f};
@@ -20,48 +19,63 @@ void Physics::SimulateWorld(float simulationStep) {
   // Update simulation Objects locations
   b2World_Step(simulationWorld_, simulationStep, 4);
 
-  b2ContactEvents events = b2World_GetContactEvents(simulationWorld_); 
+  b2ContactEvents events = b2World_GetContactEvents(simulationWorld_);
   for (int j = 0; j < events.hitCount; j++) {
     b2BodyId bid1 = b2Shape_GetBody(events.hitEvents[j].shapeIdA);
     b2BodyId bid2 = b2Shape_GetBody(events.hitEvents[j].shapeIdB);
     uint16_t inx1 = bid1.index1 - 1;
     uint16_t inx2 = bid2.index1 - 1;
-    if (entities_[inx1]->GetType() == Entity::EntityType::UNDEFINED || entities_[inx2]->GetType() == Entity::EntityType::UNDEFINED) {continue;}
-    float damageMultiplier = -(events.hitEvents[j].approachSpeed * events.hitEvents[j].approachSpeed);
-    float bulletDamage = damageMultiplier * BULLET_DAMAGE; 
-    float entityDamage = damageMultiplier * ENTITY_DAMAGE; 
+    if (entities_[inx1]->GetType() == Entity::EntityType::UNDEFINED ||
+        entities_[inx2]->GetType() == Entity::EntityType::UNDEFINED) {
+      continue;
+    }
+    float damageMultiplier = -(events.hitEvents[j].approachSpeed *
+                               events.hitEvents[j].approachSpeed);
+    float bulletDamage = damageMultiplier * BULLET_DAMAGE;
+    float entityDamage = damageMultiplier * ENTITY_DAMAGE;
     bool is1Ground = entities_[inx1]->GetType() == Entity::EntityType::GROUND;
     bool is2Ground = entities_[inx2]->GetType() == Entity::EntityType::GROUND;
     bool is1Bullet = entities_[inx1]->GetType() == Entity::EntityType::BULLET;
     bool is2Bullet = entities_[inx2]->GetType() == Entity::EntityType::BULLET;
 
-    if (is1Ground + is2Ground + is1Bullet + is2Bullet > 1) 
-    {continue;}
-    if (is1Ground + is2Ground == 2) 
-    {printf("sdfsdf\n");}
+    if (is1Ground + is2Ground + is1Bullet + is2Bullet > 1) {
+      continue;
+    }
+    if (is1Ground + is2Ground == 2) {
+      printf("sdfsdf\n");
+    }
     if (is1Bullet) {
       entities_[inx2]->ChangeHealth(bulletDamage);
-      if (PRINT_DEBUG) std::cout << "ent2Bullet: " << entities_[inx2]->GetHealth() << std::endl;
+      if (PRINT_DEBUG)
+        std::cout << "ent2Bullet: " << entities_[inx2]->GetHealth()
+                  << std::endl;
     } else if (is2Bullet) {
       entities_[inx1]->ChangeHealth(bulletDamage);
-      if (PRINT_DEBUG) std::cout << "ent1Bullet: " << entities_[inx1]->GetHealth() << std::endl;
+      if (PRINT_DEBUG)
+        std::cout << "ent1Bullet: " << entities_[inx1]->GetHealth()
+                  << std::endl;
     } else if (is1Ground) {
       entities_[inx2]->ChangeHealth(entityDamage);
-      if (PRINT_DEBUG) std::cout << "ent2Ground: " << entities_[inx2]->GetHealth() << std::endl;
+      if (PRINT_DEBUG)
+        std::cout << "ent2Ground: " << entities_[inx2]->GetHealth()
+                  << std::endl;
     } else if (is2Ground) {
       entities_[inx1]->ChangeHealth(entityDamage);
-      if (PRINT_DEBUG) std::cout << "ent1Ground: " << entities_[inx1]->GetHealth() << std::endl;
+      if (PRINT_DEBUG)
+        std::cout << "ent1Ground: " << entities_[inx1]->GetHealth()
+                  << std::endl;
     } else {
       entities_[inx1]->ChangeHealth(entityDamage);
       entities_[inx2]->ChangeHealth(entityDamage);
-      if (PRINT_DEBUG) std::cout << "ent1: " << entities_[inx1]->GetHealth() << std::endl;
-      if (PRINT_DEBUG) std::cout << "ent2: " << entities_[inx2]->GetHealth() << std::endl;
-      if (PRINT_DEBUG) std::cout << events.hitEvents[j].approachSpeed << std::endl;
+      if (PRINT_DEBUG)
+        std::cout << "ent1: " << entities_[inx1]->GetHealth() << std::endl;
+      if (PRINT_DEBUG)
+        std::cout << "ent2: " << entities_[inx2]->GetHealth() << std::endl;
+      if (PRINT_DEBUG)
+        std::cout << events.hitEvents[j].approachSpeed << std::endl;
     }
 
-      // std::cout << "ground damage" << std::endl;
-    
-
+    // std::cout << "ground damage" << std::endl;
   }
 
   // Verify that all entities match simulation bodies
@@ -127,24 +141,32 @@ b2BodyId Physics::AddGround(Ground* ground) {
 
 b2BodyId Physics::AddBullet(Bullet* bullet) {
   bullet->SetType(Entity::EntityType::BULLET);
-  float bx = bullet->GetPos().GetX();
-  float by = bullet->GetPos().GetY();
+
+  float pos_x = bullet->GetPos().GetX();
+  float pos_y = bullet->GetPos().GetY();
+
+  float rot = bullet->GetRotation() * (M_PI / 180);
+  b2Rot bruht;
+  bruht.c = cos(rot);
+  bruht.s = sin(rot);
 
   b2BodyDef bulletBodyDef = b2DefaultBodyDef();
   bulletBodyDef.type = b2_dynamicBody;
-  bulletBodyDef.position = (b2Vec2){bx, by};
+
   b2BodyId bulletId = b2CreateBody(simulationWorld_, &bulletBodyDef);
 
   b2ShapeDef bulletShapeDef = b2DefaultShapeDef();
   bulletShapeDef.enableHitEvents = true;
-  bulletShapeDef.density = 1;
+  bulletShapeDef.density = 5;
+  bulletShapeDef.friction = 0.3f;
+  bulletShapeDef.enableHitEvents = true;
 
-  b2Capsule capsule;
-  capsule.center1 = (b2Vec2){bx, by};
-  capsule.center2 = (b2Vec2){bx + 1.0f, by + 1.0f};
-  capsule.radius = 0.25f;
+  b2Polygon dynamicBox =
+      b2MakeBox(bullet->GetWidth() / 2.0, bullet->GetHeight() / 2.0);
 
-  b2CreateCapsuleShape(bulletId, &bulletShapeDef, &capsule);
+  b2CreatePolygonShape(bulletId, &bulletShapeDef, &dynamicBox);
+
+  b2Body_SetTransform(bulletId, (b2Vec2){pos_x, pos_y}, bruht);
 
   SetVelocity(bulletId, bullet->GetVel().GetX(), bullet->GetVel().GetY());
 
@@ -159,10 +181,11 @@ b2BodyId Physics::AddEnemy(Enemy* enemy) {
   b2BodyDef bodyDef = b2DefaultBodyDef();
   bodyDef.type = b2_dynamicBody;
   bodyDef.position = (b2Vec2){enemy->GetPos().GetX(), enemy->GetPos().GetY()};
-  
+
   b2BodyId bodyId = b2CreateBody(simulationWorld_, &bodyDef);
-  b2Polygon dynamicBox = b2MakeBox(enemy->GetWidth() / 2.0, enemy->GetHeight() / 2.0);
-  
+  b2Polygon dynamicBox =
+      b2MakeBox(enemy->GetWidth() / 2.0, enemy->GetHeight() / 2.0);
+
   b2ShapeDef shapeDef = b2DefaultShapeDef();
   shapeDef.density = 1.0f;
   shapeDef.friction = 0.3f;
@@ -185,5 +208,4 @@ void Physics::SetPosition(b2BodyId body, float xPos, float yPos,
   b2Body_SetTransform(body, (b2Vec2){xPos, yPos}, rotation);
 };
 
-void Physics::Contact(b2ContactHitEvent contact) {
-}
+void Physics::Contact(b2ContactHitEvent contact) {}
