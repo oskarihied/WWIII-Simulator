@@ -1,10 +1,12 @@
 #include "level.hpp"
 
-Level::Level()
+Level::Level(sf::Texture& background)
     : camera_(new Camera(-1, 4)),
       physics_(new Physics()),
       entities_(physics_->GetEntities()) {
-  bullets_.push_back(new RegularBullet(-3, -2, 0, 0));
+    background_.setTexture(background);
+    background_.setScale(2.0f, 2.0f);
+    bullets_.push_back(new RegularBullet(-3, -2, 0, 0));
   // entities_ = physics_->GetEntities();
 }
 
@@ -19,6 +21,10 @@ void Level::AddBox(Box* box) {
   // entities_.push_back(box);
 }
 
+void Level::AddGround(Ground* ground) {
+    physics_->AddGround(ground);
+}
+
 void Level::AddEnemy(Enemy* enemy) {
     physics_->AddEnemy(enemy);
 }
@@ -27,6 +33,15 @@ void Level::AddBoxes(std::vector<Box*> boxes) {
     for(auto it : boxes){
         physics_->AddBox(it);
     }
+}
+
+void Level::AddButton(Button* button) {
+    buttons_.push_back(button);
+    nonPhysicals_.push_back(button->GetEntity());
+}
+
+sf::Sprite& Level::GetBackground() {
+    return background_;
 }
 
 Physics* Level::GetPhysics() {
@@ -66,6 +81,10 @@ void Level::AddScores(std::vector<std::pair<std::string,int>> scores) {
 
 std::vector<Entity*> Level::GetNonPhysicalEntities(){
     return nonPhysicals_;
+}
+
+std::vector<Button*> Level::GetButtons(){
+    return buttons_;
 }
 
 Entity* Level::CurrentGun() {
