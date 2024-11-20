@@ -187,6 +187,57 @@ Funny images and other stuff. Physics are getting better
 3. Ristimäki: graphics
 4. Hiedanpää: file manager and enemies
 
+
+
+
+
+# Meeting 20.11.2024 14:00
+
+**Participants**: 
+1. Leo Blomqvist
+2. Oskari Hiedanpää
+3. Oskari Kokkonen
+4. Väinö Ristimäki 
+
+## Summary of works
+1. Blomqvist
+   
+   C++ wrapper, slingshot
+
+2. Hiedanpää
+
+   Enemy, file manager
+
+3. Kokkonen
+   
+   boxes take and deal damage and bullet deals damage
+
+4. Ristimäki
+   
+   Graphics, texture loader, menu
+
+
+## Challenges
+
+1. c++
+
+## Actions
+1. Blomqvist makes slingshot ready and fixes bullet
+2. Kokkonen makes enemies die and boxes break
+3. Ristimäki implements rocket launcher and explosions
+4. Hiedanpää starts to create levels
+
+## Project status 
+It' going well and we are in the schedule.
+
+### TODOs
+1. Blomqvist slingshot
+2. Kokkonen breaking
+3. Ristimäki explosions
+4. Hiedanpää levels
+
+
+
 # Meeting dd.mm.2021 HH:MM
 
 **Participants**: 

@@ -207,9 +207,11 @@ int main() {
       std::pair<int, int> pos =
           game.ToScreenPos(entity->GetPos(), *currentLevel->GetCam());
 
-      // std::cout << pos.first << " " << pos.second << std::endl;
+      //std::cout << entity->GetHealth() << std::endl;
 
       entity->GetSprite()->setPosition(pos.first, -pos.second);
+
+
 
       window.draw(*(entity->GetSprite()));
     }
