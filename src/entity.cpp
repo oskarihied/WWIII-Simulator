@@ -61,11 +61,11 @@ float Entity::GetRotation() {
     return rotation_;
 }
 
-void Entity::setType(enum Type type){
+void Entity::SetType(enum EntityType type){
     type_ = type;
 }
 
-enum Type Entity::getType(){
+enum Entity::EntityType Entity::GetType(){
     return type_;
 }
   

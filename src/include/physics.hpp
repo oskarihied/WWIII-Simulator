@@ -2,10 +2,11 @@
 #define PHYSICS_HPP
 
 #include <box2cpp/box2cpp.h>
-
+// #include <box2d/box2d.h>
 #include "box.hpp"
 #include "bullet.hpp"
 #include "ground.hpp"
+#include "enemy.hpp"
 
 class Physics {
  public:
@@ -17,6 +18,7 @@ class Physics {
   b2BodyId AddBox(Box* box);
   b2BodyId AddGround(Ground* ground);
   b2BodyId AddBullet(Bullet* bullet);
+  b2BodyId AddEnemy(Enemy* enemy);
 
   void SetVelocity(b2BodyId body, float xVel, float yVel);
   void SetPosition(b2BodyId body, float xPos, float yPos, b2Rot rotation);
