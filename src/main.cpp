@@ -31,14 +31,14 @@ int main() {
   // level->AddBox(new Wood(4, 0, game));
   // level->AddBox(new Wood(5, 0, game));
 
-  level->AddBox(new Wood(7, 0, game));
-  level->AddBox(new Wood(7, 1, game));
-  level->AddBox(new Wood(7, 2, game));
-  level->AddBox(new Wood(7, 3, game));
-  level->AddBox(new Wood(7, 4, game));
-  level->AddBox(new Wood(7, 5, game));
-  level->AddBox(new Wood(7, 6, game));
-  level->AddBox(new Wood(7, 7, game));
+  level->AddBox(new Wood(7, 0, game.GetTexture("wood")));
+  level->AddBox(new Wood(7, 1, game.GetTexture("wood")));
+  level->AddBox(new Wood(7, 2, game.GetTexture("wood")));
+  level->AddBox(new Wood(7, 3, game.GetTexture("wood")));
+  level->AddBox(new Wood(7, 4, game.GetTexture("wood")));
+  level->AddBox(new Wood(7, 5, game.GetTexture("wood")));
+  level->AddBox(new Wood(7, 6, game.GetTexture("wood")));
+  level->AddBox(new Wood(7, 7, game.GetTexture("wood")));
   level->AddEnemy(new Enemy(6, 0, game.GetTexture("enemy")));
 
   // level->AddBox(new Wood(4, 2, game));
