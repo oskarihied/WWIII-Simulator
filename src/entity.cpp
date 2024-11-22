@@ -31,11 +31,23 @@ Entity::Entity(float x, float y, float xVel, float yVel, std::string image)
   }
 }
 
+Entity::Entity(float x, float y, float xVel, float yVel, sf::Texture& texture)
+    : image_(""), texture_(texture), pos_(Pos(x, y)), vel_(Pos(xVel, yVel)) {
+  sprite_.setTexture(texture_);
+  sprite_.setOrigin(texture_.getSize().x / 2, texture_.getSize().y / 2);
+  // std::cout << &sprite_ << std::endl;
+}
+
 Pos Entity::GetPos() { return pos_; }
 
 Pos Entity::GetVel() { return vel_; }
 
 void Entity::UpdateVel(float xVel, float yVel) { vel_ = Pos(xVel, yVel); }
+
+void Entity::ChangeTexture(sf::Texture& texture) {
+  texture_ = texture;
+  sprite_.setTexture(texture_);
+}
 
 std::string Entity::GetImage() { return image_; }
 
@@ -81,4 +93,8 @@ void Entity::SetHealth(float health) {
   health_ = health;
   if (health_ > maxHealth) health_ = maxHealth;
   if (health_ < 0) health = 0;
+}
+
+bool Entity::Explodes() {
+  return explode_;
 }

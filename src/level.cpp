@@ -7,9 +7,11 @@ Level::Level(sf::Texture& background)
 
     background_.setTexture(background);
     background_.setScale(2.0f, 2.0f);
+    /*
     for (int i = 0; i < 10; i++) {
       bullets_.push_back(new RegularBullet(-3, -2, 0, 0));
     } 
+    */
 }
 
 Camera* Level::GetCam() { return camera_; }
@@ -25,6 +27,17 @@ void Level::AddBox(Box* box) {
 
 void Level::AddGround(Ground* ground) {
     physics_->AddGround(ground);
+}
+
+void Level::AddExplosion(Explosion* explosion, float force) {
+    nonPhysicals_.push_back((Entity*)explosion);
+    explosions_.push_back(explosion);
+    Pos pos = explosion->GetPos();
+    physics_->SpawnExplosion(pos, force);
+}
+
+std::vector<Explosion*> Level::GetExplosions(){
+  return explosions_;
 }
 
 void Level::AddEnemy(Enemy* enemy) {
@@ -90,12 +103,52 @@ void Level::AddScores(std::vector<std::pair<std::string, int>> scores) {
 
 std::vector<Entity*> Level::GetNonPhysicalEntities() { return nonPhysicals_; }
 
+
+void Level::RemovePhysicalEntity(Entity* entity) {
+  physics_->RemovePhysicalEntity(entity);
+}
+
+void Level::RemoveNonPhysicalEntity(Entity* entity) {
+  int index = -1;
+  int i = 0;
+  for (Entity* ent : nonPhysicals_) {
+    if (ent == entity) {
+      index = i;
+    }
+    i++;
+  }
+
+  if (index != -1) {
+    nonPhysicals_.erase(nonPhysicals_.begin() + index);
+  }
+}
+
+
+
+void Level::RemoveExplosion(Explosion* entity) {
+  int index = -1;
+  int i = 0;
+  for (Explosion* ent : explosions_) {
+    if (ent == entity) {
+      index = i;
+    }
+    i++;
+  }
+
+  if (index != -1) {
+    explosions_.erase(explosions_.begin() + index);
+    RemoveNonPhysicalEntity(entity);
+  }
+}
+
+
+
 std::vector<Button*> Level::GetButtons(){
     return buttons_;
 }
 
 Entity* Level::CurrentGun() {
-    return nonPhysicals_[guns_[0]];
+    return currentGun_;
 }
 /*
 std::vector<Entity*> Level::GetGuns() {
@@ -103,7 +156,9 @@ std::vector<Entity*> Level::GetGuns() {
 }
 */
 
-void Level::AddGun(Entity* gun) {
+void Level::AddGun(Gun* gun) {
   guns_.push_back(nonPhysicals_.size());
+  bullets_.push_back(gun->GetBullet());
   nonPhysicals_.push_back(gun);
+  currentGun_ = gun;
 }

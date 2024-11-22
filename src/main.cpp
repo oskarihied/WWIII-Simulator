@@ -5,6 +5,7 @@
 #include "boxes.hpp"
 #include "game.hpp"
 #include "physics.hpp"
+//#include "guns.hpp"
 
 int main() {
   // Create the main window
@@ -30,7 +31,7 @@ int main() {
   // level->AddBox(new Concrete(3, 0, game));
   // level->AddBox(new Wood(4, 0, game));
   // level->AddBox(new Wood(5, 0, game));
-
+/*
   level->AddBox(new Wood(7, 0, game));
   level->AddBox(new Wood(7, 1, game));
   level->AddBox(new Wood(7, 2, game));
@@ -39,6 +40,24 @@ int main() {
   level->AddBox(new Wood(7, 5, game));
   level->AddBox(new Wood(7, 6, game));
   level->AddBox(new Wood(7, 7, game));
+  level->AddBox(new Wood(8, 0, game));
+  level->AddBox(new Wood(8, 1, game));
+  level->AddBox(new Wood(8, 2, game));
+  level->AddBox(new Wood(8, 3, game));
+  level->AddBox(new Wood(8, 4, game));
+  level->AddBox(new Wood(8, 5, game));
+  level->AddBox(new Wood(8, 6, game));
+  level->AddBox(new Wood(8, 7, game));
+  */
+
+  for (int i = 0; i < 10; i++) {
+    for (int j = 0; j < 10; j++) {
+      level->AddBox(new Wood(7+i, j, game));
+    }
+  }
+
+
+
   level->AddEnemy(new Enemy(6, 0, game.GetTexture("enemy")));
 
   // level->AddBox(new Wood(4, 2, game));
@@ -57,20 +76,22 @@ int main() {
   level->AddNonPhysicalEntity(new Entity(-5, 0, game.GetTexture("biden")));
 
   // level->AddNonPhysicalEntity(new Entity(-2, -0.2, "images/rifle.png"));
+  Gun* gun1 = new RocketLauncher(0, -0.2, game.GetTextures());
+  Gun* gun2 = new RocketLauncher(-1, -0.2, game.GetTextures());
+  Gun* gun3 = new Rifle(-2, -0.2, game.GetTextures());
+  Gun* gun4 = new Rifle(-3, -0.2, game.GetTextures());
+  Gun* gun5 = new Rifle(-4, -0.2, game.GetTextures());
+  Gun* gun6 = new Rifle(-5, -0.2, game.GetTextures());
 
-  Entity* gun1 = new Entity(0, -0.2, game.GetTexture("rifle"));
-  Entity* gun2 = new Entity(-1, -0.2, game.GetTexture("rifle"));
-  Entity* gun3 = new Entity(-2, -0.2, game.GetTexture("rifle"));
-  Entity* gun4 = new Entity(-3, -0.2, game.GetTexture("rifle"));
-  Entity* gun5 = new Entity(-4, -0.2, game.GetTexture("rifle"));
-  Entity* gun6 = new Entity(-5, -0.2, game.GetTexture("rifle"));
+
   // level->AddNonPhysicalEntity(level->CurrentGun());
-  level->AddGun(gun1);
+  
   level->AddGun(gun2);
   level->AddGun(gun3);
   level->AddGun(gun4);
   level->AddGun(gun5);
   level->AddGun(gun6);
+  level->AddGun(gun1);
 
   sf::RenderWindow window(sf::VideoMode(w, h), "WWIII Simulator");
   // b2Vec2 v = b2Vec2(4.5, 6.8);
@@ -168,8 +189,8 @@ int main() {
       }
 
       if (event.type == sf::Event::MouseButtonReleased) {
-        float speed = timer.getElapsedTime().asSeconds();
-        level->Fire(speed);
+        float vel = std::min(timer.getElapsedTime().asSeconds(), 2.0f);
+        level->Fire(vel);
       }
 
       // Close window: exit
@@ -192,7 +213,17 @@ int main() {
 
     window.draw(currentLevel->GetBackground());
 
+
+    for (Explosion* explosion : currentLevel->GetExplosions()) {
+      explosion->NextSprite();
+      if (explosion->GetCount() > 10) {
+        currentLevel->RemoveExplosion(explosion);
+      }
+      //currentLevel->RemoveNonPhysicalEntity(explosion);
+    }
+
     for (Entity* entity : currentLevel->GetNonPhysicalEntities()) {
+      
       float scale = (w / 200.0f) / currentLevel->GetCam()->GetZoom();
 
       entity->GetSprite()->setScale(sf::Vector2(scale, scale));
@@ -221,6 +252,16 @@ int main() {
       entity->GetSprite()->setPosition(pos.first, -pos.second);
 
       window.draw(*(entity->GetSprite()));
+
+      if (entity->GetHealth() <= 0) {
+        Pos position = entity->GetPos();
+        //bool explodes = entity->Explodes();
+        level->RemovePhysicalEntity(entity);
+
+        if (entity->Explodes()) {
+          level->AddExplosion(new Explosion(entity->GetPos().GetX() + 0.01f, entity->GetPos().GetY() + 0.01f, game.GetTexture("explosion1"), game.GetTexture("explosion2"), game.GetTexture("explosion3"), 0), 500.0f);
+        }
+      }
     }
 
     // std::cout << std::endl;

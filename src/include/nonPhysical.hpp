@@ -1,3 +1,6 @@
+#ifndef NONPHYSICAL_HPP
+#define NONPHYSICAL_HPP
+
 
 #include "entity.hpp"
 
@@ -7,3 +10,5 @@ class NonPhysical : public Entity {
         NonPhysical(float x, float y, std::string image);
         NonPhysical(float x, float y, sf::Texture& texture);
 };
+
+#endif

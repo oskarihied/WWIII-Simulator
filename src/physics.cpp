@@ -3,7 +3,7 @@
 #include <iostream>
 
 constexpr int BULLET_DAMAGE = 10;
-constexpr int ENTITY_DAMAGE = 10;
+constexpr int ENTITY_DAMAGE = 1000;
 constexpr bool PRINT_DEBUG = false;
 
 Physics::Physics() {
@@ -25,10 +25,12 @@ void Physics::SimulateWorld(float simulationStep) {
     b2BodyId bid2 = b2Shape_GetBody(events.hitEvents[j].shapeIdB);
     uint16_t inx1 = bid1.index1 - 1;
     uint16_t inx2 = bid2.index1 - 1;
+
     if (entities_[inx1]->GetType() == Entity::EntityType::UNDEFINED ||
         entities_[inx2]->GetType() == Entity::EntityType::UNDEFINED) {
       continue;
     }
+
     float damageMultiplier = -(events.hitEvents[j].approachSpeed *
                                events.hitEvents[j].approachSpeed);
     float bulletDamage = damageMultiplier * BULLET_DAMAGE;
@@ -44,21 +46,27 @@ void Physics::SimulateWorld(float simulationStep) {
     if (is1Ground + is2Ground == 2) {
       printf("sdfsdf\n");
     }
+    /*
     if (is1Bullet) {
       entities_[inx2]->ChangeHealth(bulletDamage);
+      entities_[inx1]->ChangeHealth(bulletDamage);
       if (PRINT_DEBUG)
         std::cout << "ent2Bullet: " << entities_[inx2]->GetHealth()
                   << std::endl;
     } else if (is2Bullet) {
       entities_[inx1]->ChangeHealth(bulletDamage);
+      entities_[inx2]->ChangeHealth(bulletDamage);
       if (PRINT_DEBUG)
         std::cout << "ent1Bullet: " << entities_[inx1]->GetHealth()
                   << std::endl;
-    } else if (is1Ground) {
+    } 
+    */
+    else if (is1Ground) {
       entities_[inx2]->ChangeHealth(entityDamage);
       if (PRINT_DEBUG)
         std::cout << "ent2Ground: " << entities_[inx2]->GetHealth()
                   << std::endl;
+                  
     } else if (is2Ground) {
       entities_[inx1]->ChangeHealth(entityDamage);
       if (PRINT_DEBUG)
@@ -172,7 +180,7 @@ b2BodyId Physics::AddBullet(Bullet* bullet) {
 
   b2bodies_.push_back(bulletId);
   entities_.push_back(bullet);
-  bullets_.push_back(bulletId.index1);
+  //bullets_.push_back(bulletId.index1);
   return bulletId;
 };
 
@@ -209,3 +217,37 @@ void Physics::SetPosition(b2BodyId body, float xPos, float yPos,
 };
 
 void Physics::Contact(b2ContactHitEvent contact) {}
+
+
+void Physics::SpawnExplosion(Pos pos, float force) {
+  
+  int i = 0;
+  for (Entity* entity : entities_) {
+    
+    Pos vector = pos.VectorTo(entity->GetPos());
+    float distance = std::max(pos.Distance(entity->GetPos()), 0.1f);
+
+    b2Vec2 forceVec = b2Vec2 {force * vector.GetX() / (float)pow(distance, 2), force * vector.GetY() / (float)pow(distance, 2)};
+    b2Vec2 position = b2Vec2 {pos.GetX(), pos.GetY()};
+
+    b2Body_ApplyForce(b2bodies_[i], forceVec, position, true);
+    entity->ChangeHealth(-(force*10)/distance);
+
+    i++;
+  }
+}
+
+void Physics::RemovePhysicalEntity(Entity* entity) {
+  int index = -1;
+  int i = 0;
+  for (Entity* ent : entities_) {
+    if (ent == entity) {
+      index = i;
+    }
+    i++;
+  }
+
+  if (index != -1) {
+    b2Body_SetTransform(b2bodies_[index], b2Vec2{100000, 100000}, b2Body_GetRotation(b2bodies_[index]));
+  }
+}

@@ -52,3 +52,7 @@ void Game::LoadTextures(FileManager& manager) {
 };
 
 sf::Texture& Game::GetTexture(std::string name) { return textures_.at(name); }
+
+std::map<std::string, sf::Texture> Game::GetTextures() {
+  return textures_;
+}
