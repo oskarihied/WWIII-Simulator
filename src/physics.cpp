@@ -36,15 +36,13 @@ void Physics::SimulateWorld(float simulationStep) {
     bool is1Bullet = entities_[inx1]->GetType() == Entity::EntityType::BULLET;
     bool is2Bullet = entities_[inx2]->GetType() == Entity::EntityType::BULLET;
 
-    if (is1Ground + is2Ground + is1Bullet + is2Bullet > 1) 
-    {continue;}
-    if (is1Ground + is2Ground == 2) 
-    {printf("sdfsdf\n");}
+    if (is1Ground + is2Ground + is1Bullet + is2Bullet > 1) {continue;}
+
     if (is1Bullet) {
-      entities_[inx2]->ChangeHealth(bulletDamage);
+      entities_[inx2]->ChangeHealth(bulletDamage * b2Body_GetMass(bid1));
       if (PRINT_DEBUG) std::cout << "ent2Bullet: " << entities_[inx2]->GetHealth() << std::endl;
     } else if (is2Bullet) {
-      entities_[inx1]->ChangeHealth(bulletDamage);
+      entities_[inx1]->ChangeHealth(bulletDamage * b2Body_GetMass(bid2));
       if (PRINT_DEBUG) std::cout << "ent1Bullet: " << entities_[inx1]->GetHealth() << std::endl;
     } else if (is1Ground) {
       entities_[inx2]->ChangeHealth(entityDamage);
@@ -53,13 +51,12 @@ void Physics::SimulateWorld(float simulationStep) {
       entities_[inx1]->ChangeHealth(entityDamage);
       if (PRINT_DEBUG) std::cout << "ent1Ground: " << entities_[inx1]->GetHealth() << std::endl;
     } else {
-      entities_[inx1]->ChangeHealth(entityDamage);
-      entities_[inx2]->ChangeHealth(entityDamage);
+      entities_[inx1]->ChangeHealth(entityDamage * b2Body_GetMass(bid2));
+      entities_[inx2]->ChangeHealth(entityDamage * b2Body_GetMass(bid1));
       if (PRINT_DEBUG) std::cout << "ent1: " << entities_[inx1]->GetHealth() << std::endl;
       if (PRINT_DEBUG) std::cout << "ent2: " << entities_[inx2]->GetHealth() << std::endl;
       if (PRINT_DEBUG) std::cout << events.hitEvents[j].approachSpeed << std::endl;
     }
-
   }
 
   // Verify that all entities match simulation bodies

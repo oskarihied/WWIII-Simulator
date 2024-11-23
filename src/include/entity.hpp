@@ -8,13 +8,6 @@
 
 #include "pos.hpp"
 
-// enum Type {
-//   CONCRETE,
-//   WOOD,
-//   GLASS,
-//   ENEMY
-// };
-
 class Entity {
  public:
 
