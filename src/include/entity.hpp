@@ -23,6 +23,7 @@ class Entity {
   Entity(float x, float y);
   Entity(float x, float y, std::string sprite);
   Entity(float x, float y, sf::Texture& texture);
+  Entity(float x, float y, float xVel, float yVel, sf::Texture& texture);
   Entity(float x, float y, float xVel, float yVel, std::string sprite);
 
   Pos GetPos();
@@ -40,7 +41,8 @@ class Entity {
   float GetHealth();
   void SetHealth(float health); 
   float ChangeHealth(float amount);
-  
+
+  void ChangeTexture(sf::Texture& texture);
 
   std::string GetImage();
 
@@ -52,6 +54,8 @@ class Entity {
   void SetType(enum EntityType type);
   enum EntityType GetType();
 
+  bool Explodes();
+
  protected:
   std::string image_ = "";
   Pos pos_;
@@ -62,6 +66,9 @@ class Entity {
   enum EntityType type_ = EntityType::UNDEFINED;
   float health_ = 1000;
   float maxHealth = 1000;
+  float mass = 10;
+
+  bool explode_ = false;
 };
 
 #endif

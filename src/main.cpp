@@ -5,6 +5,7 @@
 #include "boxes.hpp"
 #include "game.hpp"
 #include "physics.hpp"
+//#include "guns.hpp"
 
 int main() {
   // Create the main window
@@ -13,25 +14,24 @@ int main() {
   int h = 700;
 
   Game game = Game(w, h);
+  sf::Clock timer;
 
   FileManager manager = FileManager();
   game.LoadTextures(manager);
 
   Level* level = game.startLevel();
 
-
   Level* menu = game.StartMenu();
 
   menu->AddNonPhysicalEntity(new Entity(4, 2.5, game.GetTexture("logo")));
   menu->AddButton(new Button(2, 0, 1, 1, game.GetTexture("button")));
-
 
   Level* currentLevel = game.GetCurrentLevel();
 
   // level->AddBox(new Concrete(3, 0, game));
   // level->AddBox(new Wood(4, 0, game));
   // level->AddBox(new Wood(5, 0, game));
-
+/*
   level->AddBox(new Wood(7, 0, game));
   level->AddBox(new Wood(7, 1, game));
   level->AddBox(new Wood(7, 2, game));
@@ -40,6 +40,24 @@ int main() {
   level->AddBox(new Wood(7, 5, game));
   level->AddBox(new Wood(7, 6, game));
   level->AddBox(new Wood(7, 7, game));
+  level->AddBox(new Wood(8, 0, game));
+  level->AddBox(new Wood(8, 1, game));
+  level->AddBox(new Wood(8, 2, game));
+  level->AddBox(new Wood(8, 3, game));
+  level->AddBox(new Wood(8, 4, game));
+  level->AddBox(new Wood(8, 5, game));
+  level->AddBox(new Wood(8, 6, game));
+  level->AddBox(new Wood(8, 7, game));
+  */
+
+  for (int i = 0; i < 10; i++) {
+    for (int j = 0; j < 10; j++) {
+      level->AddBox(new Wood(7+i, j, game.GetTexture("wood")));
+    }
+  }
+
+
+
   level->AddEnemy(new Enemy(6, 0, game.GetTexture("enemy")));
 
   // level->AddBox(new Wood(4, 2, game));
@@ -58,22 +76,22 @@ int main() {
   level->AddNonPhysicalEntity(new Entity(-5, 0, game.GetTexture("biden")));
 
   // level->AddNonPhysicalEntity(new Entity(-2, -0.2, "images/rifle.png"));
+  Gun* gun1 = new RocketLauncher(0, -0.2, game.GetTextures());
+  Gun* gun2 = new RocketLauncher(-1, -0.2, game.GetTextures());
+  Gun* gun3 = new Rifle(-2, -0.2, game.GetTextures());
+  Gun* gun4 = new Rifle(-3, -0.2, game.GetTextures());
+  Gun* gun5 = new Rifle(-4, -0.2, game.GetTextures());
+  Gun* gun6 = new Rifle(-5, -0.2, game.GetTextures());
 
-  Entity* gun1 = new Entity(0, -0.2, game.GetTexture("rifle"));
-  Entity* gun2 = new Entity(-1, -0.2, game.GetTexture("rifle"));
-  Entity* gun3 = new Entity(-2, -0.2, game.GetTexture("rifle"));
-  Entity* gun4 = new Entity(-3, -0.2, game.GetTexture("rifle"));
-  Entity* gun5 = new Entity(-4, -0.2, game.GetTexture("rifle"));
-  Entity* gun6 = new Entity(-5, -0.2, game.GetTexture("rifle"));
+
   // level->AddNonPhysicalEntity(level->CurrentGun());
-  level->AddGun(gun1);
+  
   level->AddGun(gun2);
   level->AddGun(gun3);
   level->AddGun(gun4);
   level->AddGun(gun5);
   level->AddGun(gun6);
-
-  level->Fire();
+  level->AddGun(gun1);
 
   sf::RenderWindow window(sf::VideoMode(w, h), "WWIII Simulator");
   // b2Vec2 v = b2Vec2(4.5, 6.8);
@@ -90,7 +108,7 @@ int main() {
     sf::Event event;
 
     // Advance simulation
-    physics->SimulateWorld(1 / 60.0f / 10);
+    physics->SimulateWorld(1.0f / 60.0f);
 
     sf::Vector2i mousePos = sf::Mouse::getPosition(window);
 
@@ -104,20 +122,23 @@ int main() {
 
     // std::cout << gunX << std::endl;
 
-    float gunRotation = -atan(gunY / gunX);
-
+    float gunRotation = atan(gunY / gunX);
     if (gunX < 0) {
-      gunRotation += M_PI;
+      if (gunY < 0) {
+        gunRotation = -M_PI + gunRotation;
+      } else {
+        gunRotation = M_PI + gunRotation;
+      }
     }
 
     // std::cout << gunRotation * (180.0f/M_PI) << std::endl;
 
-    level->CurrentGun()->RotationTo(gunRotation * (180.0f / M_PI));
-    gun2->RotationTo(gunRotation * (180.0f / M_PI));
-    gun3->RotationTo(gunRotation * (180.0f / M_PI));
-    gun4->RotationTo(gunRotation * (180.0f / M_PI));
-    gun5->RotationTo(gunRotation * (180.0f / M_PI));
-    gun6->RotationTo(gunRotation * (180.0f / M_PI));
+    level->CurrentGun()->RotationTo(-gunRotation * (180.0f / M_PI));
+    gun2->RotationTo(-gunRotation * (180.0f / M_PI));
+    gun3->RotationTo(-gunRotation * (180.0f / M_PI));
+    gun4->RotationTo(-gunRotation * (180.0f / M_PI));
+    gun5->RotationTo(-gunRotation * (180.0f / M_PI));
+    gun6->RotationTo(-gunRotation * (180.0f / M_PI));
     // gun3->RotationTo(gunRotation * (180.0f/M_PI));
 
     while (window.pollEvent(event)) {
@@ -137,7 +158,7 @@ int main() {
         if (event.key.scancode == sf::Keyboard::Scan::Left) {
           currentLevel->GetCam()->Move(-speed, 0.0f);
         }
-        
+
         if (event.key.scancode == sf::Keyboard::Scan::Comma) {
           currentLevel->GetCam()->Zoom(1 - zoomSpeed);
         }
@@ -152,14 +173,24 @@ int main() {
       }
 
       if (event.type == sf::Event::MouseButtonPressed) {
-        Pos gamePos = game.ToGamePos(mousePos.x, mousePos.y, *currentLevel->GetCam());
+        Pos gamePos =
+            game.ToGamePos(mousePos.x, mousePos.y, *currentLevel->GetCam());
         for (Button* button : currentLevel->GetButtons()) {
           if (button->IsTouching(gamePos.GetX(), gamePos.GetY())) {
             currentLevel = game.SwitchLevel(level);
             physics = currentLevel->GetPhysics();
-            //std::cout << "button" << std::endl;
+            // std::cout << "button" << std::endl;
           }
         }
+      }
+
+      if (event.type == sf::Event::MouseButtonPressed) {
+        timer.restart();
+      }
+
+      if (event.type == sf::Event::MouseButtonReleased) {
+        float vel = std::min(timer.getElapsedTime().asSeconds(), 2.0f);
+        level->Fire(vel);
       }
 
       // Close window: exit
@@ -167,7 +198,7 @@ int main() {
     }
     // Clear screen
     window.clear();
-    
+
     /*
     sf::Texture texture;
     texture.loadFromFile("images/background1.jpg");
@@ -176,14 +207,23 @@ int main() {
     sf::Sprite background;
     background.setTexture(texture);
     background.setScale(sf::Vector2(2.0f, 2.0f));
-    
+
     window.draw(background);
     */
 
     window.draw(currentLevel->GetBackground());
-    
+
+
+    for (Explosion* explosion : currentLevel->GetExplosions()) {
+      explosion->NextSprite();
+      if (explosion->GetCount() > 10) {
+        currentLevel->RemoveExplosion(explosion);
+      }
+      //currentLevel->RemoveNonPhysicalEntity(explosion);
+    }
 
     for (Entity* entity : currentLevel->GetNonPhysicalEntities()) {
+      
       float scale = (w / 200.0f) / currentLevel->GetCam()->GetZoom();
 
       entity->GetSprite()->setScale(sf::Vector2(scale, scale));
@@ -202,18 +242,28 @@ int main() {
       float scale = (w / 200.0f) / currentLevel->GetCam()->GetZoom();
 
       entity->GetSprite()->setScale(sf::Vector2(scale, scale));
-      entity->GetSprite()->setRotation(entity->GetRotation());
+      entity->GetSprite()->setRotation(-entity->GetRotation());
 
       std::pair<int, int> pos =
           game.ToScreenPos(entity->GetPos(), *currentLevel->GetCam());
 
-      // std::cout << pos.first << " " << pos.second << std::endl;
+      // std::cout << entity->GetHealth() << std::endl;
 
       entity->GetSprite()->setPosition(pos.first, -pos.second);
 
       window.draw(*(entity->GetSprite()));
+
+      if (entity->GetHealth() <= 0) {
+        Pos position = entity->GetPos();
+        //bool explodes = entity->Explodes();
+        level->RemovePhysicalEntity(entity);
+
+        if (entity->Explodes()) {
+          level->AddExplosion(new Explosion(entity->GetPos().GetX() + 0.01f, entity->GetPos().GetY() + 0.01f, game.GetTexture("explosion1"), game.GetTexture("explosion2"), game.GetTexture("explosion3"), 0), 500.0f);
+        }
+      }
     }
-    
+
     // std::cout << std::endl;
     // Update the window
     window.display();

@@ -18,6 +18,9 @@ class Pos {
   void Change(Pos other);
   void Change(float x, float y);
 
+  Pos VectorTo(Pos pos);
+  float Distance(Pos pos);
+
  private:
   float x_;
   float y_;

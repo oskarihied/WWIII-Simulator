@@ -13,6 +13,8 @@ class Physical : public Entity {
            float height);
   Physical(float x, float y, float xVel, float yVel, std::string image,
            float mass, float width, float height);
+  Physical(float x, float y, float xVel, float yVel, sf::Texture& texture, float mass, float width,
+           float height);
 
   float GetWidth();
   float GetHeight();

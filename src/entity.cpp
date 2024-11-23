@@ -16,10 +16,9 @@ Entity::Entity(float x, float y, std::string image)
 
 Entity::Entity(float x, float y, sf::Texture& texture)
     : image_(""), texture_(texture), pos_(Pos(x, y)) {
-    
   sprite_.setTexture(texture_);
   sprite_.setOrigin(texture_.getSize().x / 2, texture_.getSize().y / 2);
-    // std::cout << &sprite_ << std::endl;
+  // std::cout << &sprite_ << std::endl;
 }
 
 Entity::Entity(float x, float y, float xVel, float yVel, std::string image)
@@ -32,11 +31,23 @@ Entity::Entity(float x, float y, float xVel, float yVel, std::string image)
   }
 }
 
+Entity::Entity(float x, float y, float xVel, float yVel, sf::Texture& texture)
+    : image_(""), texture_(texture), pos_(Pos(x, y)), vel_(Pos(xVel, yVel)) {
+  sprite_.setTexture(texture_);
+  sprite_.setOrigin(texture_.getSize().x / 2, texture_.getSize().y / 2);
+  // std::cout << &sprite_ << std::endl;
+}
+
 Pos Entity::GetPos() { return pos_; }
 
 Pos Entity::GetVel() { return vel_; }
 
 void Entity::UpdateVel(float xVel, float yVel) { vel_ = Pos(xVel, yVel); }
+
+void Entity::ChangeTexture(sf::Texture& texture) {
+  texture_ = texture;
+  sprite_.setTexture(texture_);
+}
 
 std::string Entity::GetImage() { return image_; }
 
@@ -57,23 +68,17 @@ sf::Sprite* Entity::GetSprite() {
 
 void Entity::RotationTo(float x) { rotation_ = x; }
 
-float Entity::GetRotation() {
-    return rotation_;
-}
+float Entity::GetRotation() { return rotation_; }
 
-void Entity::SetType(enum EntityType type){
-    type_ = type;
-}
+void Entity::SetType(enum EntityType type) { type_ = type; }
 
-enum Entity::EntityType Entity::GetType(){
-    return type_;
-}
-  
+enum Entity::EntityType Entity::GetType() { return type_; }
+
 float Entity::ChangeHealth(float amount) {
   health_ += amount;
   if (health_ < 0) {
     health_ = 0;
-    return 0; 
+    return 0;
   } else if (health_ > maxHealth) {
     health_ = maxHealth;
     return maxHealth;
@@ -82,10 +87,14 @@ float Entity::ChangeHealth(float amount) {
   }
 }
 
-float Entity::GetHealth() {return health_;};
+float Entity::GetHealth() { return health_; };
 
 void Entity::SetHealth(float health) {
   health_ = health;
   if (health_ > maxHealth) health_ = maxHealth;
   if (health_ < 0) health = 0;
-  }
+}
+
+bool Entity::Explodes() {
+  return explode_;
+}

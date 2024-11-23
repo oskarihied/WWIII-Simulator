@@ -13,3 +13,7 @@ Rigid::Rigid(float x, float y, float xVel, float yVel, std::string image,
     : Physical(x, y, xVel, yVel, image, mass, w, h),
       maxHP_(hp),
       currentHP_(hp) {}
+
+Rigid::Rigid(float x, float y, float xVel, float yVel, sf::Texture& texture, float w,
+        float h,  float mass, int hp)
+    : Physical(x, y, xVel, yVel, texture, mass, w, h), maxHP_(hp), currentHP_(hp) {}

@@ -3,9 +3,8 @@
 #include <iostream>
 
 constexpr int BULLET_DAMAGE = 10;
-constexpr int ENTITY_DAMAGE = 10;
+constexpr int ENTITY_DAMAGE = 1000;
 constexpr bool PRINT_DEBUG = false;
-
 
 Physics::Physics() {
   b2WorldDef worldDef = b2DefaultWorldDef();
@@ -21,16 +20,22 @@ void Physics::SimulateWorld(float simulationStep) {
   b2World_Step(simulationWorld_, simulationStep, 4);
 
   // Calculate bullet and collision damage
-  b2ContactEvents events = b2World_GetContactEvents(simulationWorld_); 
+  b2ContactEvents events = b2World_GetContactEvents(simulationWorld_);
   for (int j = 0; j < events.hitCount; j++) {
     b2BodyId bid1 = b2Shape_GetBody(events.hitEvents[j].shapeIdA);
     b2BodyId bid2 = b2Shape_GetBody(events.hitEvents[j].shapeIdB);
     uint16_t inx1 = bid1.index1 - 1;
     uint16_t inx2 = bid2.index1 - 1;
-    if (entities_[inx1]->GetType() == Entity::EntityType::UNDEFINED || entities_[inx2]->GetType() == Entity::EntityType::UNDEFINED) {continue;}
-    float damageMultiplier = -(events.hitEvents[j].approachSpeed * events.hitEvents[j].approachSpeed);
-    float bulletDamage = damageMultiplier * BULLET_DAMAGE; 
-    float entityDamage = damageMultiplier * ENTITY_DAMAGE; 
+
+    if (entities_[inx1]->GetType() == Entity::EntityType::UNDEFINED ||
+        entities_[inx2]->GetType() == Entity::EntityType::UNDEFINED) {
+      continue;
+    }
+
+    float damageMultiplier = -(events.hitEvents[j].approachSpeed *
+                               events.hitEvents[j].approachSpeed);
+    float bulletDamage = damageMultiplier * BULLET_DAMAGE;
+    float entityDamage = damageMultiplier * ENTITY_DAMAGE;
     bool is1Ground = entities_[inx1]->GetType() == Entity::EntityType::GROUND;
     bool is2Ground = entities_[inx2]->GetType() == Entity::EntityType::GROUND;
     bool is1Bullet = entities_[inx1]->GetType() == Entity::EntityType::BULLET;
@@ -46,10 +51,15 @@ void Physics::SimulateWorld(float simulationStep) {
       if (PRINT_DEBUG) std::cout << "ent1Bullet: " << entities_[inx1]->GetHealth() << std::endl;
     } else if (is1Ground) {
       entities_[inx2]->ChangeHealth(entityDamage);
-      if (PRINT_DEBUG) std::cout << "ent2Ground: " << entities_[inx2]->GetHealth() << std::endl;
+      if (PRINT_DEBUG)
+        std::cout << "ent2Ground: " << entities_[inx2]->GetHealth()
+                  << std::endl;
+                  
     } else if (is2Ground) {
       entities_[inx1]->ChangeHealth(entityDamage);
-      if (PRINT_DEBUG) std::cout << "ent1Ground: " << entities_[inx1]->GetHealth() << std::endl;
+      if (PRINT_DEBUG)
+        std::cout << "ent1Ground: " << entities_[inx1]->GetHealth()
+                  << std::endl;
     } else {
       entities_[inx1]->ChangeHealth(entityDamage * b2Body_GetMass(bid2));
       entities_[inx2]->ChangeHealth(entityDamage * b2Body_GetMass(bid1));
@@ -122,30 +132,38 @@ b2BodyId Physics::AddGround(Ground* ground) {
 
 b2BodyId Physics::AddBullet(Bullet* bullet) {
   bullet->SetType(Entity::EntityType::BULLET);
-  float bx = bullet->GetPos().GetX();
-  float by = bullet->GetPos().GetY();
+
+  float pos_x = bullet->GetPos().GetX();
+  float pos_y = bullet->GetPos().GetY();
+
+  float rot = bullet->GetRotation() * (M_PI / 180);
+  b2Rot bruht;
+  bruht.c = cos(rot);
+  bruht.s = sin(rot);
 
   b2BodyDef bulletBodyDef = b2DefaultBodyDef();
   bulletBodyDef.type = b2_dynamicBody;
-  bulletBodyDef.position = (b2Vec2){bx, by};
+
   b2BodyId bulletId = b2CreateBody(simulationWorld_, &bulletBodyDef);
 
   b2ShapeDef bulletShapeDef = b2DefaultShapeDef();
   bulletShapeDef.enableHitEvents = true;
-  bulletShapeDef.density = 1;
+  bulletShapeDef.density = 5;
+  bulletShapeDef.friction = 0.3f;
+  bulletShapeDef.enableHitEvents = true;
 
-  b2Capsule capsule;
-  capsule.center1 = (b2Vec2){bx, by};
-  capsule.center2 = (b2Vec2){bx + 1.0f, by + 1.0f};
-  capsule.radius = 0.25f;
+  b2Polygon dynamicBox =
+      b2MakeBox(bullet->GetWidth() / 2.0, bullet->GetHeight() / 2.0);
 
-  b2CreateCapsuleShape(bulletId, &bulletShapeDef, &capsule);
+  b2CreatePolygonShape(bulletId, &bulletShapeDef, &dynamicBox);
+
+  b2Body_SetTransform(bulletId, (b2Vec2){pos_x, pos_y}, bruht);
 
   SetVelocity(bulletId, bullet->GetVel().GetX(), bullet->GetVel().GetY());
 
   b2bodies_.push_back(bulletId);
   entities_.push_back(bullet);
-  bullets_.push_back(bulletId.index1);
+  //bullets_.push_back(bulletId.index1);
   return bulletId;
 };
 
@@ -154,10 +172,11 @@ b2BodyId Physics::AddEnemy(Enemy* enemy) {
   b2BodyDef bodyDef = b2DefaultBodyDef();
   bodyDef.type = b2_dynamicBody;
   bodyDef.position = (b2Vec2){enemy->GetPos().GetX(), enemy->GetPos().GetY()};
-  
+
   b2BodyId bodyId = b2CreateBody(simulationWorld_, &bodyDef);
-  b2Polygon dynamicBox = b2MakeBox(enemy->GetWidth() / 2.0, enemy->GetHeight() / 2.0);
-  
+  b2Polygon dynamicBox =
+      b2MakeBox(enemy->GetWidth() / 2.0, enemy->GetHeight() / 2.0);
+
   b2ShapeDef shapeDef = b2DefaultShapeDef();
   shapeDef.density = 1.0f;
   shapeDef.friction = 0.3f;
@@ -180,5 +199,38 @@ void Physics::SetPosition(b2BodyId body, float xPos, float yPos,
   b2Body_SetTransform(body, (b2Vec2){xPos, yPos}, rotation);
 };
 
-void Physics::Contact(b2ContactHitEvent contact) {
+void Physics::Contact(b2ContactHitEvent contact) {}
+
+
+void Physics::SpawnExplosion(Pos pos, float force) {
+  
+  int i = 0;
+  for (Entity* entity : entities_) {
+    
+    Pos vector = pos.VectorTo(entity->GetPos());
+    float distance = std::max(pos.Distance(entity->GetPos()), 0.1f);
+
+    b2Vec2 forceVec = b2Vec2 {force * vector.GetX() / (float)pow(distance, 2), force * vector.GetY() / (float)pow(distance, 2)};
+    b2Vec2 position = b2Vec2 {pos.GetX(), pos.GetY()};
+
+    b2Body_ApplyForce(b2bodies_[i], forceVec, position, true);
+    entity->ChangeHealth(-(force*10)/distance);
+
+    i++;
+  }
+}
+
+void Physics::RemovePhysicalEntity(Entity* entity) {
+  int index = -1;
+  int i = 0;
+  for (Entity* ent : entities_) {
+    if (ent == entity) {
+      index = i;
+    }
+    i++;
+  }
+
+  if (index != -1) {
+    b2Body_SetTransform(b2bodies_[index], b2Vec2{100000, 100000}, b2Body_GetRotation(b2bodies_[index]));
+  }
 }
