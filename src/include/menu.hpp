@@ -1,3 +1,6 @@
+#ifndef MENU_HPP
+#define MENU_HPP
+
 #include <vector>
 #include "level.hpp"
 #include "background.hpp"
@@ -11,3 +14,5 @@ class Menu : Level {
     private:
         std::vector<Level*> levels_; 
 };
+
+#endif

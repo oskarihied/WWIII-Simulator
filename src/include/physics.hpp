@@ -26,6 +26,10 @@ class Physics {
   const std::vector<Entity*>& GetEntities() const { return entities_; }
   const std::vector<b2BodyId>& GetBodies() const { return b2bodies_; }
 
+  void SpawnExplosion(Pos pos, float force);
+
+  void RemovePhysicalEntity(Entity* entity);
+
  private:
   void Contact(b2ContactHitEvent hit);
 
