@@ -1,16 +1,11 @@
 #include "fileManager.hpp"
-<<<<<<< HEAD
 
 #include <filesystem>
-=======
-#include "boxes.hpp"
-#include "enemy.hpp"
->>>>>>> 08420ebd1418e4ff34b8a8df28e4d838ccd11440
 #include <fstream>
 #include <sstream>
-#include <filesystem>
 
 #include "boxes.hpp"
+#include "enemy.hpp"
 
 bool FileManager::SaveScore(const std::string& filename,
                             std::vector<std::pair<std::string, int>> scores) {
@@ -62,50 +57,14 @@ std::vector<Entity*>& entities){ std::ofstream file(filename);
         file << it->GetPos
     }
 }*/
-<<<<<<< HEAD
-std::vector<Box*> FileManager::LoadLevel(const std::string& filename) {
-  std::vector<Box*> boxes;
+std::vector<Entity*> FileManager::LoadLevel(
+    const std::string& filename, std::map<std::string, sf::Texture>& textures) {
+  std::vector<Entity*> entities;
   std::ifstream file(filename);
 
   if (!file.is_open()) {
-    return boxes;
-  }
-=======
-std::vector<Entity*> FileManager::LoadLevel(const std::string& filename, std::map<std::string, sf::Texture>& textures){
-    std::vector<Entity*> entities;
-    std::ifstream file(filename);
-
-    if(!file.is_open()){
-        return entities;
-    }
-
-    std::string line;
-    while(std::getline(file, line)){
-        std::istringstream stream(line);
-        std::string type;
-        int x, y;
-        std::getline(stream,type,';');
-        stream >> x;
-        stream.ignore();
-        stream >> y;
-        if(type == "C"){
-            entities.push_back(new Concrete(x,y,textures.at("concrete")));
-        }
-        else if(type == "W"){
-            entities.push_back(new Wood(x,y,textures.at("wood")));
-        }
-        else if(type == "G"){
-            entities.push_back(new Glass(x,y,textures.at("glass")));
-        }
-        else if(type == "E"){
-            entities.push_back(new Enemy(x,y,textures.at("enemy")));
-        }
-    }
-
-    file.close();
     return entities;
-}
->>>>>>> 08420ebd1418e4ff34b8a8df28e4d838ccd11440
+  }
 
   std::string line;
   while (std::getline(file, line)) {
@@ -116,17 +75,19 @@ std::vector<Entity*> FileManager::LoadLevel(const std::string& filename, std::ma
     stream >> x;
     stream.ignore();
     stream >> y;
-    if (type == "CONCRETE") {
-      boxes.push_back(new Concrete(x, y));
-    } else if (type == "WOOD") {
-      boxes.push_back(new Wood(x, y));
-    } else if (type == "GLASS") {
-      boxes.push_back(new Glass(x, y));
+    if (type == "C") {
+      entities.push_back(new Concrete(x, y, textures.at("concrete")));
+    } else if (type == "W") {
+      entities.push_back(new Wood(x, y, textures.at("wood")));
+    } else if (type == "G") {
+      entities.push_back(new Glass(x, y, textures.at("glass")));
+    } else if (type == "E") {
+      entities.push_back(new Enemy(x, y, textures.at("enemy")));
     }
   }
 
   file.close();
-  return boxes;
+  return entities;
 }
 
 void FileManager::LoadTextures(std::map<std::string, sf::Texture>& map,

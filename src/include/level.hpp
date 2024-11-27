@@ -7,15 +7,17 @@
 #include "camera.hpp"
 #include "enemy.hpp"
 #include "entity.hpp"
-#include "physics.hpp"
 #include "explosion.hpp"
 #include "gun.hpp"
+#include "physics.hpp"
 
 class Level {
  public:
-  Level(sf::Texture& background);
+  Level(sf::Texture& background, bool isMenu = false);
 
   Camera* GetCam();
+
+  bool IsMenu();
 
   void AddEntity(Entity* entity);
   void AddNonPhysicalEntity(Entity* entity);
@@ -37,11 +39,11 @@ class Level {
 
   std::vector<Entity*> GetEntities();
   std::vector<Entity*> GetNonPhysicalEntities();
-  
+
   void RemoveNonPhysicalEntity(Entity* entity);
   void RemovePhysicalEntity(Entity* entity);
   void RemoveExplosion(Explosion* entity);
-  
+
   std::vector<Button*> GetButtons();
 
   std::vector<Explosion*> GetExplosions();
@@ -52,13 +54,13 @@ class Level {
   void AddGun(Gun* gun);
 
  protected:
+  bool isMenu_;
   Camera* camera_;
   Physics* physics_;
-  std::vector<Bullet*> bullets_;
   const std::vector<Entity*>& entities_;
   std::vector<std::pair<std::string, int>> leaderboard_;
   std::vector<Entity*> nonPhysicals_;
-  std::vector<int> guns_;
+  std::vector<Gun*> guns_;
 
   Gun* currentGun_ = nullptr;
 
