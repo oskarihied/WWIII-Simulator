@@ -238,6 +238,55 @@ It' going well and we are in the schedule.
 
 
 
+# Meeting 27.11.2024 14:00
+
+**Participants**: 
+1. Leo Blomqvist
+2. Oskari Hiedanpää
+3. Oskari Kokkonen
+4. Väinö Ristimäki 
+
+## Summary of works
+1. Blomqvist
+   
+   Created gun queue logic, cleaning main, bullet
+
+2. Hiedanpää
+
+   Created levels
+
+3. Kokkonen
+
+   Physics and made box damage more realistic and fun
+
+4. Ristimäki
+
+   Implementing explosions and rocket launcher
+
+## Challenges
+
+1. 0 errors
+
+## Actions
+1. Blomqvist does multiplayer maybe
+2. Hiedanpää does Valgrind to ready and levels
+3. Kokkonen does boxes to disappear and does damage right
+4. Ristimäki does UI to ready. And explosion when mouseclick and timer to sinko. 
+
+## Project status 
+Going well. Now starts the grind
+
+### TODOs
+1. Blomqvist multiplayer
+2. Hiedanpää valgrind
+3. Kokkonen gameplay
+4. Ristimäki UI
+
+
+
+
+
+
 # Meeting dd.mm.2021 HH:MM
 
 **Participants**: 
