@@ -18,6 +18,7 @@ class Physical : public Entity {
 
   float GetWidth();
   float GetHeight();
+  float GetMass();
 
  protected:
   float mass_;

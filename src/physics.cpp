@@ -3,14 +3,14 @@
 #include <iostream>
 
 constexpr int BULLET_DAMAGE = 10;
-constexpr int ENTITY_DAMAGE = 1000;
-constexpr bool PRINT_DEBUG = false;
+constexpr float ENTITY_DAMAGE = 0.2;
+constexpr bool PRINT_DEBUG = true;
 
 Physics::Physics() {
   b2WorldDef worldDef = b2DefaultWorldDef();
   worldDef.gravity = (b2Vec2){0.0f, -9.81f};
   // worldDef.restitutionThreshold = 0.0f;
-  worldDef.hitEventThreshold = 0.1f;
+  worldDef.hitEventThreshold = 0.5f;
   simulationWorld_ = b2CreateWorld(&worldDef);
   // b2World_SetHitEventThreshold(simulationWorld_, 1);
 }
@@ -50,13 +50,13 @@ void Physics::SimulateWorld(float simulationStep) {
       entities_[inx1]->ChangeHealth(bulletDamage * b2Body_GetMass(bid2));
       if (PRINT_DEBUG) std::cout << "ent1Bullet: " << entities_[inx1]->GetHealth() << std::endl;
     } else if (is1Ground) {
-      entities_[inx2]->ChangeHealth(entityDamage);
+      entities_[inx2]->ChangeHealth(entityDamage * 10);
       if (PRINT_DEBUG)
         std::cout << "ent2Ground: " << entities_[inx2]->GetHealth()
                   << std::endl;
                   
     } else if (is2Ground) {
-      entities_[inx1]->ChangeHealth(entityDamage);
+      entities_[inx1]->ChangeHealth(entityDamage * 10);
       if (PRINT_DEBUG)
         std::cout << "ent1Ground: " << entities_[inx1]->GetHealth()
                   << std::endl;
@@ -100,7 +100,7 @@ b2BodyId Physics::AddBox(Box* box) {
       b2MakeBox(box->GetWidth() / 2.0, box->GetHeight() / 2.0);
 
   b2ShapeDef shapeDef = b2DefaultShapeDef();
-  shapeDef.density = 1.0f;
+  shapeDef.density = box->GetMass();
   shapeDef.friction = 0.3f;
   shapeDef.enableHitEvents = true;
   b2CreatePolygonShape(bodyId, &shapeDef, &dynamicBox);
@@ -148,7 +148,7 @@ b2BodyId Physics::AddBullet(Bullet* bullet) {
 
   b2ShapeDef bulletShapeDef = b2DefaultShapeDef();
   bulletShapeDef.enableHitEvents = true;
-  bulletShapeDef.density = 5;
+  bulletShapeDef.density = bullet->GetMass();
   bulletShapeDef.friction = 0.3f;
   bulletShapeDef.enableHitEvents = true;
 
@@ -169,6 +169,7 @@ b2BodyId Physics::AddBullet(Bullet* bullet) {
 
 b2BodyId Physics::AddEnemy(Enemy* enemy) {
   enemy->SetType(Entity::EntityType::ENEMY);
+  enemy->SetHealth(100);
   b2BodyDef bodyDef = b2DefaultBodyDef();
   bodyDef.type = b2_dynamicBody;
   bodyDef.position = (b2Vec2){enemy->GetPos().GetX(), enemy->GetPos().GetY()};

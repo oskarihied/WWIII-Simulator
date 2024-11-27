@@ -24,3 +24,5 @@ Physical::Physical(float x, float y, float xVel, float yVel, sf::Texture& textur
 float Physical::GetWidth() { return width_; };
 
 float Physical::GetHeight() { return height_; };
+
+float Physical::GetMass() { return mass_; };
