@@ -4,6 +4,9 @@ Game::Game(int w, int h) : windowWidth_(w), windowHeight_(h) {}
 
 Level* Game::StartLevel() {
   currentLevel_ = new Level(this->GetTexture("background1"));
+  currentLevel_->GetCam()->MoveTo(20, 15);
+  currentLevel_->GetCam()->ZoomTo(30);
+  currentLevel_->GetCam()->NewAnimation(Pos(-5, 7), 15, 2);
   return currentLevel_;
 }
 

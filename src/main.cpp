@@ -115,6 +115,7 @@ int main() {
     if (!inMenu) {
       // Advance simulation
       physics->SimulateWorld(1.0f / 60.0f);
+      currentLevel->GetCam()->AnimationStep(1.0f / 60.0f);
 
       Entity* gun = currentLevel->CurrentGun();
 
@@ -161,24 +162,27 @@ int main() {
         float camZoomSpeed = 0.05f;
 
         if (event.type == sf::Event::KeyPressed) {
-          if (event.key.scancode == sf::Keyboard::Scan::Up) {
-            currentLevel->GetCam()->Move(0.0f, camMoveSpeed);
-          }
-          if (event.key.scancode == sf::Keyboard::Scan::Down) {
-            currentLevel->GetCam()->Move(0.0f, -camMoveSpeed);
-          }
-          if (event.key.scancode == sf::Keyboard::Scan::Right) {
-            currentLevel->GetCam()->Move(camMoveSpeed, 0.0f);
-          }
-          if (event.key.scancode == sf::Keyboard::Scan::Left) {
-            currentLevel->GetCam()->Move(-camMoveSpeed, 0.0f);
-          }
+          if (!currentLevel->GetCam()->GetAnimation()) {
+            if (event.key.scancode == sf::Keyboard::Scan::Up) {
+              currentLevel->GetCam()->Move(0.0f, camMoveSpeed);
+            }
+            if (event.key.scancode == sf::Keyboard::Scan::Down) {
+              currentLevel->GetCam()->Move(0.0f, -camMoveSpeed);
+            }
+            if (event.key.scancode == sf::Keyboard::Scan::Right) {
+              currentLevel->GetCam()->Move(camMoveSpeed, 0.0f);
+            }
+            if (event.key.scancode == sf::Keyboard::Scan::Left) {
+              currentLevel->GetCam()->Move(-camMoveSpeed, 0.0f);
+            }
 
-          if (event.key.scancode == sf::Keyboard::Scan::Comma) {
-            currentLevel->GetCam()->Zoom(1 - camZoomSpeed);
-          }
-          if (event.key.scancode == sf::Keyboard::Scan::Period) {
-            currentLevel->GetCam()->Zoom(1 + camZoomSpeed);
+            if (event.key.scancode == sf::Keyboard::Scan::Comma) {
+              currentLevel->GetCam()->Zoom(1 - camZoomSpeed);
+            }
+            if (event.key.scancode == sf::Keyboard::Scan::Period) {
+              currentLevel->GetCam()->Zoom(1 + camZoomSpeed);
+            }
+
           }
         }
 
