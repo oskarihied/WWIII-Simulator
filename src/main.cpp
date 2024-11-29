@@ -52,11 +52,11 @@ int main() {
 
   for (int i = 0; i < 10; i++) {
     for (int j = 0; j < 10; j++) {
-      level->AddBox(new Wood(7 + i, j, game.GetTexture("wood")));
+      level->AddBox(new Wood(7 + i, j, game.GetTextures()));
     }
   }
 
-  level->AddEnemy(new Enemy(6, 0, game.GetTexture("enemy")));
+  level->AddEnemy(new Enemy(6, 0, game.GetTextures()));
 
   // level->AddBox(new Wood(4, 2, game));
   // level->AddBox(new Glass(4, 1, game));
@@ -255,6 +255,10 @@ int main() {
         entity->GetSprite()->setPosition(pos.first, -pos.second);
 
         window.draw(*(entity->GetSprite()));
+
+        if (entity->GetHealth() <= entity->GetMaxHealth() * 0.8) {
+          entity->ChangeToDamaged();
+        }
 
         if (entity->GetHealth() <= 0) {
           Pos position = entity->GetPos();

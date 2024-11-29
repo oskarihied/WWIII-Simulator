@@ -46,12 +46,21 @@ class Entity {
   float GetRotation();
 
   float GetHealth();
+  float GetMaxHealth();
+
+  void ChangeToDamaged();
+
+
   void SetHealth(float health); 
   float ChangeHealth(float amount);
 
   void ChangeTexture(sf::Texture& texture);
 
   std::string GetImage();
+
+  bool CanBeDamaged();
+
+  std::optional<sf::Texture> GetDamagedTexture();
 
   sf::Sprite* GetSprite();
 
@@ -69,6 +78,7 @@ class Entity {
   Pos vel_;
   float rotation_ = 0.0f;
   sf::Texture texture_;
+  std::optional<sf::Texture> damaged_ = std::nullopt;
   sf::Sprite sprite_;
   enum EntityType type_ = EntityType::UNDEFINED;
   float health_ = 1000;

@@ -76,13 +76,13 @@ std::vector<Entity*> FileManager::LoadLevel(
     stream.ignore();
     stream >> y;
     if (type == "C") {
-      entities.push_back(new Concrete(x, y, textures.at("concrete")));
+      entities.push_back(new Concrete(x, y, textures));
     } else if (type == "W") {
-      entities.push_back(new Wood(x, y, textures.at("wood")));
+      entities.push_back(new Wood(x, y, textures));
     } else if (type == "G") {
-      entities.push_back(new Glass(x, y, textures.at("glass")));
+      entities.push_back(new Glass(x, y, textures));
     } else if (type == "E") {
-      entities.push_back(new Enemy(x, y, textures.at("enemy")));
+      entities.push_back(new Enemy(x, y, textures));
     }
   }
 
