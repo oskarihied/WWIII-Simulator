@@ -85,6 +85,8 @@ class Entity {
   float maxHealth = 1000;
   float mass = 10;
 
+  bool damagedTexture_ = false;
+
   bool explode_ = false;
 };
 

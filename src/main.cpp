@@ -256,7 +256,7 @@ int main() {
 
         window.draw(*(entity->GetSprite()));
 
-        if (entity->GetHealth() <= entity->GetMaxHealth() * 0.8) {
+        if (entity->GetHealth() <= entity->GetMaxHealth() * 0.9) {
           entity->ChangeToDamaged();
         }
 

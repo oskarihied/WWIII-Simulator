@@ -59,8 +59,9 @@ void Entity::ChangeTexture(sf::Texture& texture) {
 }
 
 void Entity::ChangeToDamaged() {
-  if (CanBeDamaged()) {
+  if (CanBeDamaged() && !damagedTexture_) {
     ChangeTexture(damaged_.value());
+    damagedTexture_ = true;
   }
 }
 
