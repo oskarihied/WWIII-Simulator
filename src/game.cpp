@@ -2,7 +2,7 @@
 
 Game::Game(int w, int h) : windowWidth_(w), windowHeight_(h) {}
 
-Level* Game::startLevel() {
+Level* Game::StartLevel() {
   currentLevel_ = new Level(this->GetTexture("background1"));
   return currentLevel_;
 }
@@ -17,9 +17,7 @@ Level* Game::SwitchLevel(Level* level) {
   return currentLevel_;
 }
 
-Level* Game::GetCurrentLevel() {
-  return currentLevel_;
-}
+Level* Game::GetCurrentLevel() { return currentLevel_; }
 
 std::pair<int, int> Game::ToScreenPos(Pos pos, Camera cam) {
   float x = pos.GetX();
@@ -41,7 +39,6 @@ Pos Game::ToGamePos(int x, int y, Camera cam) {
   return Pos(posX, posY);
 }
 
-
 void Game::LoadTextures(FileManager& manager) {
   manager.LoadTextures(textures_, "images");
   /*
@@ -53,6 +50,4 @@ void Game::LoadTextures(FileManager& manager) {
 
 sf::Texture& Game::GetTexture(std::string name) { return textures_.at(name); }
 
-std::map<std::string, sf::Texture> Game::GetTextures() {
-  return textures_;
-}
+std::map<std::string, sf::Texture> Game::GetTextures() { return textures_; }
