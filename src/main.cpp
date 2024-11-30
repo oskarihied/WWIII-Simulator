@@ -24,7 +24,11 @@ int main() {
   Level* menu = game.StartMenu();
 
   menu->AddNonPhysicalEntity(new Entity(4, 2.5, game.GetTexture("logo")));
-  menu->AddButton(new Button(2, 0, 1, 1, game.GetTexture("button")));
+  
+  menu->AddButton(new Button(2, 0, 1, 1, game.GetTexture("button1")));
+  menu->AddButton(new Button(4, 0, 1, 1, game.GetTexture("button2")));
+  menu->AddButton(new Button(6, 0, 1, 1, game.GetTexture("button3")));
+
 
   Level* currentLevel = game.GetCurrentLevel();
 

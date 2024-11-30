@@ -60,7 +60,7 @@ void Camera::AnimationStep(float time) {
     if (animation_) {
 
 
-        std::cout << "(" << pos_.GetX() << " " << pos_.GetY() << ") " << zoom_ << std::endl;
+        //std::cout << "(" << pos_.GetX() << " " << pos_.GetY() << ") " << zoom_ << std::endl;
 
         if (timer_ < goalTime_) {
             
