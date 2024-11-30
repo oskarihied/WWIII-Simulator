@@ -25,9 +25,14 @@ int main() {
 
   menu->AddNonPhysicalEntity(new Entity(4, 2.5, game.GetTexture("logo")));
   
+  menu->AddButton(new Button(7.7, 3.5, 0.5, 0.5, game.GetTexture("singleplayer_chosen")));
+  menu->AddButton(new Button(8.25, 3.5, 0.5, 0.5, game.GetTexture("multiplayer")));
+
   menu->AddButton(new Button(2, 0, 1, 1, game.GetTexture("button1")));
   menu->AddButton(new Button(4, 0, 1, 1, game.GetTexture("button2")));
   menu->AddButton(new Button(6, 0, 1, 1, game.GetTexture("button3")));
+
+
 
 
   Level* currentLevel = game.GetCurrentLevel();
@@ -148,14 +153,36 @@ int main() {
     while (window.pollEvent(event)) {
       if (inMenu) {
         if (event.type == sf::Event::MouseButtonReleased) {
+          
           Pos gamePos =
               game.ToGamePos(mousePos.x, mousePos.y, *currentLevel->GetCam());
+          
+          int index = 0;
+
           for (Button* button : currentLevel->GetButtons()) {
             if (button->IsTouching(gamePos.GetX(), gamePos.GetY())) {
-              currentLevel = game.SwitchLevel(level);
-              physics = currentLevel->GetPhysics();
+              
+              if (index == 0) {
+                button->GetEntity()->ChangeTexture(game.GetTexture("singleplayer_chosen"));
+                currentLevel->GetButtons()[1]->GetEntity()->ChangeTexture(game.GetTexture("multiplayer"));
+                game.SetMultiplayer(false);
+              }
+
+              else if (index == 1) {
+                button->GetEntity()->ChangeTexture(game.GetTexture("multiplayer_chosen"));
+                currentLevel->GetButtons()[0]->GetEntity()->ChangeTexture(game.GetTexture("singleplayer"));
+                game.SetMultiplayer(true);
+              }
+
+              else {
+                currentLevel = game.SwitchLevel(level);
+                physics = currentLevel->GetPhysics();
+              }
             }
+
+            index++;
           }
+
         }
 
         if (event.key.scancode == sf::Keyboard::Scan::Escape) {

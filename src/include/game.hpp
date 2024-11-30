@@ -28,6 +28,8 @@ class Game {
   sf::Texture& GetTexture(std::string name);
   std::map<std::string, sf::Texture> GetTextures();
 
+  void SetMultiplayer(bool multi);
+
  private:
   std::string playerName_;
   Level* currentLevel_;
@@ -36,5 +38,7 @@ class Game {
   int windowHeight_;
 
   std::map<std::string, sf::Texture> textures_;
+
+  bool multiplayer_ = false;
 };
 #endif
