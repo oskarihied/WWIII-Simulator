@@ -43,13 +43,18 @@ Pos Game::ToGamePos(int x, int y, Camera cam) {
 
 
 void Game::LoadTextures(FileManager& manager) {
-  manager.LoadTextures(textures_, "images");
+  manager.LoadTextures(textures_, "../images");
   /*
     for (auto texture : textures_) {
       std::cout << texture.first << std::endl;
     }
     */
 };
+
+void Game::LoadLevel(FileManager& manager, Level* level) {
+  /*currentLevel_->AddBoxes(manager.LoadLevel("src/levels/level_1", textures_));*/
+  manager.LoadLevel("../src/levels/level_1", textures_, level);
+}
 
 sf::Texture& Game::GetTexture(std::string name) { return textures_.at(name); }
 

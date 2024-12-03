@@ -25,6 +25,8 @@ class Game {
 
   void LoadTextures(FileManager& manager);
 
+  void LoadLevel(FileManager& manager, Level* level);
+
   sf::Texture& GetTexture(std::string name);
   std::map<std::string, sf::Texture> GetTextures();
 

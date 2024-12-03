@@ -5,10 +5,13 @@
 #include "boxes.hpp"
 #include "game.hpp"
 #include "physics.hpp"
+#include <filesystem>
 //#include "guns.hpp"
 
 int main() {
   // Create the main window
+  
+  std::cout << "Current working directory: " << std::filesystem::current_path() << std::endl;
 
   int w = 1300;
   int h = 700;
@@ -25,6 +28,7 @@ int main() {
 
   menu->AddNonPhysicalEntity(new Entity(4, 2.5, game.GetTexture("logo")));
   menu->AddButton(new Button(2, 0, 1, 1, game.GetTexture("button")));
+
 
   Level* currentLevel = game.GetCurrentLevel();
 
@@ -50,11 +54,11 @@ int main() {
   level->AddBox(new Wood(8, 7, game));
   */
 
-  for (int i = 0; i < 10; i++) {
+  /*for (int i = 0; i < 10; i++) {
     for (int j = 0; j < 10; j++) {
       level->AddBox(new Wood(7+i, j, game.GetTexture("wood")));
     }
-  }
+  }*/
 
 
 
@@ -100,6 +104,7 @@ int main() {
   // physics->AddBox(new Box(1, 4000));
   level->AddGround(new Ground(0, -1));
   level->AddGround(new Ground(10, -1));
+  game.LoadLevel(manager, level);
 
   window.setFramerateLimit(60);
   // Start the game loop

@@ -1,4 +1,5 @@
 #include "pos.hpp"
+#include "math.h"
 
 Pos::Pos() : x_(0), y_(0) {}
 
