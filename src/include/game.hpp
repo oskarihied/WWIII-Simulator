@@ -11,10 +11,9 @@ class Game {
  public:
   Game(int w, int h);
 
-  Level* StartLevel();
-  Level* StartMenu();
+  void StartLevel(int levelIndex);
 
-  Level* SwitchLevel(Level* level);
+  void StartMenu();
 
   Level* GetCurrentLevel();
 
@@ -23,10 +22,6 @@ class Game {
 
   std::vector<Entity*> LevelEntities() { return currentLevel_->GetEntities(); }
 
-  void LoadTextures(FileManager& manager);
-
-  void LoadLevel(FileManager& manager, Level* level);
-
   sf::Texture& GetTexture(std::string name);
   std::map<std::string, sf::Texture> GetTextures();
 
@@ -34,13 +29,14 @@ class Game {
 
  private:
   std::string playerName_;
-  Level* currentLevel_;
+  Level* currentLevel_ = nullptr;
 
   int windowWidth_;
   int windowHeight_;
 
   std::map<std::string, sf::Texture> textures_;
 
+  FileManager manager_ = FileManager();
   bool multiplayer_ = false;
 };
 #endif

@@ -12,6 +12,8 @@ class Physics {
  public:
   Physics();
 
+  ~Physics();
+
   // simulate the simulation one simulation step
   void SimulateWorld(float simulationStep);
 

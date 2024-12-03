@@ -39,13 +39,13 @@ Entity::Entity(float x, float y, float xVel, float yVel, sf::Texture& texture)
 }
 
 bool Entity::CanBeDamaged() {
-  if (damaged_) return true;
-  else return false;
+  if (damaged_)
+    return true;
+  else
+    return false;
 }
 
-std::optional<sf::Texture> Entity::GetDamagedTexture() {
-  return damaged_;
-}
+std::optional<sf::Texture> Entity::GetDamagedTexture() { return damaged_; }
 
 Pos Entity::GetPos() { return pos_; }
 
@@ -104,7 +104,7 @@ float Entity::ChangeHealth(float amount) {
 }
 
 float Entity::GetHealth() { return health_; }
-float Entity::GetMaxHealth() {return maxHealth; }
+float Entity::GetMaxHealth() { return maxHealth; }
 
 void Entity::SetHealth(float health) {
   health_ = health;
@@ -112,6 +112,4 @@ void Entity::SetHealth(float health) {
   if (health_ < 0) health = 0;
 }
 
-bool Entity::Explodes() {
-  return explode_;
-}
+bool Entity::Explodes() { return explode_; }

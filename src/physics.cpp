@@ -15,6 +15,12 @@ Physics::Physics() {
   // b2World_SetHitEventThreshold(simulationWorld_, 1);
 }
 
+Physics::~Physics() {
+  for (auto it : entities_) {
+    delete it;
+  }
+}
+
 void Physics::SimulateWorld(float simulationStep) {
   // Update simulation Objects locations
   b2World_Step(simulationWorld_, simulationStep, 4);
@@ -59,14 +65,14 @@ void Physics::SimulateWorld(float simulationStep) {
       if (PRINT_DEBUG)
         std::cout << "ent1Bullet: " << entities_[inx1]->GetHealth()
                   << std::endl;
-    } 
+    }
     */
     else if (is1Ground) {
       entities_[inx2]->ChangeHealth(entityDamage);
       if (PRINT_DEBUG)
         std::cout << "ent2Ground: " << entities_[inx2]->GetHealth()
                   << std::endl;
-                  
+
     } else if (is2Ground) {
       entities_[inx1]->ChangeHealth(entityDamage);
       if (PRINT_DEBUG)
@@ -180,7 +186,7 @@ b2BodyId Physics::AddBullet(Bullet* bullet) {
 
   b2bodies_.push_back(bulletId);
   entities_.push_back(bullet);
-  //bullets_.push_back(bulletId.index1);
+  // bullets_.push_back(bulletId.index1);
   return bulletId;
 };
 
@@ -218,20 +224,18 @@ void Physics::SetPosition(b2BodyId body, float xPos, float yPos,
 
 void Physics::Contact(b2ContactHitEvent contact) {}
 
-
 void Physics::SpawnExplosion(Pos pos, float force) {
-  
   int i = 0;
   for (Entity* entity : entities_) {
-    
     Pos vector = pos.VectorTo(entity->GetPos());
     float distance = std::max(pos.Distance(entity->GetPos()), 0.1f);
 
-    b2Vec2 forceVec = b2Vec2 {force * vector.GetX() / (float)pow(distance, 2), force * vector.GetY() / (float)pow(distance, 2)};
-    b2Vec2 position = b2Vec2 {pos.GetX(), pos.GetY()};
+    b2Vec2 forceVec = b2Vec2{force * vector.GetX() / (float)pow(distance, 2),
+                             force * vector.GetY() / (float)pow(distance, 2)};
+    b2Vec2 position = b2Vec2{pos.GetX(), pos.GetY()};
 
     b2Body_ApplyForce(b2bodies_[i], forceVec, position, true);
-    entity->ChangeHealth(-(force*10)/distance);
+    entity->ChangeHealth(-(force * 10) / distance);
 
     i++;
   }
@@ -248,6 +252,7 @@ void Physics::RemovePhysicalEntity(Entity* entity) {
   }
 
   if (index != -1) {
-    b2Body_SetTransform(b2bodies_[index], b2Vec2{100000, 100000}, b2Body_GetRotation(b2bodies_[index]));
+    b2Body_SetTransform(b2bodies_[index], b2Vec2{100000, 100000},
+                        b2Body_GetRotation(b2bodies_[index]));
   }
 }

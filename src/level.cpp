@@ -9,6 +9,11 @@ Level::Level(sf::Texture& background, bool isMenu)
   background_.setScale(2.0f, 2.0f);
 }
 
+Level::~Level() {
+  delete camera_;
+  delete physics_;
+}
+
 Camera* Level::GetCam() { return camera_; }
 
 bool Level::IsMenu() { return isMenu_; }
