@@ -3,6 +3,7 @@
 
 #include <SFML/Graphics.hpp>
 #include <iostream>
+#include <optional>
 #include <string>
 #include <vector>
 
@@ -17,14 +18,7 @@
 
 class Entity {
  public:
-
-  enum class EntityType {
-    UNDEFINED,
-    BOX,
-    GROUND,
-    BULLET,
-    ENEMY
-  };
+  enum class EntityType { UNDEFINED, BOX, GROUND, BULLET, ENEMY };
 
   Entity();
   Entity(float x, float y);
@@ -50,8 +44,7 @@ class Entity {
 
   void ChangeToDamaged();
 
-
-  void SetHealth(float health); 
+  void SetHealth(float health);
   float ChangeHealth(float amount);
 
   void ChangeTexture(sf::Texture& texture);

@@ -1,23 +1,28 @@
 #include "game.hpp"
 
-Game::Game(int w, int h) : windowWidth_(w), windowHeight_(h) {}
+Game::Game(int w, int h) : windowWidth_(w), windowHeight_(h) {
+  manager_.LoadTextures(textures_, "images");
+}
 
-Level* Game::StartLevel() {
-  currentLevel_ = new Level(this->GetTexture("background1"));
+void Game::StartLevel(int levelIndex) {
+  delete currentLevel_;
+
+  std::string filename = "src/levels/level_" + std::to_string(levelIndex);
+
+  currentLevel_ = manager_.LoadLevel(filename, textures_, multiplayer_);
+  for (int i = 0; i < 5; i++) {
+    currentLevel_->AddGround(new Ground(i * 10, -1));
+  }
   currentLevel_->GetCam()->MoveTo(20, 15);
   currentLevel_->GetCam()->ZoomTo(30);
   currentLevel_->GetCam()->NewAnimation(Pos(-5, 7), 15, 2);
-  return currentLevel_;
 }
 
-Level* Game::StartMenu() {
-  currentLevel_ = (Level*)(new Menu(this->GetTexture("menu")));
-  return currentLevel_;
-}
-
-Level* Game::SwitchLevel(Level* level) {
-  currentLevel_ = level;
-  return currentLevel_;
+void Game::StartMenu() {
+  if (currentLevel_ != nullptr) {
+    delete currentLevel_;
+  }
+  currentLevel_ = (Level*)new Menu(textures_);
 }
 
 Level* Game::GetCurrentLevel() { return currentLevel_; }
@@ -40,20 +45,6 @@ Pos Game::ToGamePos(int x, int y, Camera cam) {
   float posY = (-y * (cam.GetZoom())) / windowWidth_ + cam.GetPos().GetY();
 
   return Pos(posX, posY);
-}
-
-void Game::LoadTextures(FileManager& manager) {
-  manager.LoadTextures(textures_, "images");
-  /*
-    for (auto texture : textures_) {
-      std::cout << texture.first << std::endl;
-    }
-    */
-};
-
-void Game::LoadLevel(FileManager& manager, Level* level) {
-  /*currentLevel_->AddBoxes(manager.LoadLevel("src/levels/level_1", textures_));*/
-  manager.LoadLevel("src/levels/level_1", textures_, level);
 }
 
 sf::Texture& Game::GetTexture(std::string name) { return textures_.at(name); }

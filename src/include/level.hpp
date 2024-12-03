@@ -15,6 +15,8 @@ class Level {
  public:
   Level(sf::Texture& background, bool isMenu = false);
 
+  ~Level();
+
   Camera* GetCam();
 
   bool IsMenu();
