@@ -11,7 +11,7 @@ class Game {
  public:
   Game(int w, int h);
 
-  Level* startLevel();
+  Level* StartLevel();
   Level* StartMenu();
 
   Level* SwitchLevel(Level* level);
@@ -21,7 +21,7 @@ class Game {
   std::pair<int, int> ToScreenPos(Pos pos, Camera cam);
   Pos ToGamePos(int x, int y, Camera cam);
 
-  std::vector<Entity*> levelEntities() { return currentLevel_->GetEntities(); }
+  std::vector<Entity*> LevelEntities() { return currentLevel_->GetEntities(); }
 
   void LoadTextures(FileManager& manager);
 
@@ -29,6 +29,8 @@ class Game {
 
   sf::Texture& GetTexture(std::string name);
   std::map<std::string, sf::Texture> GetTextures();
+
+  void SetMultiplayer(bool multi);
 
  private:
   std::string playerName_;
@@ -38,5 +40,7 @@ class Game {
   int windowHeight_;
 
   std::map<std::string, sf::Texture> textures_;
+
+  bool multiplayer_ = false;
 };
 #endif

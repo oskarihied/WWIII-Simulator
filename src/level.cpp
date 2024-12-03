@@ -1,20 +1,17 @@
 #include "level.hpp"
 
-Level::Level(sf::Texture& background)
+Level::Level(sf::Texture& background, bool isMenu)
     : camera_(new Camera(-1, 4)),
       physics_(new Physics()),
-      entities_(physics_->GetEntities()) {
-
-    background_.setTexture(background);
-    background_.setScale(2.0f, 2.0f);
-    /*
-    for (int i = 0; i < 10; i++) {
-      bullets_.push_back(new RegularBullet(-3, -2, 0, 0));
-    } 
-    */
+      entities_(physics_->GetEntities()),
+      isMenu_(isMenu) {
+  background_.setTexture(background);
+  background_.setScale(2.0f, 2.0f);
 }
 
 Camera* Level::GetCam() { return camera_; }
+
+bool Level::IsMenu() { return isMenu_; }
 
 void Level::AddEntity(Entity* entity) {
   // entities_.push_back(entity);
@@ -25,24 +22,18 @@ void Level::AddBox(Box* box) {
   // entities_.push_back(box);
 }
 
-void Level::AddGround(Ground* ground) {
-    physics_->AddGround(ground);
-}
+void Level::AddGround(Ground* ground) { physics_->AddGround(ground); }
 
 void Level::AddExplosion(Explosion* explosion, float force) {
-    nonPhysicals_.push_back((Entity*)explosion);
-    explosions_.push_back(explosion);
-    Pos pos = explosion->GetPos();
-    physics_->SpawnExplosion(pos, force);
+  nonPhysicals_.push_back((Entity*)explosion);
+  explosions_.push_back(explosion);
+  Pos pos = explosion->GetPos();
+  physics_->SpawnExplosion(pos, force);
 }
 
-std::vector<Explosion*> Level::GetExplosions(){
-  return explosions_;
-}
+std::vector<Explosion*> Level::GetExplosions() { return explosions_; }
 
-void Level::AddEnemy(Enemy* enemy) {
-    physics_->AddEnemy(enemy);
-}
+void Level::AddEnemy(Enemy* enemy) { physics_->AddEnemy(enemy); }
 
 void Level::AddBoxes(std::vector<Box*> boxes) {
   for (auto it : boxes) {
@@ -51,22 +42,17 @@ void Level::AddBoxes(std::vector<Box*> boxes) {
 }
 
 void Level::AddButton(Button* button) {
-    buttons_.push_back(button);
-    nonPhysicals_.push_back(button->GetEntity());
+  buttons_.push_back(button);
+  nonPhysicals_.push_back(button->GetEntity());
 }
 
-sf::Sprite& Level::GetBackground() {
-    return background_;
-}
+sf::Sprite& Level::GetBackground() { return background_; }
 
-Physics* Level::GetPhysics() {
-    return physics_;
-}
+Physics* Level::GetPhysics() { return physics_; }
 
 void Level::Fire(float speed) {
-  if (!bullets_.empty()) {
-    Bullet* b = bullets_.back();
-    bullets_.pop_back();
+  if (currentGun_) {
+    Bullet* b = currentGun_->GetBullet();
 
     Pos location = CurrentGun()->GetPos();
     float angle = -CurrentGun()->GetRotation() * (M_PI / 180);
@@ -78,6 +64,13 @@ void Level::Fire(float speed) {
     b->RotationTo(-CurrentGun()->GetRotation());
 
     physics_->AddBullet(b);
+
+    guns_.pop_back();
+    if (guns_.empty()) {
+      currentGun_ = nullptr;
+    } else {
+      currentGun_ = guns_.back();
+    }
   }
 }
 
@@ -103,7 +96,6 @@ void Level::AddScores(std::vector<std::pair<std::string, int>> scores) {
 
 std::vector<Entity*> Level::GetNonPhysicalEntities() { return nonPhysicals_; }
 
-
 void Level::RemovePhysicalEntity(Entity* entity) {
   physics_->RemovePhysicalEntity(entity);
 }
@@ -123,8 +115,6 @@ void Level::RemoveNonPhysicalEntity(Entity* entity) {
   }
 }
 
-
-
 void Level::RemoveExplosion(Explosion* entity) {
   int index = -1;
   int i = 0;
@@ -141,24 +131,11 @@ void Level::RemoveExplosion(Explosion* entity) {
   }
 }
 
+std::vector<Button*> Level::GetButtons() { return buttons_; }
 
-
-std::vector<Button*> Level::GetButtons(){
-    return buttons_;
-}
-
-Entity* Level::CurrentGun() {
-    return currentGun_;
-}
-/*
-std::vector<Entity*> Level::GetGuns() {
-    return guns_;
-}
-*/
+Entity* Level::CurrentGun() { return currentGun_; }
 
 void Level::AddGun(Gun* gun) {
-  guns_.push_back(nonPhysicals_.size());
-  bullets_.push_back(gun->GetBullet());
-  nonPhysicals_.push_back(gun);
+  guns_.push_back(gun);
   currentGun_ = gun;
 }
