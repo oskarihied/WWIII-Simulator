@@ -6,7 +6,12 @@ Level::Level(sf::Texture& background, bool isMenu)
       entities_(physics_->GetEntities()),
       isMenu_(isMenu) {
   background_.setTexture(background);
-  background_.setScale(2.0f, 2.0f);
+  background_.setScale(1.0f, 1.0f);
+}
+
+Level::~Level() {
+  delete camera_;
+  delete physics_;
 }
 
 Camera* Level::GetCam() { return camera_; }
@@ -71,6 +76,9 @@ void Level::Fire(float speed) {
     } else {
       currentGun_ = guns_.back();
     }
+
+    timer_ = 0;
+    bulletTimer_ = true;
   }
 }
 
@@ -138,4 +146,34 @@ Entity* Level::CurrentGun() { return currentGun_; }
 void Level::AddGun(Gun* gun) {
   guns_.push_back(gun);
   currentGun_ = gun;
+}
+
+void Level::AddBulletTimer(float time) {
+  if (bulletTimer_) {
+    timer_ += time;
+  }
+}
+
+float Level::GetTimer() {
+  if (bulletTimer_) {
+    return timer_;
+  }
+  
+  else {
+    return 0;
+  }
+}
+
+
+void Level::SetTimer(bool timer) {
+  timer_ = 0;
+  bulletTimer_ = timer;
+}
+
+void Level::AddPoints(int points) {
+  points_ += points;
+}
+
+int Level::GetPoints() {
+  return points_;
 }

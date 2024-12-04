@@ -3,6 +3,7 @@
 
 #include <SFML/Graphics.hpp>
 #include <iostream>
+#include <optional>
 #include <string>
 #include <vector>
 
@@ -10,14 +11,7 @@
 
 class Entity {
  public:
-
-  enum class EntityType {
-    UNDEFINED,
-    BOX,
-    GROUND,
-    BULLET,
-    ENEMY
-  };
+  enum class EntityType { UNDEFINED, BOX, GROUND, BULLET, ENEMY };
 
   Entity();
   Entity(float x, float y);
@@ -39,12 +33,20 @@ class Entity {
   float GetRotation();
 
   float GetHealth();
-  void SetHealth(float health); 
+  float GetMaxHealth();
+
+  void ChangeToDamaged();
+
+  void SetHealth(float health);
   float ChangeHealth(float amount);
 
   void ChangeTexture(sf::Texture& texture);
 
   std::string GetImage();
+
+  bool CanBeDamaged();
+
+  std::optional<sf::Texture> GetDamagedTexture();
 
   sf::Sprite* GetSprite();
 
@@ -56,19 +58,33 @@ class Entity {
 
   bool Explodes();
 
+  int GetPoints();
+
+  void HealthToNull();
+
+  void Die();
+  bool GetDead();
+
  protected:
   std::string image_ = "";
   Pos pos_;
   Pos vel_;
   float rotation_ = 0.0f;
   sf::Texture texture_;
+  std::optional<sf::Texture> damaged_ = std::nullopt;
   sf::Sprite sprite_;
   enum EntityType type_ = EntityType::UNDEFINED;
   float health_ = 1000;
   float maxHealth = 1000;
   float mass = 10;
 
+  bool damagedTexture_ = false;
+
   bool explode_ = false;
+
+  int points_ = 0;
+
+  bool dead_ = false;
 };
 
 #endif

@@ -1,20 +1,34 @@
 #include "game.hpp"
 
-Game::Game(int w, int h) : windowWidth_(w), windowHeight_(h) {}
-
-Level* Game::StartLevel() {
-  currentLevel_ = new Level(this->GetTexture("background1"));
-  return currentLevel_;
+Game::Game(int w, int h) : windowWidth_(w), windowHeight_(h) {
+  manager_.LoadTextures(textures_, "images");
 }
 
-Level* Game::StartMenu() {
-  currentLevel_ = (Level*)(new Menu(this->GetTexture("menu")));
-  return currentLevel_;
+void Game::StartLevel(int levelIndex) {
+  delete currentLevel_;
+
+  std::string filename = "src/levels/level_" + std::to_string(levelIndex);
+
+  currentLevel_ = manager_.LoadLevel(filename, textures_, multiplayer_);
+  for (int i = 0; i < 5; i++) {
+    currentLevel_->AddGround(new Ground(i * 10, -1));
+  }
+  currentLevel_->GetCam()->MoveTo(20, 15);
+  currentLevel_->GetCam()->ZoomTo(30);
+
+  if (multiplayer_) {
+    currentLevel_->GetCam()->NewAnimation(Pos(currentLevel_->CurrentGun()->GetPos().GetX() - 10, 7), 15, 2);
+  }
+  else {
+    currentLevel_->GetCam()->NewAnimation(Pos(currentLevel_->CurrentGun()->GetPos().GetX() - 5, 7), 15, 2);
+  }
 }
 
-Level* Game::SwitchLevel(Level* level) {
-  currentLevel_ = level;
-  return currentLevel_;
+void Game::StartMenu() {
+  if (currentLevel_ != nullptr) {
+    delete currentLevel_;
+  }
+  currentLevel_ = (Level*)new Menu(textures_);
 }
 
 Level* Game::GetCurrentLevel() { return currentLevel_; }
@@ -39,15 +53,9 @@ Pos Game::ToGamePos(int x, int y, Camera cam) {
   return Pos(posX, posY);
 }
 
-void Game::LoadTextures(FileManager& manager) {
-  manager.LoadTextures(textures_, "images");
-  /*
-    for (auto texture : textures_) {
-      std::cout << texture.first << std::endl;
-    }
-    */
-};
-
 sf::Texture& Game::GetTexture(std::string name) { return textures_.at(name); }
 
 std::map<std::string, sf::Texture> Game::GetTextures() { return textures_; }
+
+void Game::SetMultiplayer(bool multi) { multiplayer_ = multi; }
+bool Game::GetMultiplayer() { return multiplayer_; }

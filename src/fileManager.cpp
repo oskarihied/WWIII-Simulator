@@ -57,37 +57,88 @@ std::vector<Entity*>& entities){ std::ofstream file(filename);
         file << it->GetPos
     }
 }*/
-std::vector<Entity*> FileManager::LoadLevel(
-    const std::string& filename, std::map<std::string, sf::Texture>& textures) {
-  std::vector<Entity*> entities;
+
+void FileManager::AddEntityToLevel(
+    Level* level, std::string type, int x, int y,
+    std::map<std::string, sf::Texture> textures) {
+  if (type == "C") {
+    level->AddBox(new Concrete(x, y, textures));
+  } else if (type == "W") {
+    level->AddBox(new Wood(x, y, textures));
+  } else if (type == "G") {
+    level->AddBox(new Glass(x, y, textures));
+  } else if (type == "E") {
+    level->AddEnemy(new Enemy(x, y, textures));
+  } else if (type == "A") {
+    level->AddGun(new Rifle(x, y, textures));
+  } else if (type == "R") {
+    level->AddGun(new RocketLauncher(x, y, textures));
+  }
+}
+
+Level* FileManager::LoadLevel(const std::string& filename,
+                              std::map<std::string, sf::Texture>& textures,
+                              const bool& multiplayer) {
   std::ifstream file(filename);
 
   if (!file.is_open()) {
-    return entities;
+    return nullptr;
   }
+
+  Level* level = new Level(textures.at("background1"));
 
   std::string line;
   while (std::getline(file, line)) {
-    std::istringstream stream(line);
     std::string type;
     int x, y;
-    std::getline(stream, type, ';');
-    stream >> x;
-    stream.ignore();
-    stream >> y;
-    if (type == "C") {
-      entities.push_back(new Concrete(x, y, textures.at("concrete")));
-    } else if (type == "W") {
-      entities.push_back(new Wood(x, y, textures.at("wood")));
-    } else if (type == "G") {
-      entities.push_back(new Glass(x, y, textures.at("glass")));
-    } else if (type == "E") {
-      entities.push_back(new Enemy(x, y, textures.at("enemy")));
+
+    std::istringstream stream(line);
+
+    if (stream.peek() == '*') {
+      stream.ignore();
+      x = 0;
+      y = -0.2;
+      while (std::getline(stream, type, ';')) {
+        AddEntityToLevel(level, type, x, y, textures);
+        if (multiplayer) {
+          int mirrorX = 20 + (20 - x);
+          AddEntityToLevel(level, type, mirrorX, y, textures);
+        }
+      }
+    } else if (stream.peek() == '+') {
+      stream.ignore();
+      x = 0;
+      y = 0;
+      std::string icon;
+      std::getline(stream, icon);
+      level->AddNonPhysicalEntity(new Entity(x, y, textures.at(icon)));
+    } else if (stream.peek() == '-') {
+      if (multiplayer) {
+        stream.ignore();
+        x = 40;
+        y = 0;
+        std::string icon;
+        std::getline(stream, icon);
+        level->AddNonPhysicalEntity(new Entity(x, y, textures.at(icon)));
+      } else {
+        std::string byeBye;
+        std::getline(stream, byeBye);
+      }
+    } else {
+      std::getline(stream, type, ';');
+      stream >> x;
+      stream.ignore();
+      stream >> y;
+      AddEntityToLevel(level, type, x, y, textures);
+      if (multiplayer) {
+        int mirrorX = 20 + (20 - x);
+        AddEntityToLevel(level, type, mirrorX, y, textures);
+      }
     }
   }
 
   file.close();
-  return entities;
+  return level;
 }
 
 void FileManager::LoadTextures(std::map<std::string, sf::Texture>& map,

@@ -1,4 +1,5 @@
 #include "pos.hpp"
+#include "math.h"
 
 #include <math.h>
 

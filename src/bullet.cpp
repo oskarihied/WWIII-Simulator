@@ -21,14 +21,15 @@ RegularBullet::RegularBullet(float x, float y, float xVel, float yVel)
     }
 
 RifleBullet::RifleBullet(float x, float y, std::map<std::string, sf::Texture> textures) 
-    : Bullet(x, y, 0, 0, textures.at("bullet"), 0.4f, 0.1f, 20, 1) {
+    : Bullet(x, y, 0, 0, textures.at("bullet"), 0.4f, 0.1f, 1000, 1) {
+      damaged_ = std::make_optional(textures.at("bullet_damaged"));
       maxHealth = 1;
       health_ = 1;
       mass_ = 50;
     }
 
 Rocket::Rocket(float x, float y, std::map<std::string, sf::Texture> textures) 
-    : Bullet(x, y, 0, 0, textures.at("rocket"), 0.4f, 0.1f, 20, 1) {
+    : Bullet(x, y, 0, 0, textures.at("rocket"), 0.4f, 0.1f, 1000, 1) {
       explode_ = true;
       maxHealth = 0.1f;
       health_ = 0.1f;

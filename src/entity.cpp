@@ -38,6 +38,15 @@ Entity::Entity(float x, float y, float xVel, float yVel, sf::Texture& texture)
   // std::cout << &sprite_ << std::endl;
 }
 
+bool Entity::CanBeDamaged() {
+  if (damaged_)
+    return true;
+  else
+    return false;
+}
+
+std::optional<sf::Texture> Entity::GetDamagedTexture() { return damaged_; }
+
 Pos Entity::GetPos() { return pos_; }
 
 Pos Entity::GetVel() { return vel_; }
@@ -47,6 +56,13 @@ void Entity::UpdateVel(float xVel, float yVel) { vel_ = Pos(xVel, yVel); }
 void Entity::ChangeTexture(sf::Texture& texture) {
   texture_ = texture;
   sprite_.setTexture(texture_);
+}
+
+void Entity::ChangeToDamaged() {
+  if (CanBeDamaged() && !damagedTexture_) {
+    ChangeTexture(damaged_.value());
+    damagedTexture_ = true;
+  }
 }
 
 std::string Entity::GetImage() { return image_; }
@@ -87,7 +103,8 @@ float Entity::ChangeHealth(float amount) {
   }
 }
 
-float Entity::GetHealth() { return health_; };
+float Entity::GetHealth() { return health_; }
+float Entity::GetMaxHealth() { return maxHealth; }
 
 void Entity::SetHealth(float health) {
   health_ = health;
@@ -95,6 +112,17 @@ void Entity::SetHealth(float health) {
   if (health_ < 0) health = 0;
 }
 
-bool Entity::Explodes() {
-  return explode_;
+bool Entity::Explodes() { return explode_; }
+
+int Entity::GetPoints() { return points_; } 
+
+void Entity::HealthToNull() { health_ = std::numeric_limits<float>::min(); }
+
+
+void Entity::Die() {
+  dead_ = true;
+}
+
+bool Entity::GetDead() {
+  return dead_;
 }

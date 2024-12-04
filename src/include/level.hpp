@@ -15,6 +15,8 @@ class Level {
  public:
   Level(sf::Texture& background, bool isMenu = false);
 
+  ~Level();
+
   Camera* GetCam();
 
   bool IsMenu();
@@ -53,6 +55,14 @@ class Level {
   // std::vector<Entity*> GetGuns();
   void AddGun(Gun* gun);
 
+  void AddBulletTimer(float time);
+  float GetTimer();
+  void SetTimer(bool timer);
+
+  void AddPoints(int points);
+  int GetPoints();
+
+
  protected:
   bool isMenu_;
   Camera* camera_;
@@ -69,6 +79,11 @@ class Level {
   sf::Sprite background_;
 
   std::vector<Button*> buttons_;
+
+  float timer_ = 0;
+  bool bulletTimer_ = false;
+
+  int points_ = 0;
 };
 
 #endif
