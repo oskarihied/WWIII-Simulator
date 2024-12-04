@@ -25,6 +25,8 @@ int main() {
 
   Level* currentLevel = game.GetCurrentLevel();
 
+  Bullet* currentBullet = nullptr;
+
   // level->AddBox(new Concrete(3, 0, game));
   // level->AddBox(new Wood(4, 0, game));
   // level->AddBox(new Wood(5, 0, game));
@@ -111,12 +113,17 @@ int main() {
       // Advance simulation
       game.GetCurrentLevel()->GetPhysics()->SimulateWorld(1.0f / 60.0f);
 
-      Entity* gun = currentLevel->CurrentGun();
+      Gun* gun = currentLevel->CurrentGun();
+
+      if (currentLevel->GetTimer() > 0 && currentLevel->GetTimer() <= 2 && !currentBullet->GetDead()) {
+        currentLevel->GetCam()->MoveTo(currentBullet->GetPos().GetX() - 5, currentLevel->GetCam()->GetPos().GetY());
+      }
 
       if (gun) {
         currentLevel->AddBulletTimer(1.0f / 60.0f);
 
         if (currentLevel->GetTimer() > 2) {
+          //currentLevel->GetCam()->MoveTo(currentBullet->GetPos().GetX() - 5, currentLevel->GetCam()->GetPos().GetY());
           currentLevel->SetTimer(false);
 
           if (gun->GetPos().GetX() == 0) {
@@ -232,6 +239,7 @@ int main() {
 
         if (event.type == sf::Event::MouseButtonReleased) {
           float vel = std::min(timer.getElapsedTime().asSeconds(), 2.0f);
+          currentBullet = currentLevel->CurrentGun()->GetBullet();
           currentLevel->Fire(vel);
         }
       }

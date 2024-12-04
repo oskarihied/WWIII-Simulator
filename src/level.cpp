@@ -137,7 +137,7 @@ void Level::RemoveExplosion(Explosion* entity) {
 
 std::vector<Button*> Level::GetButtons() { return buttons_; }
 
-Entity* Level::CurrentGun() { return currentGun_; }
+Gun* Level::CurrentGun() { return currentGun_; }
 
 void Level::AddGun(Gun* gun) {
   guns_.push_back(gun);
