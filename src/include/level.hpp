@@ -59,6 +59,9 @@ class Level {
   float GetTimer();
   void SetTimer(bool timer);
 
+  void AddPoints(int points);
+  int GetPoints();
+
 
  protected:
   bool isMenu_;
@@ -79,6 +82,8 @@ class Level {
 
   float timer_ = 0;
   bool bulletTimer_ = false;
+
+  int points_ = 0;
 };
 
 #endif

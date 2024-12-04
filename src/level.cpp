@@ -169,3 +169,11 @@ void Level::SetTimer(bool timer) {
   timer_ = 0;
   bulletTimer_ = timer;
 }
+
+void Level::AddPoints(int points) {
+  points_ += points;
+}
+
+int Level::GetPoints() {
+  return points_;
+}

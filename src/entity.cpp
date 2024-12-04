@@ -113,3 +113,16 @@ void Entity::SetHealth(float health) {
 }
 
 bool Entity::Explodes() { return explode_; }
+
+int Entity::GetPoints() { return points_; } 
+
+void Entity::HealthToNull() { health_ = std::numeric_limits<float>::min(); }
+
+
+void Entity::Die() {
+  dead_ = true;
+}
+
+bool Entity::GetDead() {
+  return dead_;
+}

@@ -65,6 +65,13 @@ class Entity {
 
   bool Explodes();
 
+  int GetPoints();
+
+  void HealthToNull();
+
+  void Die();
+  bool GetDead();
+
  protected:
   std::string image_ = "";
   Pos pos_;
@@ -81,6 +88,10 @@ class Entity {
   bool damagedTexture_ = false;
 
   bool explode_ = false;
+
+  int points_ = 0;
+
+  bool dead_ = false;
 };
 
 #endif

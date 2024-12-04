@@ -292,29 +292,36 @@ int main() {
 
         window.draw(*(entity->GetSprite()));
 
-        if (entity->GetHealth() <= entity->GetMaxHealth() * 0.9) {
-          entity->ChangeToDamaged();
-        }
+        if (!entity->GetDead()) {
 
-        if (entity->GetHealth() <= 0) {
-          Pos position = entity->GetPos();
-          // bool explodes = entity->Explodes();
-          currentLevel->RemovePhysicalEntity(entity);
+          if (entity->GetHealth() <= entity->GetMaxHealth() * 0.9) {
+            entity->ChangeToDamaged();
+          }
 
-          if (entity->Explodes()) {
-            currentLevel->AddExplosion(
-                new Explosion(entity->GetPos().GetX() + 0.01f,
-                              entity->GetPos().GetY() + 0.01f,
-                              game.GetTexture("explosion1"),
-                              game.GetTexture("explosion2"),
-                              game.GetTexture("explosion3"), 0),
-                500.0f);
+          if (entity->GetHealth() <= 0) {
+            
+            entity->Die();
+            currentLevel->AddPoints(entity->GetPoints());
+
+            Pos position = entity->GetPos();
+            // bool explodes = entity->Explodes();
+            currentLevel->RemovePhysicalEntity(entity);
+
+            if (entity->Explodes()) {
+              currentLevel->AddExplosion(
+                  new Explosion(entity->GetPos().GetX() + 0.01f,
+                                entity->GetPos().GetY() + 0.01f,
+                                game.GetTexture("explosion1"),
+                                game.GetTexture("explosion2"),
+                                game.GetTexture("explosion3"), 0),
+                  500.0f);
+            }
           }
         }
       }
     }
 
-    // std::cout << std::endl;
+    //std::cout << currentLevel->GetPoints() <<std::endl;
     // Update the window
 
     window.display();
