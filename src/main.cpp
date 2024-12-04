@@ -110,9 +110,24 @@ int main() {
     if (!inMenu) {
       // Advance simulation
       game.GetCurrentLevel()->GetPhysics()->SimulateWorld(1.0f / 60.0f);
-      currentLevel->GetCam()->AnimationStep(1.0f / 60.0f);
 
       Entity* gun = currentLevel->CurrentGun();
+
+      currentLevel->AddBulletTimer(1.0f / 60.0f);
+
+      if (currentLevel->GetTimer() > 2) {
+        currentLevel->SetTimer(false);
+
+        if (gun->GetPos().GetX() == 0) {
+          currentLevel->GetCam()->NewAnimation(Pos(gun->GetPos().GetX() - 5, 7), 15, 2);
+        }
+
+        else {
+          currentLevel->GetCam()->NewAnimation(Pos(gun->GetPos().GetX() - 10, 7), 15, 2);
+        }
+      }
+
+      currentLevel->GetCam()->AnimationStep(1.0f / 60.0f);
 
       if (gun) {
         std::pair<int, int> gunPos =
@@ -301,6 +316,7 @@ int main() {
 
     // std::cout << std::endl;
     // Update the window
+
     window.display();
   }
 

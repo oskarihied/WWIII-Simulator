@@ -15,7 +15,13 @@ void Game::StartLevel(int levelIndex) {
   }
   currentLevel_->GetCam()->MoveTo(20, 15);
   currentLevel_->GetCam()->ZoomTo(30);
-  currentLevel_->GetCam()->NewAnimation(Pos(-5, 7), 15, 2);
+
+  if (multiplayer_) {
+    currentLevel_->GetCam()->NewAnimation(Pos(currentLevel_->CurrentGun()->GetPos().GetX() - 10, 7), 15, 2);
+  }
+  else {
+    currentLevel_->GetCam()->NewAnimation(Pos(currentLevel_->CurrentGun()->GetPos().GetX() - 5, 7), 15, 2);
+  }
 }
 
 void Game::StartMenu() {
@@ -52,3 +58,4 @@ sf::Texture& Game::GetTexture(std::string name) { return textures_.at(name); }
 std::map<std::string, sf::Texture> Game::GetTextures() { return textures_; }
 
 void Game::SetMultiplayer(bool multi) { multiplayer_ = multi; }
+bool Game::GetMultiplayer() { return multiplayer_; }

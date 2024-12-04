@@ -26,6 +26,7 @@ class Game {
   std::map<std::string, sf::Texture> GetTextures();
 
   void SetMultiplayer(bool multi);
+  bool GetMultiplayer();
 
  private:
   std::string playerName_;
