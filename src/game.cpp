@@ -2,6 +2,7 @@
 
 Game::Game(int w, int h) : windowWidth_(w), windowHeight_(h) {
   manager_.LoadTextures(textures_, "images");
+  manager_.LoadSFX(sfx_, "sfx");
 }
 
 void Game::StartLevel(int levelIndex) {
@@ -9,7 +10,7 @@ void Game::StartLevel(int levelIndex) {
 
   std::string filename = "src/levels/level_" + std::to_string(levelIndex);
 
-  currentLevel_ = manager_.LoadLevel(filename, textures_, multiplayer_);
+  currentLevel_ = manager_.LoadLevel(filename, textures_, sfx_, multiplayer_);
   for (int i = 0; i < 5; i++) {
     currentLevel_->AddGround(new Ground(i * 10, -1));
   }
@@ -17,10 +18,11 @@ void Game::StartLevel(int levelIndex) {
   currentLevel_->GetCam()->ZoomTo(30);
 
   if (multiplayer_) {
-    currentLevel_->GetCam()->NewAnimation(Pos(currentLevel_->CurrentGun()->GetPos().GetX() - 10, 7), 15, 2);
-  }
-  else {
-    currentLevel_->GetCam()->NewAnimation(Pos(currentLevel_->CurrentGun()->GetPos().GetX() - 5, 7), 15, 2);
+    currentLevel_->GetCam()->NewAnimation(
+        Pos(currentLevel_->CurrentGun()->GetPos().GetX() - 10, 7), 15, 2);
+  } else {
+    currentLevel_->GetCam()->NewAnimation(
+        Pos(currentLevel_->CurrentGun()->GetPos().GetX() - 5, 7), 15, 2);
   }
 }
 
@@ -28,7 +30,7 @@ void Game::StartMenu() {
   if (currentLevel_ != nullptr) {
     delete currentLevel_;
   }
-  currentLevel_ = (Level*)new Menu(textures_);
+  currentLevel_ = (Level*)new Menu(textures_, sfx_);
 }
 
 Level* Game::GetCurrentLevel() { return currentLevel_; }

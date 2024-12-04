@@ -59,7 +59,7 @@ std::vector<Entity*>& entities){ std::ofstream file(filename);
 }*/
 
 void FileManager::AddEntityToLevel(
-    Level* level, std::string type, int x, int y,
+    Level* level, std::string type, float x, float y,
     std::map<std::string, sf::Texture> textures) {
   if (type == "C") {
     level->AddBox(new Concrete(x, y, textures));
@@ -78,6 +78,7 @@ void FileManager::AddEntityToLevel(
 
 Level* FileManager::LoadLevel(const std::string& filename,
                               std::map<std::string, sf::Texture>& textures,
+                              std::map<std::string, sf::SoundBuffer>& sfx,
                               const bool& multiplayer) {
   std::ifstream file(filename);
 
@@ -85,12 +86,12 @@ Level* FileManager::LoadLevel(const std::string& filename,
     return nullptr;
   }
 
-  Level* level = new Level(textures.at("background1"));
+  Level* level = new Level(textures.at("background1"), sfx);
 
   std::string line;
   while (std::getline(file, line)) {
     std::string type;
-    int x, y;
+    float x, y;
 
     std::istringstream stream(line);
 
@@ -142,7 +143,7 @@ Level* FileManager::LoadLevel(const std::string& filename,
 }
 
 void FileManager::LoadTextures(std::map<std::string, sf::Texture>& map,
-                               std::string path) {
+                               const std::string path) {
   map.clear();
 
   int i = 0;
@@ -158,6 +159,28 @@ void FileManager::LoadTextures(std::map<std::string, sf::Texture>& map,
     map.insert({name, thisTexture});
 
     // std::cout << name  << " " << i << std::endl;
+
+    i++;
+  }
+}
+
+void FileManager::LoadSFX(std::map<std::string, sf::SoundBuffer>& map,
+                          const std::string path) {
+  map.clear();
+
+  int i = 0;
+
+  for (const auto& entry : std::filesystem::directory_iterator(path)) {
+    sf::SoundBuffer buffer;
+    buffer.loadFromFile(entry.path());
+
+    std::string name = entry.path();
+    name.erase(0, (int)(path.length() + 1));
+    name.erase(name.length() - 4);
+
+    map.insert({name, buffer});
+
+    // std::cout << name << " " << i << std::endl;
 
     i++;
   }
