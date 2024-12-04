@@ -60,8 +60,6 @@ class Entity {
 
   int GetPoints();
 
-  void HealthToNull();
-
   void Die();
   bool GetDead();
 

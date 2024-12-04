@@ -36,6 +36,7 @@ class Game {
   int windowHeight_;
 
   std::map<std::string, sf::Texture> textures_;
+  std::map<std::string, sf::SoundBuffer> sfx_;
 
   FileManager manager_ = FileManager();
   bool multiplayer_ = false;

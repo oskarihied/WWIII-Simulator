@@ -6,7 +6,8 @@
 
 class Menu : Level {
  public:
-  Menu(std::map<std::string, sf::Texture>& textures);
+  Menu(std::map<std::string, sf::Texture>& textures,
+       std::map<std::string, sf::SoundBuffer>& sfx);
 };
 
 #endif

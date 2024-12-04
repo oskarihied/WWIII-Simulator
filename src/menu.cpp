@@ -1,7 +1,8 @@
 #include "menu.hpp"
 
-Menu::Menu(std::map<std::string, sf::Texture>& textures)
-    : Level(textures.at("menu"), true) {
+Menu::Menu(std::map<std::string, sf::Texture>& textures,
+           std::map<std::string, sf::SoundBuffer>& sfx)
+    : Level(textures.at("menu"), sfx, true) {
   background_.setScale(0.9f, 0.9f);
 
   AddNonPhysicalEntity(new Entity(4, 2.5, textures.at("logo")));
