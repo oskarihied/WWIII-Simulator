@@ -1,6 +1,7 @@
 #ifndef LEVEL_HPP
 #define LEVEL_HPP
 
+#include <SFML/Audio.hpp>
 #include <vector>
 
 #include "button.hpp"
@@ -13,7 +14,8 @@
 
 class Level {
  public:
-  Level(sf::Texture& background, bool isMenu = false);
+  Level(sf::Texture& background, std::map<std::string, sf::SoundBuffer>& sfx,
+        bool isMenu = false);
 
   ~Level();
 
@@ -21,20 +23,22 @@ class Level {
 
   bool IsMenu();
 
-  void AddEntity(Entity* entity);
-  void AddNonPhysicalEntity(Entity* entity);
   void AddBox(Box* box);
+  void AddBoxes(std::vector<Box*> boxes);
   void AddGround(Ground* ground);
+  void AddEnemy(Enemy* enemy);
+  void AddGun(Gun* gun);
+  void AddExplosion(Explosion* explosion, float force);
+
+  void AddNonPhysicalEntity(Entity* entity);
 
   void AddButton(Button* button);
 
-  void AddEnemy(Enemy* enemy);
   void AddScore(std::string name, int score);
-  void AddBoxes(std::vector<Box*> boxes);
-  void AddExplosion(Explosion* explosion, float force);
-
   void AddScores(std::vector<std::pair<std::string, int>> scores);
+
   Physics* GetPhysics();
+
   void Fire(float speed);
 
   sf::Sprite& GetBackground();
@@ -53,7 +57,6 @@ class Level {
   std::vector<std::pair<std::string, int>> GetLeaderboard();
   Entity* CurrentGun();
   // std::vector<Entity*> GetGuns();
-  void AddGun(Gun* gun);
 
   void AddBulletTimer(float time);
   float GetTimer();
@@ -62,28 +65,33 @@ class Level {
   void AddPoints(int points);
   int GetPoints();
 
+  void PlaySound(const std::string name);
+
+  std::vector<sf::Sound*>& GetSounds();
 
  protected:
-  bool isMenu_;
-  Camera* camera_;
-  Physics* physics_;
-  const std::vector<Entity*>& entities_;
-  std::vector<std::pair<std::string, int>> leaderboard_;
-  std::vector<Entity*> nonPhysicals_;
-  std::vector<Gun*> guns_;
-
-  Gun* currentGun_ = nullptr;
-
-  std::vector<Explosion*> explosions_;
-
   sf::Sprite background_;
 
-  std::vector<Button*> buttons_;
+  Camera* camera_;
+  Physics* physics_;
+  Gun* currentGun_ = nullptr;
 
-  float timer_ = 0;
-  bool bulletTimer_ = false;
+  const std::vector<Entity*>& entities_;
+  std::map<std::string, sf::SoundBuffer>& sfx_;
+
+  std::vector<Entity*> nonPhysicals_;
+  std::vector<Gun*> guns_;
+  std::vector<Explosion*> explosions_;
+  std::vector<Button*> buttons_;
+  std::vector<sf::Sound*> onGoingSounds_;
+
+  std::vector<std::pair<std::string, int>> leaderboard_;
 
   int points_ = 0;
+  float timer_ = 0;
+
+  bool bulletTimer_ = false;
+  bool isMenu_;
 };
 
 #endif

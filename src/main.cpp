@@ -93,7 +93,7 @@ int main() {
     level->AddGround(new Ground(10, -1));
   */
   sf::RenderWindow window(sf::VideoMode(w, h), "WWIII Simulator",
-                          sf::Style::Resize);
+                          sf::Style::Fullscreen);
 
   window.setFramerateLimit(60);
   // Start the game loop
@@ -113,23 +113,24 @@ int main() {
 
       Entity* gun = currentLevel->CurrentGun();
 
-      currentLevel->AddBulletTimer(1.0f / 60.0f);
-
-      if (currentLevel->GetTimer() > 2) {
-        currentLevel->SetTimer(false);
-
-        if (gun->GetPos().GetX() == 0) {
-          currentLevel->GetCam()->NewAnimation(Pos(gun->GetPos().GetX() - 5, 7), 15, 2);
-        }
-
-        else {
-          currentLevel->GetCam()->NewAnimation(Pos(gun->GetPos().GetX() - 10, 7), 15, 2);
-        }
-      }
-
-      currentLevel->GetCam()->AnimationStep(1.0f / 60.0f);
-
       if (gun) {
+        currentLevel->AddBulletTimer(1.0f / 60.0f);
+
+        if (currentLevel->GetTimer() > 2) {
+          currentLevel->SetTimer(false);
+
+          if (gun->GetPos().GetX() == 0) {
+            currentLevel->GetCam()->NewAnimation(
+                Pos(gun->GetPos().GetX() - 5, 7), 15, 2);
+          }
+
+          else {
+            currentLevel->GetCam()->NewAnimation(
+                Pos(gun->GetPos().GetX() - 10, 7), 15, 2);
+          }
+        }
+
+        currentLevel->GetCam()->AnimationStep(1.0f / 60.0f);
         std::pair<int, int> gunPos =
             game.ToScreenPos(gun->GetPos(), *currentLevel->GetCam());
 
@@ -250,6 +251,15 @@ int main() {
 
     window.draw(background);
     */
+    std::vector<sf::Sound*> currentSounds;
+    for (auto sound : currentLevel->GetSounds()) {
+      if (sound->getStatus() != sf::Sound::Status::Playing) {
+        delete sound;
+      } else {
+        currentSounds.push_back(sound);
+      }
+    }
+    currentLevel->GetSounds() = currentSounds;
 
     window.draw(currentLevel->GetBackground());
 
@@ -293,13 +303,11 @@ int main() {
         window.draw(*(entity->GetSprite()));
 
         if (!entity->GetDead()) {
-
           if (entity->GetHealth() <= entity->GetMaxHealth() * 0.9) {
             entity->ChangeToDamaged();
           }
 
           if (entity->GetHealth() <= 0) {
-            
             entity->Die();
             currentLevel->AddPoints(entity->GetPoints());
 
@@ -321,8 +329,8 @@ int main() {
       }
     }
 
-    //std::cout << currentLevel->GetPoints() <<std::endl;
-    // Update the window
+    // std::cout << currentLevel->GetPoints() <<std::endl;
+    //  Update the window
 
     window.display();
   }

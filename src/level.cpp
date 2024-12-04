@@ -1,8 +1,10 @@
 #include "level.hpp"
 
-Level::Level(sf::Texture& background, bool isMenu)
+Level::Level(sf::Texture& background,
+             std::map<std::string, sf::SoundBuffer>& sfx, bool isMenu)
     : camera_(new Camera(-1, 4)),
       physics_(new Physics()),
+      sfx_(sfx),
       entities_(physics_->GetEntities()),
       isMenu_(isMenu) {
   background_.setTexture(background);
@@ -18,14 +20,7 @@ Camera* Level::GetCam() { return camera_; }
 
 bool Level::IsMenu() { return isMenu_; }
 
-void Level::AddEntity(Entity* entity) {
-  // entities_.push_back(entity);
-}
-
-void Level::AddBox(Box* box) {
-  physics_->AddBox(box);
-  // entities_.push_back(box);
-}
+void Level::AddBox(Box* box) { physics_->AddBox(box); }
 
 void Level::AddGround(Ground* ground) { physics_->AddGround(ground); }
 
@@ -79,6 +74,7 @@ void Level::Fire(float speed) {
 
     timer_ = 0;
     bulletTimer_ = true;
+    PlaySound("rifle");
   }
 }
 
@@ -157,23 +153,24 @@ void Level::AddBulletTimer(float time) {
 float Level::GetTimer() {
   if (bulletTimer_) {
     return timer_;
-  }
-  
-  else {
+  } else {
     return 0;
   }
 }
-
 
 void Level::SetTimer(bool timer) {
   timer_ = 0;
   bulletTimer_ = timer;
 }
 
-void Level::AddPoints(int points) {
-  points_ += points;
+void Level::AddPoints(int points) { points_ += points; }
+
+int Level::GetPoints() { return points_; }
+
+void Level::PlaySound(const std::string name) {
+  sf::Sound* sound = new sf::Sound(sfx_.at(name));
+  sound->play();
+  onGoingSounds_.push_back(sound);
 }
 
-int Level::GetPoints() {
-  return points_;
-}
+std::vector<sf::Sound*>& Level::GetSounds() { return onGoingSounds_; }

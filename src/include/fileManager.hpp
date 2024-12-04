@@ -1,6 +1,7 @@
 #ifndef FILE_MANAGER_HPP
 #define FILE_MANAGER_HPP
 
+#include <SFML/Audio.hpp>
 #include <map>
 #include <string>
 #include <vector>
@@ -18,14 +19,19 @@ class FileManager {
   /*bool SaveLevel(const std::string& filename, const std::vector<Entity*>&
    * entities);*/
 
-  void AddEntityToLevel(Level* level, std::string type, int x, int y,
+  void AddEntityToLevel(Level* level, std::string type, float x, float y,
                         std::map<std::string, sf::Texture> textures);
 
   Level* LoadLevel(const std::string& filename,
                    std::map<std::string, sf::Texture>& textures,
+                   std::map<std::string, sf::SoundBuffer>& sfx,
                    const bool& multiplayer);
 
-  void LoadTextures(std::map<std::string, sf::Texture>& map, std::string path);
+  void LoadTextures(std::map<std::string, sf::Texture>& map,
+                    const std::string path);
+
+  void LoadSFX(std::map<std::string, sf::SoundBuffer>& map,
+               const std::string path);
 };
 
 #endif
