@@ -94,7 +94,7 @@ int main() {
   Physics* physics = currentLevel->GetPhysics();
 
   sf::RenderWindow window(sf::VideoMode(w, h), "WWIII Simulator",
-                          sf::Style::Fullscreen);
+                          sf::Style::Resize);
 
   // physics->AddBox(new Box(1, 4000));
   level->AddGround(new Ground(0, -1));
@@ -258,8 +258,10 @@ int main() {
 
         if (entity->GetHealth() <= 0) {
           Pos position = entity->GetPos();
-          // bool explodes = entity->Explodes();
-          currentLevel->RemovePhysicalEntity(entity);
+          bool explodes = entity->Explodes();
+          // if (entity->GetType() == Entity::EntityType::BULLET) {
+          //   entity->SetHealth(1000);
+          // }
 
           if (entity->Explodes()) {
             currentLevel->AddExplosion(
@@ -269,6 +271,9 @@ int main() {
                               game.GetTexture("explosion2"),
                               game.GetTexture("explosion3"), 0),
                 500.0f);
+          }
+          if (entity->GetType() == Entity::EntityType::BOX || entity->GetType() == Entity::EntityType::ENEMY || entity->GetType() == Entity::EntityType::GROUND) {
+          currentLevel->RemovePhysicalEntity(entity);
           }
         }
       }

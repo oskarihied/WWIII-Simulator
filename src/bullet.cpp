@@ -24,7 +24,7 @@ RifleBullet::RifleBullet(float x, float y, std::map<std::string, sf::Texture> te
     : Bullet(x, y, 0, 0, textures.at("bullet"), 0.4f, 0.1f, 20, 1) {
       maxHealth = 1;
       health_ = 1;
-      mass_ = 20;
+      mass_ = 50;
     }
 
 Rocket::Rocket(float x, float y, std::map<std::string, sf::Texture> textures) 

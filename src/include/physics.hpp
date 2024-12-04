@@ -36,8 +36,8 @@ class Physics {
   b2WorldId simulationWorld_;
   std::vector<Entity*> entities_;
   std::vector<b2BodyId> b2bodies_;
-  std::vector<int32_t> bullets_;
-  std::vector<int32_t> grounds_;
+  // std::vector<int32_t> bullets_;
+  // std::vector<int32_t> grounds_;
 };
 
 #endif
