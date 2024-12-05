@@ -1,41 +1,42 @@
-#include "pos.hpp"
 #include <iostream>
 
+#include "vector.hpp"
+
 class Camera {
-    public: 
-        Camera(float x, float y);
-        Camera(Pos pos);
+ public:
+  Camera(float x, float y);
+  Camera(Vector pos);
 
-        Pos GetPos();
-        float GetZoom();
+  Vector GetPos();
+  float GetZoom();
 
-        std::pair<int, int> Move(float x, float y);
-        void MoveTo(float x, float y);
+  void MoveTo(float x, float y);
 
-        float Zoom(float add);
-        void ZoomTo(float zoom);
+  void ShiftBy(float x, float y);
 
-        float GetTimer();
-        void AddTimer(float time);
-        void ResetTimer();
+  float Zoom(float add);
+  void ZoomTo(float zoom);
 
-        bool GetAnimation();
+  float GetTimer();
+  void AddTimer(float time);
+  void ResetTimer();
 
-        void AnimationStep(float time);
-        void NewAnimation(Pos goal, float zoom, float time);
+  bool GetAnimation();
 
-    private:
-        Pos pos_;
-        float zoom_ = 10;
+  void AnimationStep(float time);
+  void NewAnimation(Vector goal, float zoom, float time);
 
-        bool animation_ = false;
-        float timer_ = 0;
-        float goalTime_ = 0;
+ private:
+  Vector pos_;
+  float zoom_ = 10;
 
-        Pos start_;
-        Pos goal_;
-        
-        float startZoom_ = 1;
-        float goalZoom_ = 1;
+  bool animation_ = false;
+  float timer_ = 0;
+  float goalTime_ = 0;
 
+  Vector start_;
+  Vector goal_;
+
+  float startZoom_ = 1;
+  float goalZoom_ = 1;
 };

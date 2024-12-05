@@ -7,26 +7,20 @@
 #include <string>
 #include <vector>
 
-#include "pos.hpp"
+#include "vector.hpp"
 
 class Entity {
  public:
   enum class EntityType { UNDEFINED, BOX, GROUND, BULLET, ENEMY };
 
-  // Entity();
-  // Entity(float x, float y);
-  Entity(float x, float y, std::string sprite);
   Entity(float x, float y, sf::Texture& texture);
-  Entity(float x, float y, float xVel, float yVel, sf::Texture& texture);
-  Entity(float x, float y, float xVel, float yVel, std::string sprite);
 
-  Pos GetPos();
-  Pos GetVel();
+  Vector& GetPos();
+  Vector& GetVel();
 
   void UpdateVel(float xVel, float yVel);
 
   void MoveTo(float x, float y);
-  void MoveTo(Pos pos);
 
   void RotationTo(float x);
 
@@ -42,16 +36,11 @@ class Entity {
 
   void ChangeTexture(sf::Texture& texture);
 
-  std::string GetImage();
-
   bool CanBeDamaged();
 
   std::optional<sf::Texture> GetDamagedTexture();
 
   sf::Sprite* GetSprite();
-
-  std::pair<float, float> Move(float x, float y);
-  std::pair<float, float> Move(Pos pos);
 
   void SetType(enum EntityType type);
   enum EntityType GetType();
@@ -64,9 +53,8 @@ class Entity {
   bool IsDead();
 
  protected:
-  std::string image_ = "";
-  Pos pos_;
-  Pos vel_;
+  Vector pos_;
+  Vector vel_;
   float rotation_ = 0.0f;
   sf::Texture texture_;
   std::optional<sf::Texture> damaged_ = std::nullopt;

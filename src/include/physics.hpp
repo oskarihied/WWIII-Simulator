@@ -2,7 +2,7 @@
 #define PHYSICS_HPP
 
 #include <box2cpp/box2cpp.h>
-// #include <box2d/box2d.h>
+
 #include "box.hpp"
 #include "bullet.hpp"
 #include "enemy.hpp"
@@ -28,7 +28,7 @@ class Physics {
   const std::vector<Entity*>& GetEntities() const { return entities_; }
   const std::vector<b2BodyId>& GetBodies() const { return b2bodies_; }
 
-  void SpawnExplosion(Pos pos, float force);
+  void SpawnExplosion(Vector pos, float force);
 
   std::vector<Entity*>::const_iterator RemovePhysicalEntity(Entity* entity);
 

@@ -4,10 +4,8 @@
 #include "physical.hpp"
 
 class Static : public Physical {
-    public:
-        // Static(float x, float y);
-        Static(float x, float y, std::string image);
-        Static(float x, float y, std::string image, float mass);
+ public:
+  Static(float x, float y, sf::Texture& texture);
 };
 
 #endif

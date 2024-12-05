@@ -60,12 +60,12 @@ int main() {
 
           if (gun->GetPos().GetX() == 0) {
             currentLevel->GetCam()->NewAnimation(
-                Pos(gun->GetPos().GetX() - 5, 7), 15, 2);
+                Vector(gun->GetPos().GetX() - 5, 7), 15, 2);
           }
 
           else {
             currentLevel->GetCam()->NewAnimation(
-                Pos(gun->GetPos().GetX() - 10, 7), 15, 2);
+                Vector(gun->GetPos().GetX() - 10, 7), 15, 2);
           }
         }
 
@@ -94,7 +94,7 @@ int main() {
     while (window.pollEvent(event)) {
       if (inMenu) {
         if (event.type == sf::Event::MouseButtonReleased) {
-          Pos gamePos =
+          Vector gamePos =
               game.ToGamePos(mousePos.x, mousePos.y, *currentLevel->GetCam());
 
           int index = 0;
@@ -137,16 +137,16 @@ int main() {
         if (event.type == sf::Event::KeyPressed) {
           if (!currentLevel->GetCam()->GetAnimation()) {
             if (event.key.scancode == sf::Keyboard::Scan::Up) {
-              currentLevel->GetCam()->Move(0.0f, camMoveSpeed);
+              currentLevel->GetCam()->ShiftBy(0.0f, camMoveSpeed);
             }
             if (event.key.scancode == sf::Keyboard::Scan::Down) {
-              currentLevel->GetCam()->Move(0.0f, -camMoveSpeed);
+              currentLevel->GetCam()->ShiftBy(0.0f, -camMoveSpeed);
             }
             if (event.key.scancode == sf::Keyboard::Scan::Right) {
-              currentLevel->GetCam()->Move(camMoveSpeed, 0.0f);
+              currentLevel->GetCam()->ShiftBy(camMoveSpeed, 0.0f);
             }
             if (event.key.scancode == sf::Keyboard::Scan::Left) {
-              currentLevel->GetCam()->Move(-camMoveSpeed, 0.0f);
+              currentLevel->GetCam()->ShiftBy(-camMoveSpeed, 0.0f);
             }
 
             if (event.key.scancode == sf::Keyboard::Scan::Comma) {
@@ -253,7 +253,7 @@ int main() {
             entity->Die();
             currentLevel->AddPoints(entity->GetPoints());
 
-            Pos position = entity->GetPos();
+            Vector position = entity->GetPos();
             // bool explodes = entity->Explodes();
             // currentLevel->RemovePhysicalEntity(entity);
 

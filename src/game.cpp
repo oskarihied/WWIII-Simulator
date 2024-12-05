@@ -12,17 +12,17 @@ void Game::StartLevel(int levelIndex) {
 
   currentLevel_ = manager_.LoadLevel(filename, textures_, sfx_, multiplayer_);
   for (int i = 0; i < 5; i++) {
-    currentLevel_->AddGround(new Ground(i * 10, -1));
+    currentLevel_->AddGround(new Ground(i * 10, -1, textures_.at("ground")));
   }
   currentLevel_->GetCam()->MoveTo(20, 15);
   currentLevel_->GetCam()->ZoomTo(30);
 
   if (multiplayer_) {
     currentLevel_->GetCam()->NewAnimation(
-        Pos(currentLevel_->CurrentGun()->GetPos().GetX() - 10, 7), 15, 2);
+        Vector(currentLevel_->CurrentGun()->GetPos().GetX() - 10, 7), 15, 2);
   } else {
     currentLevel_->GetCam()->NewAnimation(
-        Pos(currentLevel_->CurrentGun()->GetPos().GetX() - 5, 7), 15, 2);
+        Vector(currentLevel_->CurrentGun()->GetPos().GetX() - 5, 7), 15, 2);
   }
 }
 
@@ -35,7 +35,7 @@ void Game::StartMenu() {
 
 Level* Game::GetCurrentLevel() { return currentLevel_; }
 
-std::pair<int, int> Game::ToScreenPos(Pos pos, Camera cam) {
+std::pair<int, int> Game::ToScreenPos(Vector pos, Camera cam) {
   float x = pos.GetX();
   float y = pos.GetY();
 
@@ -48,11 +48,11 @@ std::pair<int, int> Game::ToScreenPos(Pos pos, Camera cam) {
   return (std::pair((int)x, (int)y));
 }
 
-Pos Game::ToGamePos(int x, int y, Camera cam) {
+Vector Game::ToGamePos(int x, int y, Camera cam) {
   float posX = (x * (cam.GetZoom())) / windowWidth_ + cam.GetPos().GetX();
   float posY = (-y * (cam.GetZoom())) / windowWidth_ + cam.GetPos().GetY();
 
-  return Pos(posX, posY);
+  return Vector(posX, posY);
 }
 
 sf::Texture& Game::GetTexture(std::string name) { return textures_.at(name); }
