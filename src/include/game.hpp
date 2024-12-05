@@ -17,8 +17,8 @@ class Game {
 
   Level* GetCurrentLevel();
 
-  std::pair<int, int> ToScreenPos(Pos pos, Camera cam);
-  Pos ToGamePos(int x, int y, Camera cam);
+  std::pair<int, int> ToScreenPos(Vector pos, Camera cam);
+  Vector ToGamePos(int x, int y, Camera cam);
 
   std::vector<Entity*> LevelEntities() { return currentLevel_->GetEntities(); }
 

@@ -4,8 +4,8 @@
 #include "static.hpp"
 
 class Ground : public Static {
-    public:
-        Ground(float x, float y);
+ public:
+  Ground(float x, float y, sf::Texture& texture);
 };
 
 #endif

@@ -29,7 +29,7 @@ void Level::AddGround(Ground* ground) { physics_->AddGround(ground); }
 void Level::AddExplosion(Explosion* explosion, float force) {
   nonPhysicals_.push_back((Entity*)explosion);
   explosions_.push_back(explosion);
-  Pos pos = explosion->GetPos();
+  Vector pos = explosion->GetPos();
   physics_->SpawnExplosion(pos, force);
 }
 
@@ -69,7 +69,7 @@ void Level::Fire(float speed) {
 
     Bullet* b = currentGun_->GetBullet();
 
-    Pos location = CurrentGun()->GetPos();
+    Vector location = CurrentGun()->GetPos();
     float angle = -CurrentGun()->GetRotation() * (M_PI / 180);
     float x = cos(angle);
     float y = sin(angle);
@@ -77,6 +77,7 @@ void Level::Fire(float speed) {
     b->MoveTo(location.GetX() + x, location.GetY() + y);
     b->UpdateVel(x * speed * 30, y * speed * 30);
     b->RotationTo(-CurrentGun()->GetRotation());
+    b->UpdateDims(0.4, 0.1);
 
     physics_->AddBullet(b);
 
@@ -189,4 +190,4 @@ void Level::PlaySound(const std::string name) {
 
 std::vector<sf::Sound*>& Level::GetSounds() { return onGoingSounds_; }
 
-std::vector<Gun*> Level::GetGuns() {return guns_;}
+std::vector<Gun*> Level::GetGuns() { return guns_; }

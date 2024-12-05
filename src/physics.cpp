@@ -106,7 +106,7 @@ void Physics::SimulateWorld(float simulationStep) {
 
     Entity* ent = entities_[i];
     ent->UpdateVel(vel.x, vel.y);
-    ent->MoveTo(Pos(pos.x, pos.y));
+    ent->MoveTo(pos.x, pos.y);
     ent->RotationTo(acos(b2Body_GetRotation(body).c) * (180 / M_PI));
     // std::cout << "x: " << pos.x << " y: " << pos.y << std::endl;
   }
@@ -224,11 +224,12 @@ void Physics::SetPosition(b2BodyId body, float xPos, float yPos,
 
 void Physics::Contact(b2ContactHitEvent contact) {}
 
-void Physics::SpawnExplosion(Pos pos, float force) {
+void Physics::SpawnExplosion(Vector pos, float force) {
   int i = 0;
   for (Entity* entity : entities_) {
-    Pos vector = pos.VectorTo(entity->GetPos());
-    float distance = std::max(pos.Distance(entity->GetPos()), 0.1f);
+    Vector& entPos = entity->GetPos();
+    Vector vector = Vector(entPos);
+    float distance = std::max(pos.Distance(entPos), 0.1f);
 
     b2Vec2 forceVec = b2Vec2{force * vector.GetX() / (float)pow(distance, 2),
                              force * vector.GetY() / (float)pow(distance, 2)};
