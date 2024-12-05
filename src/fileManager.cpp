@@ -4,7 +4,6 @@
 #include <fstream>
 #include <sstream>
 
-#include "boxes.hpp"
 #include "enemy.hpp"
 
 bool FileManager::SaveScore(const std::string& filename,

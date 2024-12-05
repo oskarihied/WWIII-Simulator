@@ -2,12 +2,8 @@
 #include <filesystem>
 #include <iostream>
 
-#include "background.hpp"
-#include "boxes.hpp"
 #include "game.hpp"
 #include "physics.hpp"
-// #include "guns.hpp"
-//  #include "guns.hpp"
 
 int main() {
   // Create the main window
@@ -27,73 +23,6 @@ int main() {
 
   Bullet* currentBullet = nullptr;
 
-  // level->AddBox(new Concrete(3, 0, game));
-  // level->AddBox(new Wood(4, 0, game));
-  // level->AddBox(new Wood(5, 0, game));
-  /*
-    level->AddBox(new Wood(7, 0, game));
-    level->AddBox(new Wood(7, 1, game));
-    level->AddBox(new Wood(7, 2, game));
-    level->AddBox(new Wood(7, 3, game));
-    level->AddBox(new Wood(7, 4, game));
-    level->AddBox(new Wood(7, 5, game));
-    level->AddBox(new Wood(7, 6, game));
-    level->AddBox(new Wood(7, 7, game));
-    level->AddBox(new Wood(8, 0, game));
-    level->AddBox(new Wood(8, 1, game));
-    level->AddBox(new Wood(8, 2, game));
-    level->AddBox(new Wood(8, 3, game));
-    level->AddBox(new Wood(8, 4, game));
-    level->AddBox(new Wood(8, 5, game));
-    level->AddBox(new Wood(8, 6, game));
-    level->AddBox(new Wood(8, 7, game));
-    */
-
-  /*for (int i = 0; i < 10; i++) {
-    for (int j = 0; j < 10; j++) {
-      level->AddBox(new Wood(7 + i, j, game.GetTextures()));
-    }
-  }*/
-  /*
-    level->AddEnemy(new Enemy(6, 0, game.GetTextures()));
-
-    // level->AddBox(new Wood(4, 2, game));
-    // level->AddBox(new Glass(4, 1, game));
-    // level->AddBox(new Glass(5, 1, game));
-    // level->AddBox(new Glass(6, 0, game));
-    level->AddNonPhysicalEntity(new Entity(0, 0, game.GetTexture("trump")));
-
-    // level->AddNonPhysicalEntity(new Entity(1.5, -0.2,
-    // "images/rifle_bullet.png"));
-    level->AddNonPhysicalEntity(new Entity(-1, 0, game.GetTexture("marin")));
-    // level->AddNonPhysicalEntity(new Entity(-1, -0.2, "images/rifle.png"));
-    level->AddNonPhysicalEntity(new Entity(-2, 0, game.GetTexture("putin")));
-    level->AddNonPhysicalEntity(new Entity(-3, 0, game.GetTexture("kim")));
-    level->AddNonPhysicalEntity(new Entity(-4, 0, game.GetTexture("xi")));
-    level->AddNonPhysicalEntity(new Entity(-5, 0, game.GetTexture("biden")));
-
-    // level->AddNonPhysicalEntity(new Entity(-2, -0.2, "images/rifle.png"));
-    Gun* gun1 = new RocketLauncher(0, -0.2, game.GetTextures());
-    Gun* gun2 = new RocketLauncher(0, -0.2, game.GetTextures());
-    Gun* gun3 = new Rifle(0, -0.2, game.GetTextures());
-    Gun* gun4 = new Rifle(0, -0.2, game.GetTextures());
-    Gun* gun5 = new Rifle(0, -0.2, game.GetTextures());
-    Gun* gun6 = new Rifle(0, -0.2, game.GetTextures());
-
-    // level->AddNonPhysicalEntity(level->CurrentGun());
-
-    level->AddGun(gun2);
-    level->AddGun(gun3);
-    level->AddGun(gun4);
-    level->AddGun(gun5);
-    level->AddGun(gun6);
-    level->AddGun(gun1);
-
-    // b2Vec2 v = b2Vec2(4.5, 6.8);
-    // physics->AddBox(new Box(1, 4000));
-    level->AddGround(new Ground(0, -1));
-    level->AddGround(new Ground(10, -1));
-  */
   sf::RenderWindow window(sf::VideoMode(w, h), "WWIII Simulator",
                           sf::Style::Fullscreen);
 
@@ -111,19 +40,22 @@ int main() {
 
     if (!inMenu) {
       // Advance simulation
-      game.GetCurrentLevel()->GetPhysics()->SimulateWorld(1.0f / 60.0f);
+      currentLevel->GetPhysics()->SimulateWorld(1.0f / 60.0f);
 
       Gun* gun = currentLevel->CurrentGun();
 
-      if (currentLevel->GetTimer() > 0 && currentLevel->GetTimer() <= 2 && !currentBullet->GetDead()) {
-        currentLevel->GetCam()->MoveTo(currentBullet->GetPos().GetX() - 5, currentLevel->GetCam()->GetPos().GetY());
+      if (currentLevel->GetTimer() > 0 && currentLevel->GetTimer() <= 2 &&
+          !currentBullet->IsDead()) {
+        currentLevel->GetCam()->MoveTo(currentBullet->GetPos().GetX() - 5,
+                                       currentLevel->GetCam()->GetPos().GetY());
       }
 
       if (gun) {
         currentLevel->AddBulletTimer(1.0f / 60.0f);
 
         if (currentLevel->GetTimer() > 2) {
-          //currentLevel->GetCam()->MoveTo(currentBullet->GetPos().GetX() - 5, currentLevel->GetCam()->GetPos().GetY());
+          // currentLevel->GetCam()->MoveTo(currentBullet->GetPos().GetX() - 5,
+          // currentLevel->GetCam()->GetPos().GetY());
           currentLevel->SetTimer(false);
 
           if (gun->GetPos().GetX() == 0) {
@@ -340,7 +272,7 @@ int main() {
       int n = 0;
       int i = 0;
       for (Gun* gun : currentLevel->GetGuns()) {
-        if (game.GetMultiplayer() && n%2 == 0) {
+        if (game.GetMultiplayer() && n % 2 == 0) {
           gun->GetSprite()->setScale(sf::Vector2(0.5f, 0.5f));
           gun->GetSprite()->setPosition(50, 20 + i * 40);
           window.draw(*(gun->GetSprite()));
@@ -349,7 +281,6 @@ int main() {
         n++;
       }
     }
-
 
     // std::cout << currentLevel->GetPoints() <<std::endl;
     //  Update the window

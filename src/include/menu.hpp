@@ -1,7 +1,6 @@
 #ifndef MENU_HPP
 #define MENU_HPP
 
-#include "background.hpp"
 #include "level.hpp"
 
 class Menu : Level {
