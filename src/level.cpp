@@ -137,7 +137,7 @@ void Level::RemoveExplosion(Explosion* entity) {
 
 std::vector<Button*> Level::GetButtons() { return buttons_; }
 
-Entity* Level::CurrentGun() { return currentGun_; }
+Gun* Level::CurrentGun() { return currentGun_; }
 
 void Level::AddGun(Gun* gun) {
   guns_.push_back(gun);
@@ -174,3 +174,5 @@ void Level::PlaySound(const std::string name) {
 }
 
 std::vector<sf::Sound*>& Level::GetSounds() { return onGoingSounds_; }
+
+std::vector<Gun*> Level::GetGuns() {return guns_;}

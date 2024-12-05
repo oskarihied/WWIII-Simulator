@@ -55,7 +55,7 @@ class Level {
   std::vector<Explosion*> GetExplosions();
 
   std::vector<std::pair<std::string, int>> GetLeaderboard();
-  Entity* CurrentGun();
+  Gun* CurrentGun();
   // std::vector<Entity*> GetGuns();
 
   void AddBulletTimer(float time);
@@ -68,6 +68,8 @@ class Level {
   void PlaySound(const std::string name);
 
   std::vector<sf::Sound*>& GetSounds();
+
+  std::vector<Gun*> GetGuns();
 
  protected:
   sf::Sprite background_;

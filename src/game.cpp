@@ -30,7 +30,7 @@ void Game::StartMenu() {
   if (currentLevel_ != nullptr) {
     delete currentLevel_;
   }
-  currentLevel_ = (Level*)new Menu(textures_, sfx_);
+  currentLevel_ = (Level*)new Menu(textures_, sfx_, windowWidth_);
 }
 
 Level* Game::GetCurrentLevel() { return currentLevel_; }
