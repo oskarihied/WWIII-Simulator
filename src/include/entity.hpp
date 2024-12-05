@@ -68,7 +68,7 @@ class Entity {
   int GetPoints();
 
   void Die();
-  bool GetDead();
+  bool IsDead();
 
  protected:
   std::string image_ = "";

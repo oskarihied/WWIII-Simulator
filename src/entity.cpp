@@ -118,4 +118,4 @@ int Entity::GetPoints() { return points_; }
 
 void Entity::Die() { dead_ = true; }
 
-bool Entity::GetDead() { return dead_; }
+bool Entity::IsDead() { return dead_; }
