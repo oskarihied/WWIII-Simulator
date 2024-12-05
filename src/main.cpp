@@ -302,7 +302,7 @@ int main() {
 
         window.draw(*(entity->GetSprite()));
 
-        if (!entity->GetDead()) {
+        if (!entity->IsDead()) {
           if (entity->GetHealth() <= entity->GetMaxHealth() * 0.9) {
             entity->ChangeToDamaged();
           }
@@ -323,6 +323,7 @@ int main() {
                                 game.GetTexture("explosion2"),
                                 game.GetTexture("explosion3"), 0),
                   500.0f);
+              currentLevel->PlaySound("explosion");
             }
           }
         }

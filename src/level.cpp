@@ -1,5 +1,7 @@
 #include "level.hpp"
 
+#include <exception>
+
 Level::Level(sf::Texture& background,
              std::map<std::string, sf::SoundBuffer>& sfx, bool isMenu)
     : camera_(new Camera(-1, 4)),
@@ -52,6 +54,19 @@ Physics* Level::GetPhysics() { return physics_; }
 
 void Level::Fire(float speed) {
   if (currentGun_) {
+    switch (currentGun_->GetType()) {
+      case 'A':
+        PlaySound("rifle");
+        break;
+
+      case 'R':
+        PlaySound("launcher");
+        break;
+
+      default:
+        throw std::exception();
+    }
+
     Bullet* b = currentGun_->GetBullet();
 
     Pos location = CurrentGun()->GetPos();
@@ -74,7 +89,6 @@ void Level::Fire(float speed) {
 
     timer_ = 0;
     bulletTimer_ = true;
-    PlaySound("rifle");
   }
 }
 
