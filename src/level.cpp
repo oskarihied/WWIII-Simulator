@@ -115,8 +115,8 @@ void Level::AddScores(std::vector<std::pair<std::string, int>> scores) {
 
 std::vector<Entity*> Level::GetNonPhysicalEntities() { return nonPhysicals_; }
 
-void Level::RemovePhysicalEntity(Entity* entity) {
-  physics_->RemovePhysicalEntity(entity);
+std::vector<Entity*>::const_iterator Level::RemovePhysicalEntity(Entity* entity) {
+  return physics_->RemovePhysicalEntity(entity);
 }
 
 void Level::RemoveNonPhysicalEntity(Entity* entity) {
@@ -152,7 +152,8 @@ void Level::RemoveExplosion(Explosion* entity) {
 
 std::vector<Button*> Level::GetButtons() { return buttons_; }
 
-Gun* Level::CurrentGun() { return currentGun_; }
+Gun* Level::CurrentGun() { 
+  return currentGun_; }
 
 void Level::AddGun(Gun* gun) {
   guns_.push_back(gun);

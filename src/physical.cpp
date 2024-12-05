@@ -12,3 +12,5 @@ void Physical::UpdateDims(float w, float h) {
 float Physical::GetWidth() { return width_; };
 
 float Physical::GetHeight() { return height_; };
+
+float Physical::GetMass() { return mass_; };

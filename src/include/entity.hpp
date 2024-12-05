@@ -9,13 +9,6 @@
 
 #include "vector.hpp"
 
-// enum Type {
-//   CONCRETE,
-//   WOOD,
-//   GLASS,
-//   ENEMY
-// };
-
 class Entity {
  public:
   enum class EntityType { UNDEFINED, BOX, GROUND, BULLET, ENEMY };

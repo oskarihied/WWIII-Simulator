@@ -30,7 +30,7 @@ class Physics {
 
   void SpawnExplosion(Vector pos, float force);
 
-  void RemovePhysicalEntity(Entity* entity);
+  std::vector<Entity*>::const_iterator RemovePhysicalEntity(Entity* entity);
 
  private:
   void Contact(b2ContactHitEvent hit);
@@ -38,8 +38,8 @@ class Physics {
   b2WorldId simulationWorld_;
   std::vector<Entity*> entities_;
   std::vector<b2BodyId> b2bodies_;
-  std::vector<int32_t> bullets_;
-  std::vector<int32_t> grounds_;
+  // std::vector<int32_t> bullets_;
+  // std::vector<int32_t> grounds_;
 };
 
 #endif
