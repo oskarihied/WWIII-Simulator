@@ -10,7 +10,7 @@ class Gun : public Entity {
         Bullet* GetBullet();
     
     private:
-        Bullet* bullet_;
+        Bullet* bullet_ = nullptr;
 };
 
 

@@ -6,7 +6,7 @@
 
 class Physical : public Entity {
  public:
-  Physical(float x, float y);
+  // Physical(float x, float y);
   Physical(float x, float y, std::string image, float mass, float width,
            float height);
   Physical(float x, float y, sf::Texture& texture, float mass, float width,

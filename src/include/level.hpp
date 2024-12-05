@@ -47,7 +47,7 @@ class Level {
   std::vector<Entity*> GetNonPhysicalEntities();
 
   void RemoveNonPhysicalEntity(Entity* entity);
-  void RemovePhysicalEntity(Entity* entity);
+  std::vector<Entity*>::const_iterator RemovePhysicalEntity(Entity* entity);
   void RemoveExplosion(Explosion* entity);
 
   std::vector<Button*> GetButtons();

@@ -4,7 +4,7 @@
 
 constexpr int BULLET_DAMAGE = 10;
 constexpr float ENTITY_DAMAGE = 0.2;
-constexpr bool PRINT_DEBUG = true;
+constexpr bool PRINT_DEBUG = false;
 
 Physics::Physics() {
   b2WorldDef worldDef = b2DefaultWorldDef();
@@ -38,8 +38,9 @@ void Physics::SimulateWorld(float simulationStep) {
       continue;
     }
 
-    float damageMultiplier = -(events.hitEvents[j].approachSpeed *
-                               events.hitEvents[j].approachSpeed);
+    float damageMultiplier = -(events.hitEvents[j].approachSpeed 
+                             * events.hitEvents[j].approachSpeed
+                              );
     float bulletDamage = damageMultiplier * BULLET_DAMAGE;
     float entityDamage = damageMultiplier * ENTITY_DAMAGE;
     bool is1Ground = entities_[inx1]->GetType() == Entity::EntityType::GROUND;
@@ -47,28 +48,15 @@ void Physics::SimulateWorld(float simulationStep) {
     bool is1Bullet = entities_[inx1]->GetType() == Entity::EntityType::BULLET;
     bool is2Bullet = entities_[inx2]->GetType() == Entity::EntityType::BULLET;
 
-    if (is1Ground + is2Ground + is1Bullet + is2Bullet > 1) {continue;}
+    float mass1, mass2;
+    if (is1Ground) mass1 = 1000; else mass1 = b2Body_GetMass(bid1);
+    if (is2Ground) mass2 = 1000; else mass2 = b2Body_GetMass(bid2);
 
-    // if (is1Bullet) {
-    //   entities_[inx2]->ChangeHealth(bulletDamage * b2Body_GetMass(bid1));
-    //   if (PRINT_DEBUG) std::cout << "ent2Bullet: " << entities_[inx2]->GetHealth() << std::endl;
-    // } else if (is2Bullet) {
-    //   entities_[inx1]->ChangeHealth(bulletDamage * b2Body_GetMass(bid2));
-    //   if (PRINT_DEBUG) std::cout << "ent1Bullet: " << entities_[inx1]->GetHealth() << std::endl;
-    //  else 
-    if (is1Ground) {
-      entities_[inx2]->ChangeHealth(entityDamage * 10);
-      if (PRINT_DEBUG) std::cout << "ent2Ground: " << entities_[inx2]->GetHealth() << std::endl;
-    } else if (is2Ground) {
-      entities_[inx1]->ChangeHealth(entityDamage * 10);
-      if (PRINT_DEBUG) std::cout << "ent1Ground: " << entities_[inx1]->GetHealth() << std::endl;
-    } else {
-      entities_[inx1]->ChangeHealth(entityDamage * b2Body_GetMass(bid2));
-      entities_[inx2]->ChangeHealth(entityDamage * b2Body_GetMass(bid1));
-      if (PRINT_DEBUG) std::cout << "ent1: " << entities_[inx1]->GetHealth() << std::endl;
-      if (PRINT_DEBUG) std::cout << "ent2: " << entities_[inx2]->GetHealth() << std::endl;
-      if (PRINT_DEBUG) std::cout << events.hitEvents[j].approachSpeed << std::endl;
-    }
+    entities_[inx1]->ChangeHealth(entityDamage * mass2);
+    entities_[inx2]->ChangeHealth(entityDamage * mass1);
+    if (PRINT_DEBUG) std::cout << "ent1: " << entities_[inx1]->GetHealth() << std::endl;
+    if (PRINT_DEBUG) std::cout << "ent2: " << entities_[inx2]->GetHealth() << std::endl;
+    if (PRINT_DEBUG) std::cout << events.hitEvents[j].approachSpeed << std::endl;
   }
 
   // Verify that all entities match simulation bodies
@@ -123,6 +111,7 @@ b2BodyId Physics::AddGround(Ground* ground) {
   b2Polygon groundBox = b2MakeBox(10.0f, 1.0f);
 
   b2ShapeDef groundShapeDef = b2DefaultShapeDef();
+  groundShapeDef.density = ground->GetMass();
   b2CreatePolygonShape(groundId, &groundShapeDef, &groundBox);
 
   b2bodies_.push_back(groundId);
@@ -223,7 +212,7 @@ void Physics::SpawnExplosion(Pos pos, float force) {
   }
 }
 
-void Physics::RemovePhysicalEntity(Entity* entity) {
+std::vector<Entity*>::const_iterator Physics::RemovePhysicalEntity(Entity* entity) {
   int index = -1;
   
   size_t i;
@@ -234,8 +223,7 @@ void Physics::RemovePhysicalEntity(Entity* entity) {
     }
   }
   
-  b2DestroyBody(b2bodies_[index]);
-  b2bodies_.erase(b2bodies_.begin() + index);
-  entities_.erase(entities_.begin() + index);
-  delete(entity);
+  b2Body_Disable(b2bodies_[index]);
+  entities_[i]->Die();
+  return (entities_.begin() + index);
   }

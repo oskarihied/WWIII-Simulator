@@ -25,7 +25,7 @@ RifleBullet::RifleBullet(float x, float y, std::map<std::string, sf::Texture> te
       damaged_ = std::make_optional(textures.at("bullet_damaged"));
       maxHealth = 1;
       health_ = 1;
-      mass_ = 50;
+      mass_ = 150;
     }
 
 Rocket::Rocket(float x, float y, std::map<std::string, sf::Texture> textures) 

@@ -13,8 +13,8 @@ class Entity {
  public:
   enum class EntityType { UNDEFINED, BOX, GROUND, BULLET, ENEMY };
 
-  Entity();
-  Entity(float x, float y);
+  // Entity();
+  // Entity(float x, float y);
   Entity(float x, float y, std::string sprite);
   Entity(float x, float y, sf::Texture& texture);
   Entity(float x, float y, float xVel, float yVel, sf::Texture& texture);

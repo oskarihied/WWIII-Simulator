@@ -111,6 +111,14 @@ int main() {
 
     if (!inMenu) {
       // Advance simulation
+
+      // for (Entity* entity : currentLevel->GetPhysics()->GetEntities()) {
+      //   if (entity->GetHealth() <= 0) {
+      //     if (entity->GetType() == Entity::EntityType::BOX || entity->GetType() == Entity::EntityType::ENEMY || entity->GetType() == Entity::EntityType::ENEMY) {
+      //       currentLevel->RemovePhysicalEntity(entity);
+      //     }
+      //   }
+      // }
       game.GetCurrentLevel()->GetPhysics()->SimulateWorld(1.0f / 60.0f);
 
       Gun* gun = currentLevel->CurrentGun();
@@ -238,9 +246,11 @@ int main() {
         }
 
         if (event.type == sf::Event::MouseButtonReleased) {
-          float vel = std::min(timer.getElapsedTime().asSeconds(), 2.0f);
-          currentBullet = currentLevel->CurrentGun()->GetBullet();
-          currentLevel->Fire(vel);
+          float vel = std::min(timer.getElapsedTime().asSeconds() / 2, 1.0f);
+          if (currentLevel->CurrentGun() != nullptr) {
+            currentBullet = currentLevel->CurrentGun()->GetBullet();
+            currentLevel->Fire(vel);
+          }
         }
       }
     }
@@ -293,18 +303,18 @@ int main() {
     }
 
     if (!inMenu) {
-      for (Entity* entity : currentLevel->GetPhysics()->GetEntities()) {
-        // std::cout << entity->GetSprite() << std::endl;
 
+      for (auto it = currentLevel->GetPhysics()->GetEntities().begin(); it != currentLevel->GetPhysics()->GetEntities().end(); ++it)   {
+        bool deleted = false; 
+        Entity* entity = *it;
+
+        if (entity->GetDead()) continue;
         float scale = (w / 200.0f) / currentLevel->GetCam()->GetZoom();
 
         entity->GetSprite()->setScale(sf::Vector2(scale, scale));
         entity->GetSprite()->setRotation(-entity->GetRotation());
 
-        std::pair<int, int> pos =
-            game.ToScreenPos(entity->GetPos(), *currentLevel->GetCam());
-
-        // std::cout << entity->GetHealth() << std::endl;
+        std::pair<int, int> pos = game.ToScreenPos(entity->GetPos(), *currentLevel->GetCam());
 
         entity->GetSprite()->setPosition(pos.first, -pos.second);
 
@@ -321,7 +331,7 @@ int main() {
 
             Pos position = entity->GetPos();
             // bool explodes = entity->Explodes();
-            currentLevel->RemovePhysicalEntity(entity);
+            // currentLevel->RemovePhysicalEntity(entity);
 
             if (entity->Explodes()) {
               currentLevel->AddExplosion(
@@ -332,13 +342,14 @@ int main() {
                                 game.GetTexture("explosion3"), 0),
                   500.0f);
             }
-          }
-          if (entity->GetType() == Entity::EntityType::BOX || entity->GetType() == Entity::EntityType::ENEMY || entity->GetType() == Entity::EntityType::GROUND) {
-          currentLevel->RemovePhysicalEntity(entity);
+            if (entity->GetType() == Entity::EntityType::BOX || entity->GetType() == Entity::EntityType::ENEMY || entity->GetType() == Entity::EntityType::BULLET) {
+              deleted = true;
+              currentLevel-> RemovePhysicalEntity(entity) ;
+            }
           }
         }
       }
-
+          
       int n = 0;
       int i = 0;
       for (Gun* gun : currentLevel->GetGuns()) {
