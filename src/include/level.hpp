@@ -69,6 +69,8 @@ class Level {
 
   std::vector<sf::Sound*>& GetSounds();
 
+  std::vector<Gun*> GetGuns();
+
  protected:
   sf::Sprite background_;
 

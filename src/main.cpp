@@ -335,7 +335,20 @@ int main() {
           }
         }
       }
+
+      int n = 0;
+      int i = 0;
+      for (Gun* gun : currentLevel->GetGuns()) {
+        if (game.GetMultiplayer() && n%2 == 0) {
+          gun->GetSprite()->setScale(sf::Vector2(0.5f, 0.5f));
+          gun->GetSprite()->setPosition(50, 20 + i * 40);
+          window.draw(*(gun->GetSprite()));
+          i++;
+        }
+        n++;
+      }
     }
+
 
     // std::cout << currentLevel->GetPoints() <<std::endl;
     //  Update the window

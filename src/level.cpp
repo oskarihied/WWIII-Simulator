@@ -174,3 +174,5 @@ void Level::PlaySound(const std::string name) {
 }
 
 std::vector<sf::Sound*>& Level::GetSounds() { return onGoingSounds_; }
+
+std::vector<Gun*> Level::GetGuns() {return guns_;}
