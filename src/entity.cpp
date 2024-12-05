@@ -48,17 +48,15 @@ void Entity::SetType(enum EntityType type) { type_ = type; }
 
 enum Entity::EntityType Entity::GetType() { return type_; }
 
-float Entity::ChangeHealth(float amount) {
+void Entity::ChangeHealth(float amount) {
   if (type_ != EntityType::UNDEFINED && type_ != EntityType::GROUND) {
-    health_ += amount;
-    if (health_ < 0) {
+    float futureHealth = health_ + amount;
+    if (futureHealth < 0) {
       health_ = 0;
-      return 0;
-    } else if (health_ > maxHealth) {
+    } else if (futureHealth > maxHealth) {
       health_ = maxHealth;
-      return maxHealth;
     } else {
-      return health_;
+      health_ = futureHealth;
     }
   }
 }
