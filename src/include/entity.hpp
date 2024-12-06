@@ -32,7 +32,7 @@ class Entity {
   void ChangeToDamaged();
 
   void SetHealth(float health);
-  float ChangeHealth(float amount);
+  void ChangeHealth(float amount);
 
   void ChangeTexture(sf::Texture& texture);
 

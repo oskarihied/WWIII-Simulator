@@ -4,7 +4,7 @@
 #include <fstream>
 #include <sstream>
 
-#include "enemy.hpp"
+#include "game.hpp"
 
 bool FileManager::SaveScore(const std::string& filename,
                             std::vector<std::pair<std::string, int>> scores) {
@@ -75,17 +75,14 @@ void FileManager::AddEntityToLevel(
   }
 }
 
-Level* FileManager::LoadLevel(const std::string& filename,
-                              std::map<std::string, sf::Texture>& textures,
-                              std::map<std::string, sf::SoundBuffer>& sfx,
-                              const bool& multiplayer) {
+Level* FileManager::LoadLevel(const std::string& filename, Game& game) {
   std::ifstream file(filename);
 
   if (!file.is_open()) {
     return nullptr;
   }
 
-  Level* level = new Level(textures.at("background1"), sfx);
+  Level* level = new Level(game);
 
   std::string line;
   while (std::getline(file, line)) {
@@ -99,10 +96,10 @@ Level* FileManager::LoadLevel(const std::string& filename,
       x = 0;
       y = -0.2;
       while (std::getline(stream, type, ';')) {
-        AddEntityToLevel(level, type, x, y, textures);
-        if (multiplayer) {
+        AddEntityToLevel(level, type, x, y, game.GetTextures());
+        if (game.IsMultiplayer()) {
           int mirrorX = 20 + (20 - x);
-          AddEntityToLevel(level, type, mirrorX, y, textures);
+          AddEntityToLevel(level, type, mirrorX, y, game.GetTextures());
         }
       }
     } else if (stream.peek() == '+') {
@@ -111,15 +108,15 @@ Level* FileManager::LoadLevel(const std::string& filename,
       y = 0;
       std::string icon;
       std::getline(stream, icon);
-      level->AddNonPhysicalEntity(new Entity(x, y, textures.at(icon)));
+      level->AddNonPhysicalEntity(new Entity(x, y, game.GetTexture(icon)));
     } else if (stream.peek() == '-') {
-      if (multiplayer) {
+      if (game.IsMultiplayer()) {
         stream.ignore();
         x = 40;
         y = 0;
         std::string icon;
         std::getline(stream, icon);
-        level->AddNonPhysicalEntity(new Entity(x, y, textures.at(icon)));
+        level->AddNonPhysicalEntity(new Entity(x, y, game.GetTexture(icon)));
       } else {
         std::string byeBye;
         std::getline(stream, byeBye);
@@ -129,10 +126,10 @@ Level* FileManager::LoadLevel(const std::string& filename,
       stream >> x;
       stream.ignore();
       stream >> y;
-      AddEntityToLevel(level, type, x, y, textures);
-      if (multiplayer) {
+      AddEntityToLevel(level, type, x, y, game.GetTextures());
+      if (game.IsMultiplayer()) {
         int mirrorX = 20 + (20 - x);
-        AddEntityToLevel(level, type, mirrorX, y, textures);
+        AddEntityToLevel(level, type, mirrorX, y, game.GetTextures());
       }
     }
   }

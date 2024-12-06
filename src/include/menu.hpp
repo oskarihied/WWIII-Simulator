@@ -1,12 +1,15 @@
 #ifndef MENU_HPP
 #define MENU_HPP
 
-#include "level.hpp"
+#include "gameView.hpp"
 
-class Menu : Level {
+class Menu : public GameView {
  public:
-  Menu(std::map<std::string, sf::Texture>& textures,
-       std::map<std::string, sf::SoundBuffer>& sfx, int width);
+  Menu(Game& game);
+
+  void StepInTime(sf::RenderWindow& window);
+
+  void Render(sf::RenderWindow& window);
 };
 
 #endif

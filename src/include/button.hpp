@@ -3,18 +3,17 @@
 
 #include "entity.hpp"
 
-class Button {
+class Button : public Entity {
  public:
   Button(float x, float y, float sizeX, float sizeY, sf::Texture& texture);
 
-  Entity* GetEntity();
   bool IsTouching(float x, float y);
 
  private:
   Vector pos_;
+
   float sizeX_;
   float sizeY_;
-  Entity* entity_;
 };
 
 #endif

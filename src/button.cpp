@@ -1,12 +1,9 @@
 #include "button.hpp"
 
 Button::Button(float x, float y, float sizeX, float sizeY, sf::Texture& texture)
-    : sizeX_(sizeX), sizeY_(sizeY) {
+    : Entity(x, y, texture), sizeX_(sizeX), sizeY_(sizeY) {
   pos_ = Vector(x, y);
-  entity_ = new Entity(x, y, texture);
 }
-
-Entity* Button::GetEntity() { return entity_; }
 
 bool Button::IsTouching(float x, float y) {
   bool xOK =
