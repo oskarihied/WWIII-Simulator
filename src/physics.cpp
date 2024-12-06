@@ -38,9 +38,8 @@ void Physics::SimulateWorld(float simulationStep) {
       continue;
     }
 
-    float damageMultiplier = -(events.hitEvents[j].approachSpeed 
-                             * events.hitEvents[j].approachSpeed
-                              );
+    float damageMultiplier = -(events.hitEvents[j].approachSpeed *
+                               events.hitEvents[j].approachSpeed);
     float bulletDamage = damageMultiplier * BULLET_DAMAGE;
     float entityDamage = damageMultiplier * ENTITY_DAMAGE;
     bool is1Ground = entities_[inx1]->GetType() == Entity::EntityType::GROUND;
@@ -49,14 +48,23 @@ void Physics::SimulateWorld(float simulationStep) {
     bool is2Bullet = entities_[inx2]->GetType() == Entity::EntityType::BULLET;
 
     float mass1, mass2;
-    if (is1Ground) mass1 = 1000; else mass1 = b2Body_GetMass(bid1);
-    if (is2Ground) mass2 = 1000; else mass2 = b2Body_GetMass(bid2);
+    if (is1Ground)
+      mass1 = 1000;
+    else
+      mass1 = b2Body_GetMass(bid1);
+    if (is2Ground)
+      mass2 = 1000;
+    else
+      mass2 = b2Body_GetMass(bid2);
 
     entities_[inx1]->ChangeHealth(entityDamage * mass2);
     entities_[inx2]->ChangeHealth(entityDamage * mass1);
-    if (PRINT_DEBUG) std::cout << "ent1: " << entities_[inx1]->GetHealth() << std::endl;
-    if (PRINT_DEBUG) std::cout << "ent2: " << entities_[inx2]->GetHealth() << std::endl;
-    if (PRINT_DEBUG) std::cout << events.hitEvents[j].approachSpeed << std::endl;
+    if (PRINT_DEBUG)
+      std::cout << "ent1: " << entities_[inx1]->GetHealth() << std::endl;
+    if (PRINT_DEBUG)
+      std::cout << "ent2: " << entities_[inx2]->GetHealth() << std::endl;
+    if (PRINT_DEBUG)
+      std::cout << events.hitEvents[j].approachSpeed << std::endl;
   }
 
   // Verify that all entities match simulation bodies
@@ -196,8 +204,10 @@ void Physics::Contact(b2ContactHitEvent contact) {}
 void Physics::SpawnExplosion(Vector pos, float force) {
   int i = 0;
   for (Entity* entity : entities_) {
-    
-    if (entity->GetType() == Entity::EntityType::BULLET || entity->GetType() == Entity::EntityType::GROUND || entity->GetType() == Entity::EntityType::UNDEFINED) continue;
+    if (entity->GetType() == Entity::EntityType::BULLET ||
+        entity->GetType() == Entity::EntityType::GROUND ||
+        entity->GetType() == Entity::EntityType::UNDEFINED)
+      continue;
     Vector& entPos = entity->GetPos();
     Vector vector = Vector(entPos);
     float distance = std::max(pos.Distance(entPos), 0.1f);
@@ -213,9 +223,10 @@ void Physics::SpawnExplosion(Vector pos, float force) {
   }
 }
 
-std::vector<Entity*>::const_iterator Physics::RemovePhysicalEntity(Entity* entity) {
+std::vector<Entity*>::const_iterator Physics::RemovePhysicalEntity(
+    Entity* entity) {
   int index = -1;
-  
+
   size_t i;
   for (i = 0; i < entities_.size(); i++) {
     if (entities_[i] == entity) {
@@ -223,8 +234,8 @@ std::vector<Entity*>::const_iterator Physics::RemovePhysicalEntity(Entity* entit
       break;
     }
   }
-  
+
   b2Body_Disable(b2bodies_[index]);
   entities_[i]->Die();
   return (entities_.begin() + index);
-  }
+}

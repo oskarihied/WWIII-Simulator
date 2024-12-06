@@ -7,13 +7,15 @@ Entity::Entity(float x, float y, sf::Texture& texture) : texture_(texture) {
 }
 
 bool Entity::CanBeDamaged() {
-  if (damaged_)
+  if (damagedTexture_)
     return true;
   else
     return false;
 }
 
-std::optional<sf::Texture> Entity::GetDamagedTexture() { return damaged_; }
+std::optional<sf::Texture> Entity::GetDamagedTexture() {
+  return damagedTexture_;
+}
 
 Vector& Entity::GetPos() { return pos_; }
 
@@ -27,9 +29,9 @@ void Entity::ChangeTexture(sf::Texture& texture) {
 }
 
 void Entity::ChangeToDamaged() {
-  if (CanBeDamaged() && !damagedTexture_) {
-    ChangeTexture(damaged_.value());
-    damagedTexture_ = true;
+  if (CanBeDamaged() && !damaged_) {
+    ChangeTexture(damagedTexture_.value());
+    damaged_ = true;
   }
 }
 
@@ -53,8 +55,8 @@ void Entity::ChangeHealth(float amount) {
     float futureHealth = health_ + amount;
     if (futureHealth < 0) {
       health_ = 0;
-    } else if (futureHealth > maxHealth) {
-      health_ = maxHealth;
+    } else if (futureHealth > maxHealth_) {
+      health_ = maxHealth_;
     } else {
       health_ = futureHealth;
     }
@@ -63,15 +65,19 @@ void Entity::ChangeHealth(float amount) {
 
 float Entity::GetHealth() { return health_; }
 
-float Entity::GetMaxHealth() { return maxHealth; }
+float Entity::GetMaxHealth() { return maxHealth_; }
 
 void Entity::SetHealth(float health) {
-  health_ = health;
-  if (health_ > maxHealth) health_ = maxHealth;
-  if (health_ < 0) health = 0;
+  if (health > maxHealth_) {
+    health_ = maxHealth_;
+  } else if (health < 0) {
+    health_ = 0;
+  } else {
+    health_ = health;
+  }
 }
 
-bool Entity::Explodes() { return explode_; }
+bool Entity::Explodes() { return explodes_; }
 
 int Entity::GetPoints() { return points_; }
 

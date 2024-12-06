@@ -1,16 +1,22 @@
 #include "physical.hpp"
 
-Physical::Physical(float x, float y, sf::Texture& texture, float mass,
-                   float width, float height)
-    : Entity(x, y, texture), mass_(mass), width_(width), height_(height) {};
+Physical::Physical(float x, float y, sf::Texture& texture)
+    : Entity(x, y, texture) {};
 
-void Physical::UpdateDims(float w, float h) {
+void Physical::SetDims(float w, float h) {
   width_ = w;
   height_ = h;
 }
 
-float Physical::GetWidth() { return width_; };
+void Physical::SetMass(float m) { mass_ = m; }
 
-float Physical::GetHeight() { return height_; };
+void Physical::SetToMaxHealth(float hp) {
+  maxHealth_ = hp;
+  health_ = hp;
+}
 
-float Physical::GetMass() { return mass_; };
+const float& Physical::GetWidth() { return width_; };
+
+const float& Physical::GetHeight() { return height_; };
+
+const float& Physical::GetMass() { return mass_; };

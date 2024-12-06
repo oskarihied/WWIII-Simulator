@@ -45,32 +45,36 @@ class Entity {
   void SetType(enum EntityType type);
   enum EntityType GetType();
 
-  bool Explodes();
-
   int GetPoints();
 
   void Die();
+
+  bool Explodes();
   bool IsDead();
 
  protected:
+  enum EntityType type_ = EntityType::UNDEFINED;
+
+  std::map<std::string, sf::Texture> textures_;
+
+  sf::Texture texture_;
+
+  std::optional<sf::Texture> damagedTexture_ = std::nullopt;
+
+  sf::Sprite sprite_;
+
   Vector pos_;
   Vector vel_;
+
   float rotation_ = 0.0f;
-  sf::Texture texture_;
-  std::optional<sf::Texture> damaged_ = std::nullopt;
-  sf::Sprite sprite_;
-  enum EntityType type_ = EntityType::UNDEFINED;
   float health_ = 1000;
-  float maxHealth = 1000;
-  float mass = 10;
-
-  bool damagedTexture_ = false;
-
-  bool explode_ = false;
+  float maxHealth_ = 1000;
 
   int points_ = 0;
 
+  bool damaged_ = false;
   bool dead_ = false;
+  bool explodes_ = false;
 };
 
 #endif

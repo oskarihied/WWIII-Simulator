@@ -5,19 +5,20 @@
 
 class Physical : public Entity {
  public:
-  Physical(float x, float y, sf::Texture& texture, float mass, float width,
-           float height);
+  Physical(float x, float y, sf::Texture& texture);
 
-  void UpdateDims(float w, float h);
+  void SetDims(float w, float h);
+  void SetMass(float m);
+  void SetToMaxHealth(float hp);
 
-  float GetWidth();
-  float GetHeight();
-  float GetMass();
+  const float& GetWidth();
+  const float& GetHeight();
+  const float& GetMass();
 
  protected:
+  float width_ = 1.0f;
+  float height_ = 1.0f;
   float mass_;
-  float width_;
-  float height_;
 };
 
 #endif
