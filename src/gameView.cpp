@@ -20,14 +20,12 @@ GameView::~GameView() {
   camera_ = nullptr;
 }
 
-void GameView::AddButton(Button* button) {
-  std::unique_ptr<Button> uptr(button);
-  buttons_.push_back(std::move(uptr));
+void GameView::AddButton(std::unique_ptr<Button> button) {
+  buttons_.push_back(std::move(button));
 }
 
-void GameView::AddNonPhysicalEntity(Entity* entity) {
-  std::unique_ptr<Entity> uptr(entity);
-  nonPhysicals_.push_back(std::move(uptr));
+void GameView::AddNonPhysicalEntity(std::unique_ptr<Entity> entity) {
+  nonPhysicals_.push_back(std::move(entity));
 }
 
 std::unique_ptr<Camera>& GameView::GetCam() { return camera_; }

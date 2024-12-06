@@ -63,7 +63,7 @@ void Level::Fire(float speed) {
 
     b->MoveTo(b->GetPos().GetX() + x, b->GetPos().GetY() + y);
     b->UpdateVel(x * speed * 30, y * speed * 30);
-    b->RotationTo(b->GetRotation());
+    b->RotationTo(-currentGun->GetRotation());
 
     physics_->AddBullet(b);
     currentBullet_ = b.get();
@@ -229,6 +229,7 @@ void Level::StepInTime(sf::RenderWindow& window) {
 
     if (event.type == sf::Event::KeyReleased) {
       if (event.key.scancode == sf::Keyboard::Scan::Escape) {
+        game_.SetMultiplayer(false);
         game_.StartMenu();
       }
     }

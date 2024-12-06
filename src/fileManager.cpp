@@ -115,7 +115,9 @@ Level* FileManager::LoadLevel(const std::string& filename, Game& game) {
       y = 0;
       std::string icon;
       std::getline(stream, icon);
-      level->AddNonPhysicalEntity(new Leader(x, y, icon, game.GetTextures()));
+      auto leader = std::make_unique<Entity>(x, y, game.GetTextures());
+      leader->SetTexture(icon);
+      level->AddNonPhysicalEntity(std::move(leader));
     } else if (stream.peek() == '-') {
       if (game.IsMultiplayer()) {
         stream.ignore();
@@ -123,7 +125,9 @@ Level* FileManager::LoadLevel(const std::string& filename, Game& game) {
         y = 0;
         std::string icon;
         std::getline(stream, icon);
-        level->AddNonPhysicalEntity(new Leader(x, y, icon, game.GetTextures()));
+        auto leader = std::make_unique<Entity>(x, y, game.GetTextures());
+        leader->SetTexture(icon);
+        level->AddNonPhysicalEntity(std::move(leader));
       } else {
         std::string byeBye;
         std::getline(stream, byeBye);
