@@ -62,7 +62,6 @@ void Level::Fire(float speed) {
     b->MoveTo(location.GetX() + x, location.GetY() + y);
     b->UpdateVel(x * speed * 30, y * speed * 30);
     b->RotationTo(-currentGun->GetRotation());
-    b->UpdateDims(0.4, 0.1);
 
     physics_->AddBullet(b);
 

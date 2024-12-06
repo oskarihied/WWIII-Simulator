@@ -1,11 +1,11 @@
 #ifndef BULLET_HPP
 #define BULLET_HPP
 
-#include "rigid.hpp"
+#include "physical.hpp"
 
-class Bullet : public Rigid {
+class Bullet : public Physical {
  public:
-  Bullet(float x, float y, sf::Texture& texture, float mass, int hp);
+  Bullet(float x, float y, sf::Texture& texture);
 };
 
 class RifleBullet : public Bullet {

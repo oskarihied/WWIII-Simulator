@@ -1,11 +1,11 @@
 #ifndef BOX_HPP
 #define BOX_HPP
 
-#include "rigid.hpp"
+#include "physical.hpp"
 
-class Box : public Rigid {
+class Box : public Physical {
  public:
-  Box(float x, float y, sf::Texture& texture, float mass, int hp);
+  Box(float x, float y, sf::Texture& texture);
 };
 
 class Concrete : public Box {
