@@ -1,39 +1,43 @@
 #include "game.hpp"
 
+#include "menu.hpp"
+
 Game::Game(int w, int h) : windowWidth_(w), windowHeight_(h) {
+  manager_ = FileManager();
   manager_.LoadTextures(textures_, "images");
   manager_.LoadSFX(sfx_, "sfx");
 }
 
 void Game::StartLevel(int levelIndex) {
-  delete currentLevel_;
+  currentView_ = nullptr;
 
   std::string filename = "src/levels/level_" + std::to_string(levelIndex);
 
-  currentLevel_ = manager_.LoadLevel(filename, textures_, sfx_, multiplayer_);
+  Level* level = manager_.LoadLevel(filename, *this);
   for (int i = 0; i < 5; i++) {
-    currentLevel_->AddGround(new Ground(i * 10, -1, textures_.at("ground")));
+    level->AddGround(new Ground(i * 10, -1, textures_.at("ground")));
   }
-  currentLevel_->GetCam()->MoveTo(20, 15);
-  currentLevel_->GetCam()->ZoomTo(30);
+
+  currentView_.reset(level);
+
+  currentView_->GetCam()->MoveTo(20, 15);
+  currentView_->GetCam()->ZoomTo(30);
 
   if (multiplayer_) {
-    currentLevel_->GetCam()->NewAnimation(
-        Vector(currentLevel_->CurrentGun()->GetPos().GetX() - 10, 7), 15, 2);
+    currentView_->GetCam()->NewAnimation(Vector(40 - 10, 7), 15, 2);
   } else {
-    currentLevel_->GetCam()->NewAnimation(
-        Vector(currentLevel_->CurrentGun()->GetPos().GetX() - 5, 7), 15, 2);
+    currentView_->GetCam()->NewAnimation(Vector(0 - 5, 7), 15, 2);
   }
 }
 
 void Game::StartMenu() {
-  if (currentLevel_ != nullptr) {
-    delete currentLevel_;
+  if (currentView_.get() != nullptr) {
+    currentView_ = nullptr;
   }
-  currentLevel_ = (Level*)new Menu(textures_, sfx_, windowWidth_);
+  currentView_.reset(new Menu(*this));
 }
 
-Level* Game::GetCurrentLevel() { return currentLevel_; }
+std::unique_ptr<GameView>& Game::GetCurrentView() { return currentView_; }
 
 std::pair<int, int> Game::ToScreenPos(Vector pos, Camera cam) {
   float x = pos.GetX();
@@ -55,9 +59,20 @@ Vector Game::ToGamePos(int x, int y, Camera cam) {
   return Vector(posX, posY);
 }
 
-sf::Texture& Game::GetTexture(std::string name) { return textures_.at(name); }
+sf::Texture& Game::GetTexture(const std::string name) {
+  return textures_.at(name);
+}
 
 std::map<std::string, sf::Texture> Game::GetTextures() { return textures_; }
 
+void Game::PlaySound(const std::string name) {
+  sf::Sound* sound = new sf::Sound(sfx_.at(name));
+  sound->play();
+  onGoingSounds_.push_back(sound);
+}
+
+std::vector<sf::Sound*>& Game::GetSounds() { return onGoingSounds_; }
+
 void Game::SetMultiplayer(bool multi) { multiplayer_ = multi; }
-bool Game::GetMultiplayer() { return multiplayer_; }
+
+bool Game::IsMultiplayer() { return multiplayer_; }

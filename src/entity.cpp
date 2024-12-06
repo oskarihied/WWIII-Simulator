@@ -62,6 +62,7 @@ void Entity::ChangeHealth(float amount) {
 }
 
 float Entity::GetHealth() { return health_; }
+
 float Entity::GetMaxHealth() { return maxHealth; }
 
 void Entity::SetHealth(float health) {

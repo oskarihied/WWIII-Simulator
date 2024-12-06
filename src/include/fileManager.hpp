@@ -6,7 +6,6 @@
 #include <string>
 #include <vector>
 
-#include "box.hpp"
 #include "level.hpp"
 
 class FileManager {
@@ -22,10 +21,7 @@ class FileManager {
   void AddEntityToLevel(Level* level, std::string type, float x, float y,
                         std::map<std::string, sf::Texture> textures);
 
-  Level* LoadLevel(const std::string& filename,
-                   std::map<std::string, sf::Texture>& textures,
-                   std::map<std::string, sf::SoundBuffer>& sfx,
-                   const bool& multiplayer);
+  Level* LoadLevel(const std::string& filename, Game& game);
 
   void LoadTextures(std::map<std::string, sf::Texture>& map,
                     const std::string path);

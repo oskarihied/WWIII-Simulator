@@ -2,32 +2,25 @@
 
 #include <exception>
 
-Level::Level(sf::Texture& background,
-             std::map<std::string, sf::SoundBuffer>& sfx, bool isMenu)
-    : camera_(new Camera(-1, 4)),
-      physics_(new Physics()),
-      sfx_(sfx),
-      entities_(physics_->GetEntities()),
-      isMenu_(isMenu) {
-  background_.setTexture(background);
+#include "game.hpp"
+
+Level::Level(Game& game) : GameView(game) {
+  physics_ = std::make_unique<Physics>();
+  background_.setTexture(game_.GetTexture("background1"));
   background_.setScale(1.0f, 1.0f);
 }
 
 Level::~Level() {
-  delete camera_;
-  delete physics_;
+  camera_ = nullptr;
+  physics_ = nullptr;
 }
-
-Camera* Level::GetCam() { return camera_; }
-
-bool Level::IsMenu() { return isMenu_; }
 
 void Level::AddBox(Box* box) { physics_->AddBox(box); }
 
 void Level::AddGround(Ground* ground) { physics_->AddGround(ground); }
 
 void Level::AddExplosion(Explosion* explosion, float force) {
-  nonPhysicals_.push_back((Entity*)explosion);
+  nonPhysicals_.push_back(std::unique_ptr<Entity>((Entity*)explosion));
   explosions_.push_back(explosion);
   Vector pos = explosion->GetPos();
   physics_->SpawnExplosion(pos, force);
@@ -43,61 +36,42 @@ void Level::AddBoxes(std::vector<Box*> boxes) {
   }
 }
 
-void Level::AddButton(Button* button) {
-  buttons_.push_back(button);
-  nonPhysicals_.push_back(button->GetEntity());
-}
-
-sf::Sprite& Level::GetBackground() { return background_; }
-
-Physics* Level::GetPhysics() { return physics_; }
-
 void Level::Fire(float speed) {
-  if (currentGun_) {
-    switch (currentGun_->GetType()) {
+  std::unique_ptr<Gun>& currentGun = guns_.back();
+  if (currentGun) {
+    switch (currentGun->GetType()) {
       case 'A':
-        PlaySound("rifle");
+        game_.PlaySound("rifle");
         break;
 
       case 'R':
-        PlaySound("launcher");
+        game_.PlaySound("launcher");
         break;
 
       default:
         throw std::exception();
     }
 
-    Bullet* b = currentGun_->GetBullet();
+    Bullet* b = currentGun->GetBullet();
 
-    Vector location = CurrentGun()->GetPos();
-    float angle = -CurrentGun()->GetRotation() * (M_PI / 180);
+    Vector location = currentGun->GetPos();
+    float angle = -currentGun->GetRotation() * (M_PI / 180);
     float x = cos(angle);
     float y = sin(angle);
 
     b->MoveTo(location.GetX() + x, location.GetY() + y);
     b->UpdateVel(x * speed * 30, y * speed * 30);
-    b->RotationTo(-CurrentGun()->GetRotation());
+    b->RotationTo(-currentGun->GetRotation());
     b->UpdateDims(0.4, 0.1);
 
     physics_->AddBullet(b);
 
     guns_.pop_back();
-    if (guns_.empty()) {
-      currentGun_ = nullptr;
-    } else {
-      currentGun_ = guns_.back();
-    }
 
     timer_ = 0;
     bulletTimer_ = true;
   }
 }
-
-void Level::AddNonPhysicalEntity(Entity* entity) {
-  nonPhysicals_.push_back(entity);
-}
-
-std::vector<Entity*> Level::GetEntities() { return entities_; }
 
 std::vector<std::pair<std::string, int>> Level::GetLeaderboard() {
   return leaderboard_;
@@ -113,17 +87,16 @@ void Level::AddScores(std::vector<std::pair<std::string, int>> scores) {
   }
 }
 
-std::vector<Entity*> Level::GetNonPhysicalEntities() { return nonPhysicals_; }
-
-std::vector<Entity*>::const_iterator Level::RemovePhysicalEntity(Entity* entity) {
+std::vector<Entity*>::const_iterator Level::RemovePhysicalEntity(
+    Entity* entity) {
   return physics_->RemovePhysicalEntity(entity);
 }
 
 void Level::RemoveNonPhysicalEntity(Entity* entity) {
   int index = -1;
   int i = 0;
-  for (Entity* ent : nonPhysicals_) {
-    if (ent == entity) {
+  for (std::unique_ptr<Entity>& ent : nonPhysicals_) {
+    if (ent.get() == entity) {
       index = i;
     }
     i++;
@@ -150,14 +123,9 @@ void Level::RemoveExplosion(Explosion* entity) {
   }
 }
 
-std::vector<Button*> Level::GetButtons() { return buttons_; }
-
-Gun* Level::CurrentGun() { 
-  return currentGun_; }
-
 void Level::AddGun(Gun* gun) {
-  guns_.push_back(gun);
-  currentGun_ = gun;
+  std::unique_ptr<Gun> uptr(gun);
+  guns_.push_back(std::move(uptr));
 }
 
 void Level::AddBulletTimer(float time) {
@@ -183,12 +151,184 @@ void Level::AddPoints(int points) { points_ += points; }
 
 int Level::GetPoints() { return points_; }
 
-void Level::PlaySound(const std::string name) {
-  sf::Sound* sound = new sf::Sound(sfx_.at(name));
-  sound->play();
-  onGoingSounds_.push_back(sound);
+std::vector<std::unique_ptr<Gun>>& Level::GetGuns() { return guns_; }
+
+void Level::StepInTime(sf::RenderWindow& window) {
+  sf::Event event;
+
+  sf::Vector2i mousePos = sf::Mouse::getPosition(window);
+
+  physics_->SimulateWorld(1.0f / 60.0f);
+
+  std::unique_ptr<Gun>& currentGun = guns_.back();
+
+  if (GetTimer() > 0 && GetTimer() <= 2 && !currentBullet_->IsDead()) {
+    camera_->MoveTo(currentBullet_->GetPos().GetX() - 5,
+                    camera_->GetPos().GetY());
+  }
+
+  if (currentGun.get() != nullptr) {
+    AddBulletTimer(1.0f / 60.0f);
+
+    if (GetTimer() > 2) {
+      SetTimer(false);
+      Vector v;
+
+      if (currentGun->GetPos().GetX() == 0) {
+        v = Vector(currentGun->GetPos().GetX() - 5, 7);
+        camera_->NewAnimation(v, 15, 2);
+      } else {
+        v = Vector(currentGun->GetPos().GetX() - 10, 7);
+        camera_->NewAnimation(v, 15, 2);
+      }
+    }
+
+    camera_->AnimationStep(1.0f / 60.0f);
+    std::pair<int, int> gunPos =
+        game_.ToScreenPos(currentGun->GetPos(), *camera_);
+
+    float gunY = -(float)mousePos.y - gunPos.second;
+    float gunX = (float)mousePos.x - gunPos.first;
+
+    float gunRotation = atan(gunY / gunX);
+    if (gunX < 0) {
+      if (gunY < 0) {
+        gunRotation = -M_PI + gunRotation;
+      } else {
+        gunRotation = M_PI + gunRotation;
+      }
+    }
+
+    currentGun->RotationTo(-gunRotation * (180.0f / M_PI));
+  }
+
+  while (window.pollEvent(event)) {
+    float camMoveSpeed = 0.5f;
+    float camZoomSpeed = 0.05f;
+
+    if (event.type == sf::Event::KeyPressed) {
+      if (!camera_->GetAnimation()) {
+        if (event.key.scancode == sf::Keyboard::Scan::Up) {
+          camera_->ShiftBy(0.0f, camMoveSpeed);
+        }
+        if (event.key.scancode == sf::Keyboard::Scan::Down) {
+          camera_->ShiftBy(0.0f, -camMoveSpeed);
+        }
+        if (event.key.scancode == sf::Keyboard::Scan::Right) {
+          camera_->ShiftBy(camMoveSpeed, 0.0f);
+        }
+        if (event.key.scancode == sf::Keyboard::Scan::Left) {
+          camera_->ShiftBy(-camMoveSpeed, 0.0f);
+        }
+
+        if (event.key.scancode == sf::Keyboard::Scan::Comma) {
+          camera_->Zoom(1 - camZoomSpeed);
+        }
+        if (event.key.scancode == sf::Keyboard::Scan::Period) {
+          camera_->Zoom(1 + camZoomSpeed);
+        }
+      }
+    }
+
+    if (event.type == sf::Event::KeyReleased) {
+      if (event.key.scancode == sf::Keyboard::Scan::Escape) {
+        game_.StartMenu();
+      }
+    }
+
+    if (event.type == sf::Event::MouseButtonPressed) {
+      gunTimer_.restart();
+    }
+
+    if (event.type == sf::Event::MouseButtonReleased) {
+      float vel = std::min(gunTimer_.getElapsedTime().asSeconds() / 2, 1.0f);
+      if (currentGun.get() != nullptr) {
+        currentBullet_ = currentGun->GetBullet();
+        Fire(vel);
+      }
+    }
+  }
 }
 
-std::vector<sf::Sound*>& Level::GetSounds() { return onGoingSounds_; }
+void Level::Render(sf::RenderWindow& window) {
+  std::unique_ptr<Gun>& currentGun = guns_.back();
 
-std::vector<Gun*> Level::GetGuns() { return guns_; }
+  window.draw(background_);
+
+  for (Explosion* explosion : explosions_) {
+    explosion->NextSprite();
+    if (explosion->GetCount() > 10) {
+      RemoveExplosion(explosion);
+    }
+  }
+
+  for (std::unique_ptr<Entity>& entity : nonPhysicals_) {
+    RenderEntity(entity, window);
+  }
+
+  if (currentGun.get() != nullptr) {
+    RenderEntity(currentGun, window);
+  }
+
+  for (auto it = physics_->GetEntities().begin();
+       it != physics_->GetEntities().end(); ++it) {
+    bool deleted = false;
+    Entity* entity = *it;
+
+    if (entity->IsDead()) continue;
+
+    float scale = (1300.0f / 200.0f) / camera_->GetZoom();
+
+    entity->GetSprite()->setScale(sf::Vector2(scale, scale));
+    entity->GetSprite()->setRotation(-entity->GetRotation());
+
+    std::pair<int, int> pos = game_.ToScreenPos(entity->GetPos(), *camera_);
+
+    entity->GetSprite()->setPosition(pos.first, -pos.second);
+
+    window.draw(*(entity->GetSprite()));
+
+    if (!entity->IsDead()) {
+      if (entity->GetHealth() <= entity->GetMaxHealth() * 0.9) {
+        entity->ChangeToDamaged();
+      }
+
+      if (entity->GetHealth() <= 0) {
+        entity->Die();
+        AddPoints(entity->GetPoints());
+
+        Vector position = entity->GetPos();
+        // bool explodes = entity->Explodes();
+        // currentLevel->RemovePhysicalEntity(entity);
+
+        if (entity->Explodes()) {
+          AddExplosion(new Explosion(entity->GetPos().GetX() + 0.01f,
+                                     entity->GetPos().GetY() + 0.01f,
+                                     game_.GetTexture("explosion1"),
+                                     game_.GetTexture("explosion2"),
+                                     game_.GetTexture("explosion3"), 0),
+                       500.0f);
+          game_.PlaySound("explosion");
+        }
+        if (entity->GetType() == Entity::EntityType::BOX ||
+            entity->GetType() == Entity::EntityType::ENEMY ||
+            entity->GetType() == Entity::EntityType::ENEMY) {
+          deleted = true;
+          RemovePhysicalEntity(entity);
+        }
+      }
+    }
+
+    int n = 0;
+    int i = 0;
+    for (std::unique_ptr<Gun>& gun : guns_) {
+      if (game_.IsMultiplayer() && n % 2 == 0) {
+        gun->GetSprite()->setScale(sf::Vector2(0.5f, 0.5f));
+        gun->GetSprite()->setPosition(50, 20 + i * 40);
+        window.draw(*(gun->GetSprite()));
+        i++;
+      }
+      n++;
+    }
+  }
+}
