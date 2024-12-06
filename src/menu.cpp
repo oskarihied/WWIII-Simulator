@@ -6,15 +6,15 @@ Menu::Menu(Game& game) : GameView(game) {
   background_.setTexture(game_.GetTexture("menu"));
   background_.setScale(1.0f, 1.0f);
 
-  AddNonPhysicalEntity(new Entity(4, 2.5, game.GetTexture("logo")));
+  // AddNonPhysicalEntity(new Entity(4, 2.5, game.GetTexture("logo")));
 
-  AddButton(
-      new Button(7.7, 3.5, 0.5, 0.5, game.GetTexture("singleplayer_chosen")));
-  AddButton(new Button(8.25, 3.5, 0.5, 0.5, game.GetTexture("multiplayer")));
+  AddButton(new Button(7.7, 3.5, 0.5, 0.5, "singleplayer_chosen",
+                       game.GetTextures()));
+  AddButton(new Button(8.25, 3.5, 0.5, 0.5, "multiplayer", game.GetTextures()));
 
-  AddButton(new Button(2, 0, 1, 1, game.GetTexture("button1")));
-  AddButton(new Button(4, 0, 1, 1, game.GetTexture("button2")));
-  AddButton(new Button(6, 0, 1, 1, game.GetTexture("button3")));
+  AddButton(new Button(2, 0, 1, 1, "button1", game.GetTextures()));
+  AddButton(new Button(4, 0, 1, 1, "button2", game.GetTextures()));
+  AddButton(new Button(6, 0, 1, 1, "button3", game.GetTextures()));
 }
 
 void Menu::StepInTime(sf::RenderWindow& window) {
@@ -31,14 +31,14 @@ void Menu::StepInTime(sf::RenderWindow& window) {
       for (std::unique_ptr<Button>& button : buttons_) {
         if (button->IsTouching(gamePos.GetX(), gamePos.GetY())) {
           if (index == 0) {
-            button->ChangeTexture(game_.GetTexture("singleplayer_chosen"));
-            buttons_[1]->ChangeTexture(game_.GetTexture("multiplayer"));
+            button->SetTexture("singleplayer_chosen");
+            buttons_[1]->SetTexture("multiplayer");
             game_.SetMultiplayer(false);
           }
 
           else if (index == 1) {
-            button->ChangeTexture(game_.GetTexture("multiplayer_chosen"));
-            buttons_[0]->ChangeTexture(game_.GetTexture("singleplayer"));
+            button->SetTexture("multiplayer_chosen");
+            buttons_[0]->SetTexture("singleplayer");
             game_.SetMultiplayer(true);
           }
 

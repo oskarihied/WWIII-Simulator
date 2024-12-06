@@ -15,7 +15,8 @@ void Game::StartLevel(int levelIndex) {
 
   Level* level = manager_.LoadLevel(filename, *this);
   for (int i = 0; i < 5; i++) {
-    level->AddGround(new Ground(i * 10, -1, textures_.at("ground")));
+    auto ground = std::make_unique<Ground>(i * 10, -1, textures_);
+    level->AddGround(std::move(ground));
   }
 
   currentView_.reset(level);
@@ -63,7 +64,7 @@ sf::Texture& Game::GetTexture(const std::string name) {
   return textures_.at(name);
 }
 
-std::map<std::string, sf::Texture> Game::GetTextures() { return textures_; }
+std::map<std::string, sf::Texture>& Game::GetTextures() { return textures_; }
 
 void Game::PlaySound(const std::string name) {
   sf::Sound* sound = new sf::Sound(sfx_.at(name));

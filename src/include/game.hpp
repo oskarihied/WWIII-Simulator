@@ -20,7 +20,7 @@ class Game {
   Vector ToGamePos(int x, int y, Camera cam);
 
   sf::Texture& GetTexture(const std::string name);
-  std::map<std::string, sf::Texture> GetTextures();
+  std::map<std::string, sf::Texture>& GetTextures();
 
   void PlaySound(const std::string name);
 

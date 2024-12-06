@@ -12,6 +12,7 @@ class FileManager {
  public:
   bool SaveScore(const std::string& filename,
                  std::vector<std::pair<std::string, int>> scores);
+
   std::vector<std::pair<std::string, int>> LoadScore(
       const std::string& filename);
 
@@ -19,7 +20,7 @@ class FileManager {
    * entities);*/
 
   void AddEntityToLevel(Level* level, std::string type, float x, float y,
-                        std::map<std::string, sf::Texture> textures);
+                        std::map<std::string, sf::Texture>& textures);
 
   Level* LoadLevel(const std::string& filename, Game& game);
 

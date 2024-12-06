@@ -13,7 +13,7 @@ class Entity {
  public:
   enum class EntityType { UNDEFINED, BOX, GROUND, BULLET, ENEMY };
 
-  Entity(float x, float y, sf::Texture& texture);
+  Entity(float x, float y, std::map<std::string, sf::Texture>& textures);
 
   Vector& GetPos();
   Vector& GetVel();
@@ -29,18 +29,14 @@ class Entity {
   float GetHealth();
   float GetMaxHealth();
 
-  void ChangeToDamaged();
+  virtual void BecomeDamaged();
 
   void SetHealth(float health);
   void ChangeHealth(float amount);
 
-  void ChangeTexture(sf::Texture& texture);
+  void SetTexture(const std::string name);
 
-  bool CanBeDamaged();
-
-  std::optional<sf::Texture> GetDamagedTexture();
-
-  sf::Sprite* GetSprite();
+  sf::Sprite& GetSprite();
 
   void SetType(enum EntityType type);
   enum EntityType GetType();
@@ -55,11 +51,7 @@ class Entity {
  protected:
   enum EntityType type_ = EntityType::UNDEFINED;
 
-  std::map<std::string, sf::Texture> textures_;
-
-  sf::Texture texture_;
-
-  std::optional<sf::Texture> damagedTexture_ = std::nullopt;
+  std::map<std::string, sf::Texture>& textures_;
 
   sf::Sprite sprite_;
 
@@ -72,7 +64,6 @@ class Entity {
 
   int points_ = 0;
 
-  bool damaged_ = false;
   bool dead_ = false;
   bool explodes_ = false;
 };

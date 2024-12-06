@@ -45,13 +45,13 @@ void GameView::RenderEntity(std::unique_ptr<T>& entity,
                             sf::RenderWindow& window) {
   float scale = (1300.0f / 200.0f) / camera_->GetZoom();
 
-  entity->GetSprite()->setScale(sf::Vector2(scale, scale));
-  entity->GetSprite()->setRotation(entity->GetRotation());
+  entity->GetSprite().setScale(sf::Vector2(scale, scale));
+  entity->GetSprite().setRotation(entity->GetRotation());
 
   std::pair<int, int> pos = game_.ToScreenPos(entity->GetPos(), *camera_);
-  entity->GetSprite()->setPosition(pos.first, -pos.second);
+  entity->GetSprite().setPosition(pos.first, -pos.second);
 
-  window.draw(*(entity->GetSprite()));
+  window.draw(entity->GetSprite());
 }
 
 template void GameView::RenderEntity<Entity>(std::unique_ptr<Entity>&,

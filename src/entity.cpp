@@ -1,20 +1,8 @@
 #include "entity.hpp"
 
-Entity::Entity(float x, float y, sf::Texture& texture) : texture_(texture) {
+Entity::Entity(float x, float y, std::map<std::string, sf::Texture>& textures)
+    : textures_(textures) {
   pos_ = Vector(x, y);
-  sprite_.setTexture(texture_);
-  sprite_.setOrigin(texture_.getSize().x / 2, texture_.getSize().y / 2);
-}
-
-bool Entity::CanBeDamaged() {
-  if (damagedTexture_)
-    return true;
-  else
-    return false;
-}
-
-std::optional<sf::Texture> Entity::GetDamagedTexture() {
-  return damagedTexture_;
 }
 
 Vector& Entity::GetPos() { return pos_; }
@@ -23,24 +11,17 @@ Vector& Entity::GetVel() { return vel_; }
 
 void Entity::UpdateVel(float xVel, float yVel) { vel_ = Vector(xVel, yVel); }
 
-void Entity::ChangeTexture(sf::Texture& texture) {
-  texture_ = texture;
-  sprite_.setTexture(texture_);
-}
-
-void Entity::ChangeToDamaged() {
-  if (CanBeDamaged() && !damaged_) {
-    ChangeTexture(damagedTexture_.value());
-    damaged_ = true;
-  }
+void Entity::SetTexture(const std::string name) {
+  sf::Texture& t = textures_.at(name);
+  sprite_.setTexture(t);
+  sprite_.setOrigin(t.getSize().x / 2, t.getSize().y / 2);
 }
 
 void Entity::MoveTo(float x, float y) { pos_.Update(x, y); }
 
-sf::Sprite* Entity::GetSprite() {
-  sprite_.setTexture(texture_);
-  return (&sprite_);
-}
+sf::Sprite& Entity::GetSprite() { return sprite_; }
+
+void Entity::BecomeDamaged() {}
 
 void Entity::RotationTo(float x) { rotation_ = x; }
 
