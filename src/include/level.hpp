@@ -36,7 +36,7 @@ class Level : public GameView {
 
   std::vector<std::pair<std::string, int>> GetLeaderboard();
 
-  void AddBulletTimer(float time);
+  void IncrementBulletTimer(float time);
   float GetTimer();
   void SetTimer(bool timer);
 

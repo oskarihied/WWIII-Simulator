@@ -128,7 +128,7 @@ void Level::AddGun(std::unique_ptr<Gun> gun) {
   guns_.push_back(std::move(gun));
 }
 
-void Level::AddBulletTimer(float time) {
+void Level::IncrementBulletTimer(float time) {
   if (bulletTimer_) {
     timer_ += time;
   }
@@ -154,23 +154,22 @@ int Level::GetPoints() { return points_; }
 std::vector<std::unique_ptr<Gun>>& Level::GetGuns() { return guns_; }
 
 void Level::StepInTime(sf::RenderWindow& window) {
+  physics_->SimulateWorld(1.0f / 60.0f);
+  camera_->AnimationStep(1.0f / 60.0f);
+
   sf::Event event;
 
   sf::Vector2i mousePos = sf::Mouse::getPosition(window);
-
-  physics_->SimulateWorld(1.0f / 60.0f);
-
-  std::unique_ptr<Gun>& currentGun = guns_.back();
 
   if (GetTimer() > 0 && GetTimer() <= 2 && !currentBullet_->IsDead()) {
     camera_->MoveTo(currentBullet_->GetPos().GetX() - 5,
                     camera_->GetPos().GetY());
   }
 
+  IncrementBulletTimer(1.0f / 60.0f);
+
   if (!guns_.empty()) {
     std::unique_ptr<Gun>& currentGun = guns_.back();
-
-    AddBulletTimer(1.0f / 60.0f);
 
     if (GetTimer() > 2) {
       SetTimer(false);
@@ -185,7 +184,6 @@ void Level::StepInTime(sf::RenderWindow& window) {
       }
     }
 
-    camera_->AnimationStep(1.0f / 60.0f);
     Vector gunPos = game_.ToScreenPos(currentGun->GetPos(), *camera_);
 
     float gunY = -(float)mousePos.y - gunPos.GetY();
