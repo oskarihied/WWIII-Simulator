@@ -57,19 +57,22 @@ void Level::Fire(float speed) {
 
     auto& b = currentGun->GetBullet();
 
-    float angle = -currentGun->GetRotation() * (M_PI / 180);
-    float x = cos(angle);
-    float y = sin(angle);
+    float gunRot = currentGun->GetRotation();
+    float x = cos(gunRot * (M_PI / 180));
+    float y = sin(-gunRot * (M_PI / 180));
 
     b->MoveTo(b->GetPos().GetX() + x, b->GetPos().GetY() + y);
     b->UpdateVel(x * speed * 30, y * speed * 30);
-    b->RotationTo(-currentGun->GetRotation());
+    b->RotationTo(-gunRot);
 
     physics_->AddBullet(b);
     currentBullet_ = b.get();
     physicals_.push_back(std::move(b));
 
     guns_.pop_back();
+    if (!guns_.empty()) {
+      guns_.back()->RotationTo(gunRot);
+    }
 
     timer_ = 0;
     bulletTimer_ = true;
