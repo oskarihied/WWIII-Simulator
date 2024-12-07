@@ -47,6 +47,9 @@ class Level : public GameView {
 
   void StepInTime(sf::RenderWindow& window);
 
+  void RenderAmmo(sf::RenderWindow& window, std::unique_ptr<Gun>& gun,
+                  const int& index);
+
   void Render(sf::RenderWindow& window);
 
  protected:

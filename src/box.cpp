@@ -2,7 +2,7 @@
 
 Box::Box(float x, float y, std::map<std::string, sf::Texture>& textures)
     : Physical(x, y, textures) {
-  SetType(Entity::EntityType::BOX);
+  SetType(EntityType::BOX);
 }
 
 Concrete::Concrete(float x, float y,

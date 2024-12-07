@@ -42,7 +42,7 @@ void Level::AddEnemy(std::unique_ptr<Enemy> enemy) {
 void Level::Fire(float speed) {
   std::unique_ptr<Gun>& currentGun = guns_.back();
   if (currentGun) {
-    switch (currentGun->GetType()) {
+    switch (currentGun->GunType()) {
       case 'A':
         game_.PlaySound("rifle");
         break;
@@ -164,7 +164,9 @@ void Level::StepInTime(sf::RenderWindow& window) {
                     camera_->GetPos().GetY());
   }
 
-  if (currentGun.get() != nullptr) {
+  if (!guns_.empty()) {
+    std::unique_ptr<Gun>& currentGun = guns_.back();
+
     AddBulletTimer(1.0f / 60.0f);
 
     if (GetTimer() > 2) {
@@ -181,11 +183,10 @@ void Level::StepInTime(sf::RenderWindow& window) {
     }
 
     camera_->AnimationStep(1.0f / 60.0f);
-    std::pair<int, int> gunPos =
-        game_.ToScreenPos(currentGun->GetPos(), *camera_);
+    Vector gunPos = game_.ToScreenPos(currentGun->GetPos(), *camera_);
 
-    float gunY = -(float)mousePos.y - gunPos.second;
-    float gunX = (float)mousePos.x - gunPos.first;
+    float gunY = -(float)mousePos.y - gunPos.GetY();
+    float gunX = (float)mousePos.x - gunPos.GetX();
 
     float gunRotation = atan(gunY / gunX);
     if (gunX < 0) {
@@ -240,16 +241,34 @@ void Level::StepInTime(sf::RenderWindow& window) {
 
     if (event.type == sf::Event::MouseButtonReleased) {
       float vel = std::min(gunTimer_.getElapsedTime().asSeconds() / 2, 1.0f);
-      if (currentGun.get() != nullptr) {
+      if (!guns_.empty()) {
         Fire(vel);
       }
     }
   }
 }
 
-void Level::Render(sf::RenderWindow& window) {
-  std::unique_ptr<Gun>& currentGun = guns_.back();
+void Level::RenderAmmo(sf::RenderWindow& window, std::unique_ptr<Gun>& gun,
+                       const int& index) {
+  sf::Sprite ammo = gun->CopySprite();
+  switch (gun->GunType()) {
+    case 'A':
+      ammo.setPosition(70.0f, 20.0f + index * 40.0f);
+      break;
 
+    case 'R':
+      ammo.setPosition(90.0f, 20.0f + index * 40.0f);
+      break;
+
+    default:
+      throw std::exception();
+  }
+  ammo.setRotation(0.0f);
+  ammo.setScale(sf::Vector2(0.5f, 0.5f));
+  window.draw(ammo);
+}
+
+void Level::Render(sf::RenderWindow& window) {
   window.draw(background_);
 
   for (Explosion* explosion : explosions_) {
@@ -263,8 +282,8 @@ void Level::Render(sf::RenderWindow& window) {
     RenderEntity(entity, window);
   }
 
-  if (currentGun.get() != nullptr) {
-    RenderEntity(currentGun, window);
+  if (!guns_.empty()) {
+    RenderEntity(guns_.back(), window);
   }
 
   for (auto it = physicals_.begin(); it != physicals_.end(); ++it) {
@@ -273,16 +292,7 @@ void Level::Render(sf::RenderWindow& window) {
 
     if (entity->IsDead()) continue;
 
-    float scale = (1300.0f / 200.0f) / camera_->GetZoom();
-
-    entity->GetSprite().setScale(sf::Vector2(scale, scale));
-    entity->GetSprite().setRotation(-entity->GetRotation());
-
-    std::pair<int, int> pos = game_.ToScreenPos(entity->GetPos(), *camera_);
-
-    entity->GetSprite().setPosition(pos.first, -pos.second);
-
-    window.draw(entity->GetSprite());
+    RenderEntity(entity, window);
 
     if (!entity->IsDead()) {
       entity->BecomeDamaged();
@@ -315,9 +325,10 @@ void Level::Render(sf::RenderWindow& window) {
     int i = 0;
     for (std::unique_ptr<Gun>& gun : guns_) {
       if (game_.IsMultiplayer() && n % 2 == 0) {
-        gun->GetSprite().setScale(sf::Vector2(0.5f, 0.5f));
-        gun->GetSprite().setPosition(50, 20 + i * 40);
-        window.draw(gun->GetSprite());
+        RenderAmmo(window, gun, i);
+        i++;
+      } else if (!game_.IsMultiplayer()) {
+        RenderAmmo(window, gun, i);
         i++;
       }
       n++;

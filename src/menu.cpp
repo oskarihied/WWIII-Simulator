@@ -34,10 +34,11 @@ void Menu::StepInTime(sf::RenderWindow& window) {
   sf::Event event;
 
   sf::Vector2i mousePos = sf::Mouse::getPosition(window);
+  Vector mouseVec = Vector(mousePos.x, mousePos.y);
 
   while (window.pollEvent(event)) {
     if (event.type == sf::Event::MouseButtonReleased) {
-      Vector gamePos = game_.ToGamePos(mousePos.x, mousePos.y, *camera_);
+      Vector gamePos = game_.ToGamePos(mouseVec, *camera_);
 
       int index = 0;
 

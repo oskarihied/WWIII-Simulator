@@ -5,7 +5,6 @@
 #include <sstream>
 
 #include "game.hpp"
-#include "leader.hpp"
 
 bool FileManager::SaveScore(const std::string& filename,
                             std::vector<std::pair<std::string, int>> scores) {

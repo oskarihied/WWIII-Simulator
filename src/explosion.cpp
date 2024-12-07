@@ -3,6 +3,7 @@
 Explosion::Explosion(float x, float y,
                      std::map<std::string, sf::Texture>& textures)
     : Entity(x, y, textures) {
+  SetType(EntityType::EXPLOSION);
   SetTexture("explosion1");
 }
 

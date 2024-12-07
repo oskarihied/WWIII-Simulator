@@ -10,7 +10,7 @@ class Gun : public Entity {
 
   std::unique_ptr<Bullet>& GetBullet();
 
-  virtual char GetType() = 0;
+  virtual char GunType() = 0;
 
  protected:
   std::unique_ptr<Bullet> bullet_ = nullptr;
@@ -20,7 +20,7 @@ class Rifle : public Gun {
  public:
   Rifle(float x, float y, std::map<std::string, sf::Texture>& textures);
 
-  char GetType();
+  char GunType();
 };
 
 class RocketLauncher : public Gun {
@@ -28,7 +28,7 @@ class RocketLauncher : public Gun {
   RocketLauncher(float x, float y,
                  std::map<std::string, sf::Texture>& textures);
 
-  char GetType();
+  char GunType();
 };
 
 #endif

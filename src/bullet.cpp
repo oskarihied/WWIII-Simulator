@@ -2,7 +2,7 @@
 
 Bullet::Bullet(float x, float y, std::map<std::string, sf::Texture>& textures)
     : Physical(x, y, textures) {
-  SetType(Entity::EntityType::BULLET);
+  SetType(EntityType::BULLET);
 }
 
 RifleBullet::RifleBullet(float x, float y,

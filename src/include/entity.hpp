@@ -11,7 +11,7 @@
 
 class Entity {
  public:
-  enum class EntityType { UNDEFINED, BOX, GROUND, BULLET, ENEMY };
+  enum class EntityType { UNDEFINED, BOX, GROUND, BULLET, ENEMY, EXPLOSION };
 
   Entity(float x, float y, std::map<std::string, sf::Texture>& textures);
 
@@ -37,6 +37,8 @@ class Entity {
   void SetTexture(const std::string name);
 
   sf::Sprite& GetSprite();
+
+  sf::Sprite CopySprite();
 
   void SetType(enum EntityType type);
   enum EntityType GetType();

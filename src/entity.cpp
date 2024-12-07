@@ -21,6 +21,8 @@ void Entity::MoveTo(float x, float y) { pos_.Update(x, y); }
 
 sf::Sprite& Entity::GetSprite() { return sprite_; }
 
+sf::Sprite Entity::CopySprite() { return sprite_; }
+
 void Entity::BecomeDamaged() {}
 
 void Entity::RotationTo(float x) { rotation_ = x; }
