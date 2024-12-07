@@ -2,24 +2,16 @@
 
 #include <iostream>
 
-constexpr int BULLET_DAMAGE = 10;
-constexpr float ENTITY_DAMAGE = 0.2;
+constexpr float BULLET_DAMAGE = 10.0f;
+constexpr float ENTITY_DAMAGE = 0.2f;
 constexpr bool PRINT_DEBUG = false;
 
 Physics::Physics(std::vector<std::unique_ptr<Physical>>& entities)
     : entities_(entities) {
   b2WorldDef worldDef = b2DefaultWorldDef();
   worldDef.gravity = (b2Vec2){0.0f, -9.81f};
-  // worldDef.restitutionThreshold = 0.0f;
   worldDef.hitEventThreshold = 0.5f;
   simulationWorld_ = b2CreateWorld(&worldDef);
-  // b2World_SetHitEventThreshold(simulationWorld_, 1);
-}
-
-Physics::~Physics() {
-  for (auto& it : entities_) {
-    it = nullptr;
-  }
 }
 
 void Physics::SimulateWorld(float simulationStep) {
@@ -28,6 +20,7 @@ void Physics::SimulateWorld(float simulationStep) {
 
   // Calculate ground and collision damage
   b2ContactEvents events = b2World_GetContactEvents(simulationWorld_);
+
   for (int j = 0; j < events.hitCount; j++) {
     b2BodyId bid1 = b2Shape_GetBody(events.hitEvents[j].shapeIdA);
     b2BodyId bid2 = b2Shape_GetBody(events.hitEvents[j].shapeIdB);
@@ -84,8 +77,22 @@ void Physics::SimulateWorld(float simulationStep) {
     ent->UpdateVel(vel.x, vel.y);
     ent->MoveTo(pos.x, pos.y);
     ent->RotationTo(acos(b2Body_GetRotation(body).c) * (180 / M_PI));
-    // std::cout << "x: " << pos.x << " y: " << pos.y << std::endl;
   }
+};
+
+void Physics::AddGround(std::unique_ptr<Ground>& ground) {
+  b2BodyDef groundBodyDef = b2DefaultBodyDef();
+  groundBodyDef.position =
+      (b2Vec2){ground->GetPos().GetX(), ground->GetPos().GetY() - 0.5f};
+  b2BodyId groundId = b2CreateBody(simulationWorld_, &groundBodyDef);
+
+  b2Polygon groundBox = b2MakeBox(10.0f, 1.0f);
+
+  b2ShapeDef groundShapeDef = b2DefaultShapeDef();
+  groundShapeDef.density = ground->GetMass();
+  b2CreatePolygonShape(groundId, &groundShapeDef, &groundBox);
+
+  b2bodies_.push_back(groundId);
 };
 
 void Physics::AddBox(std::unique_ptr<Box>& box) {
@@ -106,20 +113,23 @@ void Physics::AddBox(std::unique_ptr<Box>& box) {
   b2bodies_.push_back(bodyId);
 };
 
-void Physics::AddGround(std::unique_ptr<Ground>& ground) {
-  b2BodyDef groundBodyDef = b2DefaultBodyDef();
-  groundBodyDef.position =
-      (b2Vec2){ground->GetPos().GetX(), ground->GetPos().GetY() - 0.5f};
-  b2BodyId groundId = b2CreateBody(simulationWorld_, &groundBodyDef);
+void Physics::AddEnemy(std::unique_ptr<Enemy>& enemy) {
+  b2BodyDef bodyDef = b2DefaultBodyDef();
+  bodyDef.type = b2_dynamicBody;
+  bodyDef.position = (b2Vec2){enemy->GetPos().GetX(), enemy->GetPos().GetY()};
 
-  b2Polygon groundBox = b2MakeBox(10.0f, 1.0f);
+  b2BodyId bodyId = b2CreateBody(simulationWorld_, &bodyDef);
+  b2Polygon dynamicBox =
+      b2MakeBox(enemy->GetWidth() / 2.0, enemy->GetHeight() / 2.0);
 
-  b2ShapeDef groundShapeDef = b2DefaultShapeDef();
-  groundShapeDef.density = ground->GetMass();
-  b2CreatePolygonShape(groundId, &groundShapeDef, &groundBox);
+  b2ShapeDef shapeDef = b2DefaultShapeDef();
+  shapeDef.density = 1.0f;
+  shapeDef.friction = 0.3f;
+  shapeDef.enableHitEvents = true;
 
-  b2bodies_.push_back(groundId);
-  // grounds_.push_back(groundId.index1 - 1);
+  b2CreatePolygonShape(bodyId, &shapeDef, &dynamicBox);
+
+  b2bodies_.push_back(bodyId);
 };
 
 void Physics::AddBullet(std::unique_ptr<Bullet>& bullet) {
@@ -149,43 +159,11 @@ void Physics::AddBullet(std::unique_ptr<Bullet>& bullet) {
 
   b2Body_SetTransform(bulletId, (b2Vec2){pos_x, pos_y}, bruht);
 
-  SetVelocity(bulletId, bullet->GetVel().GetX(), bullet->GetVel().GetY());
+  b2Body_SetLinearVelocity(
+      bulletId, (b2Vec2){bullet->GetVel().GetX(), bullet->GetVel().GetY()});
 
   b2bodies_.push_back(bulletId);
-  // bullets_.push_back(bulletId.index1);
 };
-
-void Physics::AddEnemy(std::unique_ptr<Enemy>& enemy) {
-  b2BodyDef bodyDef = b2DefaultBodyDef();
-  bodyDef.type = b2_dynamicBody;
-  bodyDef.position = (b2Vec2){enemy->GetPos().GetX(), enemy->GetPos().GetY()};
-
-  b2BodyId bodyId = b2CreateBody(simulationWorld_, &bodyDef);
-  b2Polygon dynamicBox =
-      b2MakeBox(enemy->GetWidth() / 2.0, enemy->GetHeight() / 2.0);
-
-  b2ShapeDef shapeDef = b2DefaultShapeDef();
-  shapeDef.density = 1.0f;
-  shapeDef.friction = 0.3f;
-  shapeDef.enableHitEvents = true;
-
-  b2CreatePolygonShape(bodyId, &shapeDef, &dynamicBox);
-
-  b2bodies_.push_back(bodyId);
-};
-
-void Physics::SetVelocity(b2BodyId body, float xVel, float yVel) {
-  b2Body_SetLinearVelocity(body, (b2Vec2){xVel, yVel});
-};
-
-void Physics::SetPosition(b2BodyId body, float xPos, float yPos,
-                          b2Rot rotation) {
-  b2Body_SetTransform(body, (b2Vec2){xPos, yPos}, rotation);
-};
-
-const std::vector<b2BodyId>& Physics::GetBodies() const { return b2bodies_; }
-
-void Physics::Contact(b2ContactHitEvent contact) {}
 
 void Physics::SpawnExplosion(Vector pos, float force) {
   int i = 0;

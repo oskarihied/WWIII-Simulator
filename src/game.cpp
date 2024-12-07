@@ -11,9 +11,7 @@ Game::Game(int w, int h) : windowWidth_(w), windowHeight_(h) {
 std::unique_ptr<GameView>& Game::GetCurrentView() { return currentView_; }
 
 void Game::StartMenu() {
-  if (currentView_.get() != nullptr) {
-    currentView_ = nullptr;
-  }
+  currentView_ = nullptr;
   currentView_.reset(new Menu(*this));
 }
 
