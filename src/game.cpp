@@ -8,6 +8,15 @@ Game::Game(int w, int h) : windowWidth_(w), windowHeight_(h) {
   manager_.LoadSFX(sfx_, "sfx");
 }
 
+std::unique_ptr<GameView>& Game::GetCurrentView() { return currentView_; }
+
+void Game::StartMenu() {
+  if (currentView_.get() != nullptr) {
+    currentView_ = nullptr;
+  }
+  currentView_.reset(new Menu(*this));
+}
+
 void Game::StartLevel(int levelIndex) {
   currentView_ = nullptr;
 
@@ -15,7 +24,8 @@ void Game::StartLevel(int levelIndex) {
 
   Level* level = manager_.LoadLevel(filename, *this);
   for (int i = 0; i < 5; i++) {
-    level->AddGround(new Ground(i * 10, -1, textures_.at("ground")));
+    auto ground = std::make_unique<Ground>(i * 10, -1, textures_);
+    level->AddGround(std::move(ground));
   }
 
   currentView_.reset(level);
@@ -30,40 +40,37 @@ void Game::StartLevel(int levelIndex) {
   }
 }
 
-void Game::StartMenu() {
-  if (currentView_.get() != nullptr) {
-    currentView_ = nullptr;
-  }
-  currentView_.reset(new Menu(*this));
-}
-
-std::unique_ptr<GameView>& Game::GetCurrentView() { return currentView_; }
-
-std::pair<int, int> Game::ToScreenPos(Vector pos, Camera cam) {
-  float x = pos.GetX();
-  float y = pos.GetY();
+Vector Game::ToScreenPos(Vector& gamePos, Camera cam) {
+  float x = gamePos.GetX();
+  float y = gamePos.GetY();
 
   x -= cam.GetPos().GetX();
   y -= cam.GetPos().GetY();
 
-  x *= windowWidth_ / (cam.GetZoom());
-  y *= windowWidth_ / (cam.GetZoom());
+  x *= windowWidth_ / cam.GetZoom();
+  y *= windowWidth_ / cam.GetZoom();
 
-  return (std::pair((int)x, (int)y));
+  return Vector(x, y);
 }
 
-Vector Game::ToGamePos(int x, int y, Camera cam) {
-  float posX = (x * (cam.GetZoom())) / windowWidth_ + cam.GetPos().GetX();
-  float posY = (-y * (cam.GetZoom())) / windowWidth_ + cam.GetPos().GetY();
+Vector Game::ToGamePos(Vector& screenPos, Camera cam) {
+  float x = screenPos.GetX();
+  float y = screenPos.GetY();
 
-  return Vector(posX, posY);
+  x *= cam.GetZoom() / windowWidth_;
+  y *= -cam.GetZoom() / windowWidth_;
+
+  x += cam.GetPos().GetX();
+  y += cam.GetPos().GetY();
+
+  return Vector(x, y);
 }
 
 sf::Texture& Game::GetTexture(const std::string name) {
   return textures_.at(name);
 }
 
-std::map<std::string, sf::Texture> Game::GetTextures() { return textures_; }
+std::map<std::string, sf::Texture>& Game::GetTextures() { return textures_; }
 
 void Game::PlaySound(const std::string name) {
   sf::Sound* sound = new sf::Sound(sfx_.at(name));

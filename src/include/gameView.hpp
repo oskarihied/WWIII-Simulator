@@ -14,8 +14,8 @@ class GameView {
 
   ~GameView();
 
-  void AddButton(Button* button);
-  void AddNonPhysicalEntity(Entity* entity);
+  void AddButton(std::unique_ptr<Button> button);
+  void AddNonPhysicalEntity(std::unique_ptr<Entity> entity);
 
   std::unique_ptr<Camera>& GetCam();
 

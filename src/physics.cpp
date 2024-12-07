@@ -6,7 +6,8 @@ constexpr int BULLET_DAMAGE = 10;
 constexpr float ENTITY_DAMAGE = 0.2;
 constexpr bool PRINT_DEBUG = false;
 
-Physics::Physics() {
+Physics::Physics(std::vector<std::unique_ptr<Physical>>& entities)
+    : entities_(entities) {
   b2WorldDef worldDef = b2DefaultWorldDef();
   worldDef.gravity = (b2Vec2){0.0f, -9.81f};
   // worldDef.restitutionThreshold = 0.0f;
@@ -16,8 +17,8 @@ Physics::Physics() {
 }
 
 Physics::~Physics() {
-  for (auto it : entities_) {
-    delete it;
+  for (auto& it : entities_) {
+    it = nullptr;
   }
 }
 
@@ -25,7 +26,7 @@ void Physics::SimulateWorld(float simulationStep) {
   // Update simulation Objects locations
   b2World_Step(simulationWorld_, simulationStep, 4);
 
-  // Calculate bullet and collision damage
+  // Calculate ground and collision damage
   b2ContactEvents events = b2World_GetContactEvents(simulationWorld_);
   for (int j = 0; j < events.hitCount; j++) {
     b2BodyId bid1 = b2Shape_GetBody(events.hitEvents[j].shapeIdA);
@@ -73,13 +74,13 @@ void Physics::SimulateWorld(float simulationStep) {
         "Vectors entities and b2bodies must be the same size.");
   }
 
-  // Update entity location from simulation bodies locations
+  // Update ground location from simulation bodies locations
   for (uint i = 0; i < entities_.size(); i++) {
     b2BodyId body = b2bodies_[i];
     b2Vec2 pos = b2Body_GetPosition(body);
     b2Vec2 vel = b2Body_GetLinearVelocity(body);
 
-    Entity* ent = entities_[i];
+    auto& ent = entities_[i];
     ent->UpdateVel(vel.x, vel.y);
     ent->MoveTo(pos.x, pos.y);
     ent->RotationTo(acos(b2Body_GetRotation(body).c) * (180 / M_PI));
@@ -87,8 +88,7 @@ void Physics::SimulateWorld(float simulationStep) {
   }
 };
 
-b2BodyId Physics::AddBox(Box* box) {
-  box->SetType(Entity::EntityType::BOX);
+void Physics::AddBox(std::unique_ptr<Box>& box) {
   b2BodyDef bodyDef = b2DefaultBodyDef();
   bodyDef.type = b2_dynamicBody;
   bodyDef.position = (b2Vec2){box->GetPos().GetX(), box->GetPos().GetY()};
@@ -104,13 +104,9 @@ b2BodyId Physics::AddBox(Box* box) {
   b2CreatePolygonShape(bodyId, &shapeDef, &dynamicBox);
 
   b2bodies_.push_back(bodyId);
-  entities_.push_back(box);
-
-  return bodyId;
 };
 
-b2BodyId Physics::AddGround(Ground* ground) {
-  ground->SetType(Entity::EntityType::GROUND);
+void Physics::AddGround(std::unique_ptr<Ground>& ground) {
   b2BodyDef groundBodyDef = b2DefaultBodyDef();
   groundBodyDef.position =
       (b2Vec2){ground->GetPos().GetX(), ground->GetPos().GetY() - 0.5f};
@@ -123,15 +119,10 @@ b2BodyId Physics::AddGround(Ground* ground) {
   b2CreatePolygonShape(groundId, &groundShapeDef, &groundBox);
 
   b2bodies_.push_back(groundId);
-  entities_.push_back(ground);
   // grounds_.push_back(groundId.index1 - 1);
-
-  return groundId;
 };
 
-b2BodyId Physics::AddBullet(Bullet* bullet) {
-  bullet->SetType(Entity::EntityType::BULLET);
-
+void Physics::AddBullet(std::unique_ptr<Bullet>& bullet) {
   float pos_x = bullet->GetPos().GetX();
   float pos_y = bullet->GetPos().GetY();
 
@@ -161,14 +152,10 @@ b2BodyId Physics::AddBullet(Bullet* bullet) {
   SetVelocity(bulletId, bullet->GetVel().GetX(), bullet->GetVel().GetY());
 
   b2bodies_.push_back(bulletId);
-  entities_.push_back(bullet);
   // bullets_.push_back(bulletId.index1);
-  return bulletId;
 };
 
-b2BodyId Physics::AddEnemy(Enemy* enemy) {
-  enemy->SetType(Entity::EntityType::ENEMY);
-  enemy->SetHealth(100);
+void Physics::AddEnemy(std::unique_ptr<Enemy>& enemy) {
   b2BodyDef bodyDef = b2DefaultBodyDef();
   bodyDef.type = b2_dynamicBody;
   bodyDef.position = (b2Vec2){enemy->GetPos().GetX(), enemy->GetPos().GetY()};
@@ -185,9 +172,6 @@ b2BodyId Physics::AddEnemy(Enemy* enemy) {
   b2CreatePolygonShape(bodyId, &shapeDef, &dynamicBox);
 
   b2bodies_.push_back(bodyId);
-  entities_.push_back(enemy);
-
-  return bodyId;
 };
 
 void Physics::SetVelocity(b2BodyId body, float xVel, float yVel) {
@@ -199,16 +183,18 @@ void Physics::SetPosition(b2BodyId body, float xPos, float yPos,
   b2Body_SetTransform(body, (b2Vec2){xPos, yPos}, rotation);
 };
 
+const std::vector<b2BodyId>& Physics::GetBodies() const { return b2bodies_; }
+
 void Physics::Contact(b2ContactHitEvent contact) {}
 
 void Physics::SpawnExplosion(Vector pos, float force) {
   int i = 0;
-  for (Entity* entity : entities_) {
-    if (entity->GetType() == Entity::EntityType::BULLET ||
-        entity->GetType() == Entity::EntityType::GROUND ||
-        entity->GetType() == Entity::EntityType::UNDEFINED)
+  for (auto& ground : entities_) {
+    if (ground->GetType() == Entity::EntityType::BULLET ||
+        ground->GetType() == Entity::EntityType::GROUND ||
+        ground->GetType() == Entity::EntityType::UNDEFINED)
       continue;
-    Vector& entPos = entity->GetPos();
+    Vector& entPos = ground->GetPos();
     Vector vector = Vector(entPos);
     float distance = std::max(pos.Distance(entPos), 0.1f);
 
@@ -217,19 +203,18 @@ void Physics::SpawnExplosion(Vector pos, float force) {
     b2Vec2 position = b2Vec2{pos.GetX(), pos.GetY()};
 
     b2Body_ApplyForce(b2bodies_[i], forceVec, position, true);
-    entity->ChangeHealth(-(force * 10) / distance);
+    ground->ChangeHealth(-(force * 10) / distance);
 
     i++;
   }
 }
 
-std::vector<Entity*>::const_iterator Physics::RemovePhysicalEntity(
-    Entity* entity) {
+void Physics::RemovePhysicalEntity(std::unique_ptr<Physical>& entity) {
   int index = -1;
 
   size_t i;
   for (i = 0; i < entities_.size(); i++) {
-    if (entities_[i] == entity) {
+    if (entities_[i].get() == entity.get()) {
       index = i;
       break;
     }
@@ -237,5 +222,4 @@ std::vector<Entity*>::const_iterator Physics::RemovePhysicalEntity(
 
   b2Body_Disable(b2bodies_[index]);
   entities_[i]->Die();
-  return (entities_.begin() + index);
 }

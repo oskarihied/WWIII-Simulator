@@ -1,19 +1,8 @@
 #include "physical.hpp"
 
-Physical::Physical(float x, float y, sf::Texture& texture)
-    : Entity(x, y, texture) {};
-
-void Physical::SetDims(float w, float h) {
-  width_ = w;
-  height_ = h;
-}
-
-void Physical::SetMass(float m) { mass_ = m; }
-
-void Physical::SetToMaxHealth(float hp) {
-  maxHealth_ = hp;
-  health_ = hp;
-}
+Physical::Physical(float x, float y,
+                   std::map<std::string, sf::Texture>& textures)
+    : Entity(x, y, textures) {};
 
 const float& Physical::GetWidth() { return width_; };
 

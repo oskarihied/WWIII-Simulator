@@ -59,19 +59,25 @@ std::vector<Entity*>& entities){ std::ofstream file(filename);
 
 void FileManager::AddEntityToLevel(
     Level* level, std::string type, float x, float y,
-    std::map<std::string, sf::Texture> textures) {
+    std::map<std::string, sf::Texture>& textures) {
   if (type == "C") {
-    level->AddBox(new Concrete(x, y, textures));
+    auto box = std::make_unique<Concrete>(x, y, textures);
+    level->AddBox(std::move(box));
   } else if (type == "W") {
-    level->AddBox(new Wood(x, y, textures));
+    auto box = std::make_unique<Wood>(x, y, textures);
+    level->AddBox(std::move(box));
   } else if (type == "G") {
-    level->AddBox(new Glass(x, y, textures));
+    auto box = std::make_unique<Glass>(x, y, textures);
+    level->AddBox(std::move(box));
   } else if (type == "E") {
-    level->AddEnemy(new Enemy(x, y, textures));
+    auto enemy = std::make_unique<Enemy>(x, y, textures);
+    level->AddEnemy(std::move(enemy));
   } else if (type == "A") {
-    level->AddGun(new Rifle(x, y, textures));
+    auto rifle = std::make_unique<Rifle>(x, y, textures);
+    level->AddGun(std::move(rifle));
   } else if (type == "R") {
-    level->AddGun(new RocketLauncher(x, y, textures));
+    auto launcher = std::make_unique<RocketLauncher>(x, y, textures);
+    level->AddGun(std::move(launcher));
   }
 }
 
@@ -108,7 +114,9 @@ Level* FileManager::LoadLevel(const std::string& filename, Game& game) {
       y = 0;
       std::string icon;
       std::getline(stream, icon);
-      level->AddNonPhysicalEntity(new Entity(x, y, game.GetTexture(icon)));
+      auto leader = std::make_unique<Entity>(x, y, game.GetTextures());
+      leader->SetTexture(icon);
+      level->AddNonPhysicalEntity(std::move(leader));
     } else if (stream.peek() == '-') {
       if (game.IsMultiplayer()) {
         stream.ignore();
@@ -116,7 +124,9 @@ Level* FileManager::LoadLevel(const std::string& filename, Game& game) {
         y = 0;
         std::string icon;
         std::getline(stream, icon);
-        level->AddNonPhysicalEntity(new Entity(x, y, game.GetTexture(icon)));
+        auto leader = std::make_unique<Entity>(x, y, game.GetTextures());
+        leader->SetTexture(icon);
+        level->AddNonPhysicalEntity(std::move(leader));
       } else {
         std::string byeBye;
         std::getline(stream, byeBye);

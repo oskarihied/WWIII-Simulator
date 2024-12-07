@@ -5,7 +5,9 @@
 
 class Button : public Entity {
  public:
-  Button(float x, float y, float sizeX, float sizeY, sf::Texture& texture);
+  Button(float x, float y, float sizeX, float sizeY,
+         const std::string textureName,
+         std::map<std::string, sf::Texture>& textures);
 
   bool IsTouching(float x, float y);
 

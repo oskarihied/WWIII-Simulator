@@ -5,7 +5,7 @@
 #include "game.hpp"
 
 Level::Level(Game& game) : GameView(game) {
-  physics_ = std::make_unique<Physics>();
+  physics_ = std::make_unique<Physics>(physicals_);
   background_.setTexture(game_.GetTexture("background1"));
   background_.setScale(1.0f, 1.0f);
 }
@@ -15,9 +15,15 @@ Level::~Level() {
   physics_ = nullptr;
 }
 
-void Level::AddBox(Box* box) { physics_->AddBox(box); }
+void Level::AddBox(std::unique_ptr<Box> box) {
+  physics_->AddBox(box);
+  physicals_.push_back(std::move(box));
+}
 
-void Level::AddGround(Ground* ground) { physics_->AddGround(ground); }
+void Level::AddGround(std::unique_ptr<Ground> ground) {
+  physics_->AddGround(ground);
+  physicals_.push_back(std::move(ground));
+}
 
 void Level::AddExplosion(Explosion* explosion, float force) {
   nonPhysicals_.push_back(std::unique_ptr<Entity>((Entity*)explosion));
@@ -28,18 +34,15 @@ void Level::AddExplosion(Explosion* explosion, float force) {
 
 std::vector<Explosion*> Level::GetExplosions() { return explosions_; }
 
-void Level::AddEnemy(Enemy* enemy) { physics_->AddEnemy(enemy); }
-
-void Level::AddBoxes(std::vector<Box*> boxes) {
-  for (auto it : boxes) {
-    physics_->AddBox(it);
-  }
+void Level::AddEnemy(std::unique_ptr<Enemy> enemy) {
+  physics_->AddEnemy(enemy);
+  physicals_.push_back(std::move(enemy));
 }
 
 void Level::Fire(float speed) {
   std::unique_ptr<Gun>& currentGun = guns_.back();
   if (currentGun) {
-    switch (currentGun->GetType()) {
+    switch (currentGun->GunType()) {
       case 'A':
         game_.PlaySound("rifle");
         break;
@@ -52,18 +55,19 @@ void Level::Fire(float speed) {
         throw std::exception();
     }
 
-    Bullet* b = currentGun->GetBullet();
+    auto& b = currentGun->GetBullet();
 
-    Vector location = currentGun->GetPos();
     float angle = -currentGun->GetRotation() * (M_PI / 180);
     float x = cos(angle);
     float y = sin(angle);
 
-    b->MoveTo(location.GetX() + x, location.GetY() + y);
+    b->MoveTo(b->GetPos().GetX() + x, b->GetPos().GetY() + y);
     b->UpdateVel(x * speed * 30, y * speed * 30);
     b->RotationTo(-currentGun->GetRotation());
 
     physics_->AddBullet(b);
+    currentBullet_ = b.get();
+    physicals_.push_back(std::move(b));
 
     guns_.pop_back();
 
@@ -84,11 +88,6 @@ void Level::AddScores(std::vector<std::pair<std::string, int>> scores) {
   for (auto it : scores) {
     leaderboard_.push_back(it);
   }
-}
-
-std::vector<Entity*>::const_iterator Level::RemovePhysicalEntity(
-    Entity* entity) {
-  return physics_->RemovePhysicalEntity(entity);
 }
 
 void Level::RemoveNonPhysicalEntity(Entity* entity) {
@@ -122,9 +121,8 @@ void Level::RemoveExplosion(Explosion* entity) {
   }
 }
 
-void Level::AddGun(Gun* gun) {
-  std::unique_ptr<Gun> uptr(gun);
-  guns_.push_back(std::move(uptr));
+void Level::AddGun(std::unique_ptr<Gun> gun) {
+  guns_.push_back(std::move(gun));
 }
 
 void Level::AddBulletTimer(float time) {
@@ -166,7 +164,9 @@ void Level::StepInTime(sf::RenderWindow& window) {
                     camera_->GetPos().GetY());
   }
 
-  if (currentGun.get() != nullptr) {
+  if (!guns_.empty()) {
+    std::unique_ptr<Gun>& currentGun = guns_.back();
+
     AddBulletTimer(1.0f / 60.0f);
 
     if (GetTimer() > 2) {
@@ -183,11 +183,10 @@ void Level::StepInTime(sf::RenderWindow& window) {
     }
 
     camera_->AnimationStep(1.0f / 60.0f);
-    std::pair<int, int> gunPos =
-        game_.ToScreenPos(currentGun->GetPos(), *camera_);
+    Vector gunPos = game_.ToScreenPos(currentGun->GetPos(), *camera_);
 
-    float gunY = -(float)mousePos.y - gunPos.second;
-    float gunX = (float)mousePos.x - gunPos.first;
+    float gunY = -(float)mousePos.y - gunPos.GetY();
+    float gunX = (float)mousePos.x - gunPos.GetX();
 
     float gunRotation = atan(gunY / gunX);
     if (gunX < 0) {
@@ -231,6 +230,7 @@ void Level::StepInTime(sf::RenderWindow& window) {
 
     if (event.type == sf::Event::KeyReleased) {
       if (event.key.scancode == sf::Keyboard::Scan::Escape) {
+        game_.SetMultiplayer(false);
         game_.StartMenu();
       }
     }
@@ -241,17 +241,34 @@ void Level::StepInTime(sf::RenderWindow& window) {
 
     if (event.type == sf::Event::MouseButtonReleased) {
       float vel = std::min(gunTimer_.getElapsedTime().asSeconds() / 2, 1.0f);
-      if (currentGun.get() != nullptr) {
-        currentBullet_ = currentGun->GetBullet();
+      if (!guns_.empty()) {
         Fire(vel);
       }
     }
   }
 }
 
-void Level::Render(sf::RenderWindow& window) {
-  std::unique_ptr<Gun>& currentGun = guns_.back();
+void Level::RenderAmmo(sf::RenderWindow& window, std::unique_ptr<Gun>& gun,
+                       const int& index) {
+  sf::Sprite ammo = gun->CopySprite();
+  switch (gun->GunType()) {
+    case 'A':
+      ammo.setPosition(70.0f, 20.0f + index * 40.0f);
+      break;
 
+    case 'R':
+      ammo.setPosition(90.0f, 20.0f + index * 40.0f);
+      break;
+
+    default:
+      throw std::exception();
+  }
+  ammo.setRotation(0.0f);
+  ammo.setScale(sf::Vector2(0.5f, 0.5f));
+  window.draw(ammo);
+}
+
+void Level::Render(sf::RenderWindow& window) {
   window.draw(background_);
 
   for (Explosion* explosion : explosions_) {
@@ -265,32 +282,20 @@ void Level::Render(sf::RenderWindow& window) {
     RenderEntity(entity, window);
   }
 
-  if (currentGun.get() != nullptr) {
-    RenderEntity(currentGun, window);
+  if (!guns_.empty()) {
+    RenderEntity(guns_.back(), window);
   }
 
-  for (auto it = physics_->GetEntities().begin();
-       it != physics_->GetEntities().end(); ++it) {
+  for (auto it = physicals_.begin(); it != physicals_.end(); ++it) {
     bool deleted = false;
-    Entity* entity = *it;
+    std::unique_ptr<Physical>& entity = *it;
 
     if (entity->IsDead()) continue;
 
-    float scale = (1300.0f / 200.0f) / camera_->GetZoom();
-
-    entity->GetSprite()->setScale(sf::Vector2(scale, scale));
-    entity->GetSprite()->setRotation(-entity->GetRotation());
-
-    std::pair<int, int> pos = game_.ToScreenPos(entity->GetPos(), *camera_);
-
-    entity->GetSprite()->setPosition(pos.first, -pos.second);
-
-    window.draw(*(entity->GetSprite()));
+    RenderEntity(entity, window);
 
     if (!entity->IsDead()) {
-      if (entity->GetHealth() <= entity->GetMaxHealth() * 0.9) {
-        entity->ChangeToDamaged();
-      }
+      entity->BecomeDamaged();
 
       if (entity->GetHealth() <= 0) {
         entity->Die();
@@ -303,9 +308,7 @@ void Level::Render(sf::RenderWindow& window) {
         if (entity->Explodes()) {
           AddExplosion(new Explosion(entity->GetPos().GetX() + 0.01f,
                                      entity->GetPos().GetY() + 0.01f,
-                                     game_.GetTexture("explosion1"),
-                                     game_.GetTexture("explosion2"),
-                                     game_.GetTexture("explosion3"), 0),
+                                     game_.GetTextures()),
                        500.0f);
           game_.PlaySound("explosion");
         }
@@ -313,7 +316,7 @@ void Level::Render(sf::RenderWindow& window) {
             entity->GetType() == Entity::EntityType::ENEMY ||
             entity->GetType() == Entity::EntityType::ENEMY) {
           deleted = true;
-          RemovePhysicalEntity(entity);
+          physics_->RemovePhysicalEntity(entity);
         }
       }
     }
@@ -322,9 +325,10 @@ void Level::Render(sf::RenderWindow& window) {
     int i = 0;
     for (std::unique_ptr<Gun>& gun : guns_) {
       if (game_.IsMultiplayer() && n % 2 == 0) {
-        gun->GetSprite()->setScale(sf::Vector2(0.5f, 0.5f));
-        gun->GetSprite()->setPosition(50, 20 + i * 40);
-        window.draw(*(gun->GetSprite()));
+        RenderAmmo(window, gun, i);
+        i++;
+      } else if (!game_.IsMultiplayer()) {
+        RenderAmmo(window, gun, i);
         i++;
       }
       n++;

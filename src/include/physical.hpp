@@ -5,11 +5,7 @@
 
 class Physical : public Entity {
  public:
-  Physical(float x, float y, sf::Texture& texture);
-
-  void SetDims(float w, float h);
-  void SetMass(float m);
-  void SetToMaxHealth(float hp);
+  Physical(float x, float y, std::map<std::string, sf::Texture>& textures);
 
   const float& GetWidth();
   const float& GetHeight();
