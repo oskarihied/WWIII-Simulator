@@ -20,11 +20,16 @@ std::vector<std::pair<std::string, int>> LoadScore(const std::string& filename);
 
 std::unique_ptr<Level> LoadLevel(const std::string& filename, Game& game);
 
-void LoadTextures(std::map<std::string, sf::Texture>& map,
-                  const std::string path);
+void LoadTextures(const std::string path);
 
-void LoadSFX(std::map<std::string, sf::SoundBuffer>& map,
-             const std::string path);
+std::unique_ptr<sf::Texture>& GetTexture(const std::string name);
+
+void LoadSFX(const std::string path);
+
+void PlaySound(const std::string name);
+
+void DestroySFML();
+
 };  // namespace FileManager
 
 #endif

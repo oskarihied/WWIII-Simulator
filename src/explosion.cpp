@@ -1,8 +1,6 @@
 #include "explosion.hpp"
 
-Explosion::Explosion(float x, float y,
-                     std::map<std::string, sf::Texture>& textures)
-    : Entity(x, y, textures) {
+Explosion::Explosion(float x, float y) : Entity(x, y) {
   SetType(EntityType::EXPLOSION);
   SetTexture("explosion1");
 }

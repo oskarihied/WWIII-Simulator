@@ -26,16 +26,6 @@ int main() {
     // Process events
     game.GetCurrentView()->StepInTime(window);
 
-    std::vector<sf::Sound*> currentSounds;
-    for (auto sound : game.GetSounds()) {
-      if (sound->getStatus() != sf::Sound::Status::Playing) {
-        delete sound;
-      } else {
-        currentSounds.push_back(sound);
-      }
-    }
-    game.GetSounds() = currentSounds;
-
     // Clear screen
     window.clear();
 
@@ -44,6 +34,8 @@ int main() {
     //  Update the window
     window.display();
   }
+
+  FileManager::DestroySFML();
 
   return EXIT_SUCCESS;
 }

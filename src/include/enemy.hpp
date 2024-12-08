@@ -5,7 +5,7 @@
 
 class Enemy : public Physical {
  public:
-  Enemy(float x, float y, std::map<std::string, sf::Texture>& textures);
+  Enemy(float x, float y);
 
   void BecomeDamaged() override;
 };

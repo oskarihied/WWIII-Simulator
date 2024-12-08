@@ -5,7 +5,7 @@
 
 class Explosion : public Entity {
  public:
-  Explosion(float x, float y, std::map<std::string, sf::Texture>& textures);
+  Explosion(float x, float y);
 
   const int& GetCount() const;
 

@@ -38,7 +38,6 @@ class Level : public GameView {
   int GetPoints();
 
   std::vector<std::unique_ptr<Gun>>& GetGuns();
-  std::map<std::string, sf::Texture>& GetTextures();
 
   const bool& IsMultiplayer();
 
@@ -54,8 +53,7 @@ class Level : public GameView {
     if (IsMultiplayer() && physical->GetType() != Entity::EntityType::GROUND) {
       float x = physical->GetPos().GetX();
       float y = physical->GetPos().GetY();
-      std::unique_ptr<T> mirrored =
-          std::make_unique<T>(40.0f - x, y, GetTextures());
+      std::unique_ptr<T> mirrored = std::make_unique<T>(40.0f - x, y);
       AddPhysicalForReal(std::move(mirrored));
     }
     AddPhysicalForReal(std::move(physical));
@@ -66,8 +64,7 @@ class Level : public GameView {
     if (IsMultiplayer()) {
       float x = gun->GetPos().GetX();
       float y = gun->GetPos().GetY();
-      std::unique_ptr<T> mirrored =
-          std::make_unique<T>(40.0f - x, y, GetTextures());
+      std::unique_ptr<T> mirrored = std::make_unique<T>(40.0f - x, y);
       guns_.push_back(std::move(gun));
       guns_.push_back(std::move(mirrored));
     } else {

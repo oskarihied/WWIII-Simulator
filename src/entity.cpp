@@ -1,9 +1,8 @@
 #include "entity.hpp"
 
-Entity::Entity(float x, float y, std::map<std::string, sf::Texture>& textures)
-    : textures_(textures) {
-  pos_ = Vector(x, y);
-}
+#include "fileManager.hpp"
+
+Entity::Entity(float x, float y) { pos_ = Vector(x, y); }
 
 Vector& Entity::GetPos() { return pos_; }
 
@@ -12,9 +11,9 @@ Vector& Entity::GetVel() { return vel_; }
 void Entity::UpdateVel(float xVel, float yVel) { vel_ = Vector(xVel, yVel); }
 
 void Entity::SetTexture(const std::string name) {
-  sf::Texture& t = textures_.at(name);
-  sprite_.setTexture(t);
-  sprite_.setOrigin(t.getSize().x / 2, t.getSize().y / 2);
+  std::unique_ptr<sf::Texture>& t = FileManager::GetTexture(name);
+  sprite_.setTexture(*t);
+  sprite_.setOrigin((*t).getSize().x / 2, (*t).getSize().y / 2);
 }
 
 void Entity::MoveTo(float x, float y) { pos_.Update(x, y); }

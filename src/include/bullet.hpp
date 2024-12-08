@@ -5,19 +5,19 @@
 
 class Bullet : public Physical {
  public:
-  Bullet(float x, float y, std::map<std::string, sf::Texture>& textures);
+  Bullet(float x, float y);
 };
 
 class RifleBullet : public Bullet {
  public:
-  RifleBullet(float x, float y, std::map<std::string, sf::Texture>& textures);
+  RifleBullet(float x, float y);
 
   void BecomeDamaged() override;
 };
 
 class Rocket : public Bullet {
  public:
-  Rocket(float x, float y, std::map<std::string, sf::Texture>& textures);
+  Rocket(float x, float y);
 };
 
 #endif

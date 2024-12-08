@@ -3,8 +3,8 @@
 #include "menu.hpp"
 
 Game::Game(int w, int h) : windowWidth_(w), windowHeight_(h) {
-  FileManager::LoadTextures(textures_, "images");
-  FileManager::LoadSFX(sfx_, "sfx");
+  FileManager::LoadTextures("images");
+  FileManager::LoadSFX("sfx");
 }
 
 std::unique_ptr<GameView>& Game::GetCurrentView() { return currentView_; }
@@ -21,7 +21,7 @@ void Game::StartLevel(int levelIndex) {
 
   std::unique_ptr<Level> level = FileManager::LoadLevel(filename, *this);
   for (int i = 0; i < 5; i++) {
-    auto ground = std::make_unique<Ground>(i * 10.0f, -1.5f, textures_);
+    auto ground = std::make_unique<Ground>(i * 10.0f, -1.5f);
     level->AddPhysical(std::move(ground));
   }
 
@@ -62,20 +62,6 @@ Vector Game::ToGamePos(Vector& screenPos, Camera cam) {
 
   return Vector(x, y);
 }
-
-sf::Texture& Game::GetTexture(const std::string name) {
-  return textures_.at(name);
-}
-
-std::map<std::string, sf::Texture>& Game::GetTextures() { return textures_; }
-
-void Game::PlaySound(const std::string name) {
-  sf::Sound* sound = new sf::Sound(sfx_.at(name));
-  sound->play();
-  onGoingSounds_.push_back(sound);
-}
-
-std::vector<sf::Sound*>& Game::GetSounds() { return onGoingSounds_; }
 
 void Game::SetMultiplayer(bool multi) { multiplayer_ = multi; }
 

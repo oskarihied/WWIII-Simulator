@@ -1,13 +1,8 @@
 #include "box.hpp"
 
-Box::Box(float x, float y, std::map<std::string, sf::Texture>& textures)
-    : Physical(x, y, textures) {
-  SetType(EntityType::BOX);
-}
+Box::Box(float x, float y) : Physical(x, y) { SetType(EntityType::BOX); }
 
-Concrete::Concrete(float x, float y,
-                   std::map<std::string, sf::Texture>& textures)
-    : Box(x, y, textures) {
+Concrete::Concrete(float x, float y) : Box(x, y) {
   maxHealth_ = 1000;
   health_ = 1000;
   mass_ = 100;
@@ -21,8 +16,7 @@ void Concrete::BecomeDamaged() {
   }
 }
 
-Wood::Wood(float x, float y, std::map<std::string, sf::Texture>& textures)
-    : Box(x, y, textures) {
+Wood::Wood(float x, float y) : Box(x, y) {
   maxHealth_ = 500;
   health_ = 500;
   mass_ = 50;
@@ -36,8 +30,7 @@ void Wood::BecomeDamaged() {
   }
 }
 
-Glass::Glass(float x, float y, std::map<std::string, sf::Texture>& textures)
-    : Box(x, y, textures) {
+Glass::Glass(float x, float y) : Box(x, y) {
   maxHealth_ = 300;
   health_ = 300;
   mass_ = 40;

@@ -21,7 +21,7 @@ class Entity {
     GUN
   };
 
-  Entity(float x, float y, std::map<std::string, sf::Texture>& textures);
+  Entity(float x, float y);
 
   Vector& GetPos();
   Vector& GetVel();
@@ -63,8 +63,6 @@ class Entity {
 
  protected:
   enum EntityType type_ = EntityType::UNDEFINED;
-
-  std::map<std::string, sf::Texture>& textures_;
 
   sf::Sprite sprite_;
 

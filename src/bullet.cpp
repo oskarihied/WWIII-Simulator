@@ -1,13 +1,10 @@
 #include "bullet.hpp"
 
-Bullet::Bullet(float x, float y, std::map<std::string, sf::Texture>& textures)
-    : Physical(x, y, textures) {
+Bullet::Bullet(float x, float y) : Physical(x, y) {
   SetType(EntityType::BULLET);
 }
 
-RifleBullet::RifleBullet(float x, float y,
-                         std::map<std::string, sf::Texture>& textures)
-    : Bullet(x, y, textures) {
+RifleBullet::RifleBullet(float x, float y) : Bullet(x, y) {
   width_ = 0.4f;
   height_ = 0.1f;
   maxHealth_ = 1;
@@ -22,8 +19,7 @@ void RifleBullet::BecomeDamaged() {
   }
 }
 
-Rocket::Rocket(float x, float y, std::map<std::string, sf::Texture>& textures)
-    : Bullet(x, y, textures) {
+Rocket::Rocket(float x, float y) : Bullet(x, y) {
   width_ = 0.4f;
   height_ = 0.1f;
   maxHealth_ = 1;
