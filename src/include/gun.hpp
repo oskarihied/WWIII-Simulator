@@ -6,11 +6,13 @@
 
 class Gun : public Entity {
  public:
+  enum class GunType { RIFLE, LAUNCHER };
+
   Gun(float x, float y, std::map<std::string, sf::Texture>& textures);
 
   std::unique_ptr<Bullet>& GetBullet();
 
-  virtual char GunType() = 0;
+  virtual enum GunType GunType() = 0;
 
  protected:
   std::unique_ptr<Bullet> bullet_ = nullptr;
@@ -20,15 +22,14 @@ class Rifle : public Gun {
  public:
   Rifle(float x, float y, std::map<std::string, sf::Texture>& textures);
 
-  char GunType();
+  enum GunType GunType();
 };
 
 class RocketLauncher : public Gun {
  public:
-  RocketLauncher(float x, float y,
-                 std::map<std::string, sf::Texture>& textures);
+  RocketLauncher(float x, float y, std::map<std::string, sf::Texture>& textures);
 
-  char GunType();
+  enum GunType GunType();
 };
 
 #endif

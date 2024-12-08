@@ -10,11 +10,6 @@ Level::Level(Game& game) : GameView(game) {
   background_.setScale(1.0f, 1.0f);
 }
 
-Level::~Level() {
-  camera_ = nullptr;
-  physics_ = nullptr;
-}
-
 void Level::AddGround(std::unique_ptr<Ground> ground) {
   physics_->AddGround(ground);
   physicals_.push_back(std::move(ground));
@@ -34,11 +29,11 @@ void Level::Fire(float speed) {
   std::unique_ptr<Gun>& currentGun = guns_.back();
   if (currentGun) {
     switch (currentGun->GunType()) {
-      case 'A':
+      case Gun::GunType::RIFLE:
         game_.PlaySound("rifle");
         break;
 
-      case 'R':
+      case Gun::GunType::LAUNCHER:
         game_.PlaySound("launcher");
         break;
 
@@ -259,11 +254,11 @@ void Level::RenderAmmo(sf::RenderWindow& window, std::unique_ptr<Gun>& gun,
                        const int& index) {
   sf::Sprite ammo = gun->CopySprite();
   switch (gun->GunType()) {
-    case 'A':
+    case Gun::GunType::RIFLE:
       ammo.setPosition(70.0f, 20.0f + index * 40.0f);
       break;
 
-    case 'R':
+    case Gun::GunType::LAUNCHER:
       ammo.setPosition(90.0f, 20.0f + index * 40.0f);
       break;
 

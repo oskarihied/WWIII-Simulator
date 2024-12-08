@@ -8,18 +8,6 @@ GameView::GameView(Game& game) : game_(game) {
   camera_ = std::make_unique<Camera>(-1, 4);
 }
 
-GameView::~GameView() {
-  for (auto& button : buttons_) {
-    button = nullptr;
-  }
-
-  for (auto& nonPhysical : nonPhysicals_) {
-    nonPhysical = nullptr;
-  }
-
-  camera_ = nullptr;
-}
-
 void GameView::AddButton(std::unique_ptr<Button> button) {
   buttons_.push_back(std::move(button));
 }
@@ -39,8 +27,7 @@ std::vector<std::unique_ptr<Entity>>& GameView::GetNonPhysicals() {
 }
 
 template <typename T>
-void GameView::RenderEntity(std::unique_ptr<T>& entity,
-                            sf::RenderWindow& window) {
+void GameView::RenderEntity(std::unique_ptr<T>& entity, sf::RenderWindow& window) {
   Vector pos = game_.ToScreenPos(entity->GetPos(), *camera_);
 
   float scale = (1300.0f / 200.0f) / camera_->GetZoom();
@@ -58,14 +45,10 @@ void GameView::RenderEntity(std::unique_ptr<T>& entity,
   window.draw(entity->GetSprite());
 }
 
-template void GameView::RenderEntity<Entity>(std::unique_ptr<Entity>&,
-                                             sf::RenderWindow&);
+template void GameView::RenderEntity<Entity>(std::unique_ptr<Entity>&, sf::RenderWindow&);
 
-template void GameView::RenderEntity<Physical>(std::unique_ptr<Physical>&,
-                                               sf::RenderWindow&);
+template void GameView::RenderEntity<Physical>(std::unique_ptr<Physical>&, sf::RenderWindow&);
 
-template void GameView::RenderEntity<Gun>(std::unique_ptr<Gun>&,
-                                          sf::RenderWindow&);
+template void GameView::RenderEntity<Gun>(std::unique_ptr<Gun>&, sf::RenderWindow&);
 
-template void GameView::RenderEntity<Button>(std::unique_ptr<Button>&,
-                                             sf::RenderWindow&);
+template void GameView::RenderEntity<Button>(std::unique_ptr<Button>&, sf::RenderWindow&);
