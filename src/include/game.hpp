@@ -28,12 +28,10 @@ class Game {
 
   void SetMultiplayer(bool multi);
 
-  bool IsMultiplayer();
+  const bool& IsMultiplayer();
 
  private:
   std::unique_ptr<GameView> currentView_ = nullptr;
-
-  FileManager manager_;
 
   std::map<std::string, sf::Texture> textures_;
   std::map<std::string, sf::SoundBuffer> sfx_;

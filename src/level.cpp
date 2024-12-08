@@ -15,24 +15,15 @@ Level::~Level() {
   physics_ = nullptr;
 }
 
-void Level::AddBox(std::unique_ptr<Box> box) {
-  physics_->AddBox(box);
-  physicals_.push_back(std::move(box));
-}
-
 void Level::AddGround(std::unique_ptr<Ground> ground) {
   physics_->AddGround(ground);
   physicals_.push_back(std::move(ground));
 }
 
-void Level::AddExplosion(Explosion* explosion, float force) {
-  nonPhysicals_.push_back(std::unique_ptr<Entity>((Entity*)explosion));
-  explosions_.push_back(explosion);
-  Vector pos = explosion->GetPos();
-  physics_->SpawnExplosion(pos, force);
+void Level::AddBox(std::unique_ptr<Box> box) {
+  physics_->AddBox(box);
+  physicals_.push_back(std::move(box));
 }
-
-std::vector<Explosion*> Level::GetExplosions() { return explosions_; }
 
 void Level::AddEnemy(std::unique_ptr<Enemy> enemy) {
   physics_->AddEnemy(enemy);
@@ -78,6 +69,15 @@ void Level::Fire(float speed) {
     bulletTimer_ = true;
   }
 }
+
+void Level::AddExplosion(Explosion* explosion, float force) {
+  nonPhysicals_.push_back(std::unique_ptr<Entity>((Entity*)explosion));
+  explosions_.push_back(explosion);
+  Vector pos = explosion->GetPos();
+  physics_->SpawnExplosion(pos, force);
+}
+
+std::vector<Explosion*> Level::GetExplosions() { return explosions_; }
 
 std::vector<std::pair<std::string, int>> Level::GetLeaderboard() {
   return leaderboard_;
@@ -152,6 +152,12 @@ void Level::AddPoints(int points) { points_ += points; }
 int Level::GetPoints() { return points_; }
 
 std::vector<std::unique_ptr<Gun>>& Level::GetGuns() { return guns_; }
+
+std::map<std::string, sf::Texture>& Level::GetTextures() {
+  return game_.GetTextures();
+}
+
+const bool& Level::IsMultiplayer() { return game_.IsMultiplayer(); }
 
 void Level::StepInTime(sf::RenderWindow& window) {
   physics_->SimulateWorld(1.0f / 60.0f);

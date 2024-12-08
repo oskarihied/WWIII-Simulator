@@ -3,9 +3,8 @@
 #include "menu.hpp"
 
 Game::Game(int w, int h) : windowWidth_(w), windowHeight_(h) {
-  manager_ = FileManager();
-  manager_.LoadTextures(textures_, "images");
-  manager_.LoadSFX(sfx_, "sfx");
+  FileManager::LoadTextures(textures_, "images");
+  FileManager::LoadSFX(sfx_, "sfx");
 }
 
 std::unique_ptr<GameView>& Game::GetCurrentView() { return currentView_; }
@@ -20,13 +19,13 @@ void Game::StartLevel(int levelIndex) {
 
   std::string filename = "src/levels/level_" + std::to_string(levelIndex);
 
-  Level* level = manager_.LoadLevel(filename, *this);
+  std::unique_ptr<Level> level = FileManager::LoadLevel(filename, *this);
   for (int i = 0; i < 5; i++) {
     auto ground = std::make_unique<Ground>(i * 10, -1, textures_);
     level->AddGround(std::move(ground));
   }
 
-  currentView_.reset(level);
+  currentView_ = std::move(level);
 
   currentView_->GetCam()->MoveTo(20, 15);
   currentView_->GetCam()->ZoomTo(30);
@@ -80,4 +79,4 @@ std::vector<sf::Sound*>& Game::GetSounds() { return onGoingSounds_; }
 
 void Game::SetMultiplayer(bool multi) { multiplayer_ = multi; }
 
-bool Game::IsMultiplayer() { return multiplayer_; }
+const bool& Game::IsMultiplayer() { return multiplayer_; }

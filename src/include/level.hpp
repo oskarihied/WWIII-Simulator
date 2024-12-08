@@ -44,6 +44,9 @@ class Level : public GameView {
   int GetPoints();
 
   std::vector<std::unique_ptr<Gun>>& GetGuns();
+  std::map<std::string, sf::Texture>& GetTextures();
+
+  const bool& IsMultiplayer();
 
   void StepInTime(sf::RenderWindow& window);
 
