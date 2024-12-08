@@ -10,21 +10,6 @@ Level::Level(Game& game) : GameView(game) {
   background_.setScale(1.0f, 1.0f);
 }
 
-void Level::AddGround(std::unique_ptr<Ground> ground) {
-  physics_->AddGround(ground);
-  physicals_.push_back(std::move(ground));
-}
-
-void Level::AddBox(std::unique_ptr<Box> box) {
-  physics_->AddBox(box);
-  physicals_.push_back(std::move(box));
-}
-
-void Level::AddEnemy(std::unique_ptr<Enemy> enemy) {
-  physics_->AddEnemy(enemy);
-  physicals_.push_back(std::move(enemy));
-}
-
 void Level::Fire(float speed) {
   std::unique_ptr<Gun>& currentGun = guns_.back();
   if (currentGun) {
@@ -45,13 +30,13 @@ void Level::Fire(float speed) {
 
     float gunRot = currentGun->GetRotation();
     float x = cos(gunRot * (M_PI / 180));
-    float y = sin(-gunRot * (M_PI / 180));
+    float y = sin(gunRot * (M_PI / 180));
 
     b->MoveTo(b->GetPos().GetX() + x, b->GetPos().GetY() + y);
     b->UpdateVel(x * speed * 30, y * speed * 30);
-    b->RotationTo(-gunRot);
+    b->RotationTo(gunRot);
 
-    physics_->AddBullet(b);
+    physics_->AddBoxBody(b, true);
     currentBullet_ = b.get();
     physicals_.push_back(std::move(b));
 
@@ -117,10 +102,6 @@ void Level::RemoveExplosion(Explosion* entity) {
     explosions_.erase(explosions_.begin() + index);
     RemoveNonPhysicalEntity(entity);
   }
-}
-
-void Level::AddGun(std::unique_ptr<Gun> gun) {
-  guns_.push_back(std::move(gun));
 }
 
 void Level::IncrementBulletTimer(float time) {
@@ -199,7 +180,7 @@ void Level::StepInTime(sf::RenderWindow& window) {
       }
     }
 
-    currentGun->RotationTo(-gunRotation * (180.0f / M_PI));
+    currentGun->RotationTo(gunRotation * (180.0f / M_PI));
   }
 
   while (window.pollEvent(event)) {

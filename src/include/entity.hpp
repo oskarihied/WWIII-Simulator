@@ -11,7 +11,15 @@
 
 class Entity {
  public:
-  enum class EntityType { UNDEFINED, BOX, GROUND, BULLET, ENEMY, EXPLOSION };
+  enum class EntityType {
+    UNDEFINED,
+    BOX,
+    GROUND,
+    BULLET,
+    ENEMY,
+    EXPLOSION,
+    GUN
+  };
 
   Entity(float x, float y, std::map<std::string, sf::Texture>& textures);
 
@@ -24,10 +32,10 @@ class Entity {
 
   void RotationTo(float x);
 
-  float GetRotation();
+  const float& GetRotation();
 
-  float GetHealth();
-  float GetMaxHealth();
+  const float& GetHealth();
+  const float& GetMaxHealth();
 
   virtual void BecomeDamaged();
 
@@ -45,6 +53,9 @@ class Entity {
 
   int GetPoints();
 
+  const float& GetWidth();
+  const float& GetHeight();
+
   void Die();
 
   bool Explodes();
@@ -58,9 +69,12 @@ class Entity {
   sf::Sprite sprite_;
 
   Vector pos_;
-  Vector vel_;
+  Vector vel_ = Vector();
 
+  float width_ = 1.0f;
+  float height_ = 1.0f;
   float rotation_ = 0.0f;
+
   float health_ = 1000;
   float maxHealth_ = 1000;
 

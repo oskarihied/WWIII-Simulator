@@ -21,8 +21,8 @@ void Game::StartLevel(int levelIndex) {
 
   std::unique_ptr<Level> level = FileManager::LoadLevel(filename, *this);
   for (int i = 0; i < 5; i++) {
-    auto ground = std::make_unique<Ground>(i * 10, -1, textures_);
-    level->AddGround(std::move(ground));
+    auto ground = std::make_unique<Ground>(i * 10.0f, -1.5f, textures_);
+    level->AddPhysical(std::move(ground));
   }
 
   currentView_ = std::move(level);

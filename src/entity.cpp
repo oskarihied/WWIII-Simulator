@@ -27,7 +27,7 @@ void Entity::BecomeDamaged() {}
 
 void Entity::RotationTo(float x) { rotation_ = x; }
 
-float Entity::GetRotation() { return rotation_; }
+const float& Entity::GetRotation() { return rotation_; }
 
 void Entity::SetType(enum EntityType type) { type_ = type; }
 
@@ -46,9 +46,13 @@ void Entity::ChangeHealth(float amount) {
   }
 }
 
-float Entity::GetHealth() { return health_; }
+const float& Entity::GetHealth() { return health_; }
 
-float Entity::GetMaxHealth() { return maxHealth_; }
+const float& Entity::GetMaxHealth() { return maxHealth_; }
+
+const float& Entity::GetWidth() { return width_; };
+
+const float& Entity::GetHeight() { return height_; };
 
 void Entity::SetHealth(float health) {
   if (health > maxHealth_) {

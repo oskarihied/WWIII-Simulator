@@ -1,7 +1,9 @@
 #include "gun.hpp"
 
 Gun::Gun(float x, float y, std::map<std::string, sf::Texture>& textures)
-    : Entity(x, y, textures) {}
+    : Entity(x, y, textures) {
+  SetType(EntityType::GUN);
+}
 
 std::unique_ptr<Bullet>& Gun::GetBullet() { return bullet_; }
 
