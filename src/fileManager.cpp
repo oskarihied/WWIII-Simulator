@@ -6,8 +6,118 @@
 
 #include "game.hpp"
 
-bool FileManager::SaveScore(const std::string& filename,
-                            std::vector<std::pair<std::string, int>> scores) {
+namespace FileManager {
+
+namespace {
+
+Vector ParseCoords(std::istringstream &ss, std::string &str) {
+  std::getline(ss, str, ',');
+  int x = std::stoi(str);
+  std::getline(ss, str);
+  int y = std::stoi(str);
+  return Vector(x, y);
+}
+
+void AddEntityToLevel(char entityType, std::string &info,
+                      std::unique_ptr<Level> &level) {
+  std::istringstream ss(info);
+  std::string str;
+  switch (entityType) {
+    case 'C': {
+      Vector v = ParseCoords(ss, str);
+      auto concrete = std::make_unique<Concrete>(v.GetX(), v.GetY(), level->GetTextures());
+      level->AddBox(std::move(concrete));
+      if (level->IsMultiplayer()) {
+        auto mirrorConcrete = std::make_unique<Concrete>(40.0f - v.GetX(), v.GetY(), level->GetTextures());
+        level->AddBox(std::move(mirrorConcrete));
+      }
+    } break;
+
+    case 'W': {
+      Vector v = ParseCoords(ss, str);
+      auto wood = std::make_unique<Wood>(v.GetX(), v.GetY(), level->GetTextures());
+      level->AddBox(std::move(wood));
+      if (level->IsMultiplayer()) {
+        auto mirrorWood = std::make_unique<Wood>(40.0f - v.GetX(), v.GetY(), level->GetTextures());
+        level->AddBox(std::move(mirrorWood));
+      }
+    } break;
+
+    case 'G': {
+      Vector v = ParseCoords(ss, str);
+      auto glass = std::make_unique<Glass>(v.GetX(), v.GetY(), level->GetTextures());
+      level->AddBox(std::move(glass));
+      if (level->IsMultiplayer()) {
+        auto mirrorGlass = std::make_unique<Glass>(40.0f - v.GetX(), v.GetY(), level->GetTextures());
+        level->AddBox(std::move(mirrorGlass));
+      }
+    } break;
+
+    case 'E': {
+      Vector v = ParseCoords(ss, str);
+      auto enemy = std::make_unique<Enemy>(v.GetX(), v.GetY(), level->GetTextures());
+      level->AddEnemy(std::move(enemy));
+      if (level->IsMultiplayer()) {
+        auto mirrorEnemy = std::make_unique<Enemy>(40.0f - v.GetX(), v.GetY(), level->GetTextures());
+        level->AddEnemy(std::move(mirrorEnemy));
+      }
+    } break;
+
+    case '*':
+      std::getline(ss, str);
+      switch (str.front()) {
+        case 'A': {
+          auto rifle = std::make_unique<Rifle>(0.0f, -0.2f, level->GetTextures());
+          level->AddGun(std::move(rifle));
+          if (level->IsMultiplayer()) {
+            auto mirrorRifle = std::make_unique<Rifle>(40.0f, -0.2f, level->GetTextures());
+            level->AddGun(std::move(mirrorRifle));
+          }
+        } break;
+
+        case 'R': {
+          auto launcher = std::make_unique<RocketLauncher>(0.0f, -0.2f, level->GetTextures());
+          level->AddGun(std::move(launcher));
+          if (level->IsMultiplayer()) {
+            auto mirrorLauncher = std::make_unique<RocketLauncher>(40.0f, -0.2f, level->GetTextures());
+            level->AddGun(std::move(mirrorLauncher));
+          }
+        } break;
+
+        default:
+          throw std::exception();
+      }
+      break;
+
+    case '+':
+      std::getline(ss, str);
+      {
+        auto leader = std::make_unique<Entity>(0.0f, 0.0f, level->GetTextures());
+        leader->SetTexture(str);
+        level->AddNonPhysicalEntity(std::move(leader));
+      }
+      break;
+
+    case '-':
+      if (level->IsMultiplayer()) {
+        std::getline(ss, str);
+        {
+          auto leader = std::make_unique<Entity>(40.0f, 0.0f, level->GetTextures());
+          leader->SetTexture(str);
+          level->AddNonPhysicalEntity(std::move(leader));
+        }
+      }
+      break;
+
+    default:
+      throw std::exception();
+  }
+}
+
+}  // namespace
+
+bool SaveScore(const std::string &filename,
+               std::vector<std::pair<std::string, int>> scores) {
   std::ofstream file(filename);
 
   if (!file.is_open()) {
@@ -22,8 +132,8 @@ bool FileManager::SaveScore(const std::string& filename,
   return true;
 }
 
-std::vector<std::pair<std::string, int>> FileManager::LoadScore(
-    const std::string& filename) {
+std::vector<std::pair<std::string, int>> LoadScore(
+    const std::string &filename) {
   std::vector<std::pair<std::string, int>> scores;
   std::ifstream file(filename);
 
@@ -57,104 +167,39 @@ std::vector<Entity*>& entities){ std::ofstream file(filename);
     }
 }*/
 
-void FileManager::AddEntityToLevel(
-    Level* level, std::string type, float x, float y,
-    std::map<std::string, sf::Texture>& textures) {
-  if (type == "C") {
-    auto box = std::make_unique<Concrete>(x, y, textures);
-    level->AddBox(std::move(box));
-  } else if (type == "W") {
-    auto box = std::make_unique<Wood>(x, y, textures);
-    level->AddBox(std::move(box));
-  } else if (type == "G") {
-    auto box = std::make_unique<Glass>(x, y, textures);
-    level->AddBox(std::move(box));
-  } else if (type == "E") {
-    auto enemy = std::make_unique<Enemy>(x, y, textures);
-    level->AddEnemy(std::move(enemy));
-  } else if (type == "A") {
-    auto rifle = std::make_unique<Rifle>(x, y, textures);
-    level->AddGun(std::move(rifle));
-  } else if (type == "R") {
-    auto launcher = std::make_unique<RocketLauncher>(x, y, textures);
-    level->AddGun(std::move(launcher));
-  }
-}
-
-Level* FileManager::LoadLevel(const std::string& filename, Game& game) {
+std::unique_ptr<Level> LoadLevel(const std::string &filename, Game &game) {
   std::ifstream file(filename);
 
   if (!file.is_open()) {
-    return nullptr;
+    throw std::exception();
   }
 
-  Level* level = new Level(game);
+  auto level = std::make_unique<Level>(game);
 
-  std::string line;
-  while (std::getline(file, line)) {
-    std::string type;
-    float x, y;
-
-    std::istringstream stream(line);
-
-    if (stream.peek() == '*') {
-      stream.ignore();
-      x = 0;
-      y = -0.2;
-      while (std::getline(stream, type, ';')) {
-        AddEntityToLevel(level, type, x, y, game.GetTextures());
-        if (game.IsMultiplayer()) {
-          int mirrorX = 20 + (20 - x);
-          AddEntityToLevel(level, type, mirrorX, y, game.GetTextures());
-        }
-      }
-    } else if (stream.peek() == '+') {
-      stream.ignore();
-      x = 0;
-      y = 0;
-      std::string icon;
-      std::getline(stream, icon);
-      auto leader = std::make_unique<Entity>(x, y, game.GetTextures());
-      leader->SetTexture(icon);
-      level->AddNonPhysicalEntity(std::move(leader));
-    } else if (stream.peek() == '-') {
-      if (game.IsMultiplayer()) {
-        stream.ignore();
-        x = 40;
-        y = 0;
-        std::string icon;
-        std::getline(stream, icon);
-        auto leader = std::make_unique<Entity>(x, y, game.GetTextures());
-        leader->SetTexture(icon);
-        level->AddNonPhysicalEntity(std::move(leader));
-      } else {
-        std::string byeBye;
-        std::getline(stream, byeBye);
-      }
-    } else {
-      std::getline(stream, type, ';');
-      stream >> x;
-      stream.ignore();
-      stream >> y;
-      AddEntityToLevel(level, type, x, y, game.GetTextures());
-      if (game.IsMultiplayer()) {
-        int mirrorX = 20 + (20 - x);
-        AddEntityToLevel(level, type, mirrorX, y, game.GetTextures());
+  char entityType;
+  while (file.get(entityType)) {
+    std::string info;
+    while (std::getline(file, info, ';')) {
+      AddEntityToLevel(entityType, info, level);
+      if (file.peek() == '\n') {
+        file.ignore();
+        break;
       }
     }
   }
 
   file.close();
+
   return level;
 }
 
-void FileManager::LoadTextures(std::map<std::string, sf::Texture>& map,
-                               const std::string path) {
+void LoadTextures(std::map<std::string, sf::Texture> &map,
+                  const std::string path) {
   map.clear();
 
   int i = 0;
 
-  for (const auto& entry : std::filesystem::directory_iterator(path)) {
+  for (const auto &entry : std::filesystem::directory_iterator(path)) {
     sf::Texture thisTexture;
     thisTexture.loadFromFile(entry.path());
 
@@ -170,13 +215,13 @@ void FileManager::LoadTextures(std::map<std::string, sf::Texture>& map,
   }
 }
 
-void FileManager::LoadSFX(std::map<std::string, sf::SoundBuffer>& map,
-                          const std::string path) {
+void LoadSFX(std::map<std::string, sf::SoundBuffer> &map,
+             const std::string path) {
   map.clear();
 
   int i = 0;
 
-  for (const auto& entry : std::filesystem::directory_iterator(path)) {
+  for (const auto &entry : std::filesystem::directory_iterator(path)) {
     sf::SoundBuffer buffer;
     buffer.loadFromFile(entry.path());
 
@@ -191,3 +236,5 @@ void FileManager::LoadSFX(std::map<std::string, sf::SoundBuffer>& map,
     i++;
   }
 }
+
+}  // namespace FileManager

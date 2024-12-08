@@ -12,8 +12,6 @@ class GameView {
  public:
   GameView(Game& game);
 
-  ~GameView();
-
   void AddButton(std::unique_ptr<Button> button);
   void AddNonPhysicalEntity(std::unique_ptr<Entity> entity);
 

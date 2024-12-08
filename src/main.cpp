@@ -17,7 +17,7 @@ int main() {
 
   game.StartMenu();
 
-  sf::RenderWindow window(sf::VideoMode(w, h), "WWIII Simulator",
+  sf::RenderWindow window(sf::VideoMode(), "WWIII Simulator",
                           sf::Style::Fullscreen);
 
   window.setFramerateLimit(60);

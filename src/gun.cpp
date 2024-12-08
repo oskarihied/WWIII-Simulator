@@ -11,7 +11,7 @@ Rifle::Rifle(float x, float y, std::map<std::string, sf::Texture>& textures)
   SetTexture("rifle");
 }
 
-char Rifle::GunType() { return 'A'; }
+enum Gun::GunType Rifle::GunType() { return GunType::RIFLE; }
 
 RocketLauncher::RocketLauncher(float x, float y,
                                std::map<std::string, sf::Texture>& textures)
@@ -20,4 +20,4 @@ RocketLauncher::RocketLauncher(float x, float y,
   SetTexture("rocket_launcher");
 }
 
-char RocketLauncher::GunType() { return 'R'; }
+enum Gun::GunType RocketLauncher::GunType() { return GunType::LAUNCHER; }

@@ -16,8 +16,6 @@ class Level : public GameView {
  public:
   Level(Game& game);
 
-  ~Level();
-
   void AddBox(std::unique_ptr<Box> box);
   void AddGround(std::unique_ptr<Ground> ground);
   void AddEnemy(std::unique_ptr<Enemy> enemy);
@@ -44,11 +42,13 @@ class Level : public GameView {
   int GetPoints();
 
   std::vector<std::unique_ptr<Gun>>& GetGuns();
+  std::map<std::string, sf::Texture>& GetTextures();
+
+  const bool& IsMultiplayer();
 
   void StepInTime(sf::RenderWindow& window);
 
-  void RenderAmmo(sf::RenderWindow& window, std::unique_ptr<Gun>& gun,
-                  const int& index);
+  void RenderAmmo(sf::RenderWindow& window, std::unique_ptr<Gun>& gun, const int& index);
 
   void Render(sf::RenderWindow& window);
 
