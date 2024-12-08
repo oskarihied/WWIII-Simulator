@@ -5,26 +5,26 @@
 
 class Box : public Physical {
  public:
-  Box(float x, float y, std::map<std::string, sf::Texture>& textures);
+  Box(float x, float y);
 };
 
 class Concrete : public Box {
  public:
-  Concrete(float x, float y, std::map<std::string, sf::Texture>& textures);
+  Concrete(float x, float y);
 
   void BecomeDamaged() override;
 };
 
 class Wood : public Box {
  public:
-  Wood(float x, float y, std::map<std::string, sf::Texture>& textures);
+  Wood(float x, float y);
 
   void BecomeDamaged() override;
 };
 
 class Glass : public Box {
  public:
-  Glass(float x, float y, std::map<std::string, sf::Texture>& textures);
+  Glass(float x, float y);
 
   void BecomeDamaged() override;
 };

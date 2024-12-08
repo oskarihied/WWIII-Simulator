@@ -8,7 +8,7 @@ class Gun : public Entity {
  public:
   enum class GunType { RIFLE, LAUNCHER };
 
-  Gun(float x, float y, std::map<std::string, sf::Texture>& textures);
+  Gun(float x, float y);
 
   std::unique_ptr<Bullet>& GetBullet();
 
@@ -20,14 +20,14 @@ class Gun : public Entity {
 
 class Rifle : public Gun {
  public:
-  Rifle(float x, float y, std::map<std::string, sf::Texture>& textures);
+  Rifle(float x, float y);
 
   enum GunType GunType();
 };
 
 class RocketLauncher : public Gun {
  public:
-  RocketLauncher(float x, float y, std::map<std::string, sf::Texture>& textures);
+  RocketLauncher(float x, float y);
 
   enum GunType GunType();
 };

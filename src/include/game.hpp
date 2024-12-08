@@ -18,23 +18,12 @@ class Game {
   Vector ToScreenPos(Vector& gamePos, Camera cam);
   Vector ToGamePos(Vector& screenPos, Camera cam);
 
-  sf::Texture& GetTexture(const std::string name);
-
-  std::map<std::string, sf::Texture>& GetTextures();
-
-  void PlaySound(const std::string name);
-
-  std::vector<sf::Sound*>& GetSounds();
-
   void SetMultiplayer(bool multi);
 
   const bool& IsMultiplayer();
 
  private:
   std::unique_ptr<GameView> currentView_ = nullptr;
-
-  std::map<std::string, sf::Texture> textures_;
-  std::map<std::string, sf::SoundBuffer> sfx_;
 
   std::vector<sf::Sound*> onGoingSounds_;
 

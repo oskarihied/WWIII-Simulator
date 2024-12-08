@@ -6,7 +6,7 @@
 
 Level::Level(Game& game) : GameView(game) {
   physics_ = std::make_unique<Physics>(physicals_);
-  background_.setTexture(game_.GetTexture("background1"));
+  background_.setTexture(*FileManager::GetTexture("background1"));
   background_.setScale(1.0f, 1.0f);
 }
 
@@ -15,11 +15,11 @@ void Level::Fire(float speed) {
   if (currentGun) {
     switch (currentGun->GunType()) {
       case Gun::GunType::RIFLE:
-        game_.PlaySound("rifle");
+        FileManager::PlaySound("rifle");
         break;
 
       case Gun::GunType::LAUNCHER:
-        game_.PlaySound("launcher");
+        FileManager::PlaySound("launcher");
         break;
 
       default:
@@ -128,10 +128,6 @@ void Level::AddPoints(int points) { points_ += points; }
 int Level::GetPoints() { return points_; }
 
 std::vector<std::unique_ptr<Gun>>& Level::GetGuns() { return guns_; }
-
-std::map<std::string, sf::Texture>& Level::GetTextures() {
-  return game_.GetTextures();
-}
 
 const bool& Level::IsMultiplayer() { return game_.IsMultiplayer(); }
 
@@ -290,10 +286,9 @@ void Level::Render(sf::RenderWindow& window) {
 
         if (entity->Explodes()) {
           AddExplosion(new Explosion(entity->GetPos().GetX() + 0.01f,
-                                     entity->GetPos().GetY() + 0.01f,
-                                     game_.GetTextures()),
+                                     entity->GetPos().GetY() + 0.01f),
                        500.0f);
-          game_.PlaySound("explosion");
+          FileManager::PlaySound("explosion");
         }
         if (entity->GetType() == Entity::EntityType::BOX ||
             entity->GetType() == Entity::EntityType::ENEMY ||

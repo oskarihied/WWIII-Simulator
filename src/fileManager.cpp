@@ -10,6 +10,11 @@ namespace FileManager {
 
 namespace {
 
+std::map<std::string, std::unique_ptr<sf::Texture>> textures_;
+std::map<std::string, std::unique_ptr<sf::SoundBuffer>> soundBuffers_;
+
+std::vector<std::unique_ptr<sf::Sound>> sounds_;
+
 Vector ParseCoords(std::istringstream &ss, std::string &str) {
   std::getline(ss, str, ',');
   int x = std::stoi(str);
@@ -25,25 +30,25 @@ void AddEntityToLevel(char entityType, std::string &info,
   switch (entityType) {
     case 'C': {
       Vector v = ParseCoords(ss, str);
-      auto concrete = std::make_unique<Concrete>(v.GetX(), v.GetY(), level->GetTextures());
+      auto concrete = std::make_unique<Concrete>(v.GetX(), v.GetY());
       level->AddPhysical(std::move(concrete));
     } break;
 
     case 'W': {
       Vector v = ParseCoords(ss, str);
-      auto wood = std::make_unique<Wood>(v.GetX(), v.GetY(), level->GetTextures());
+      auto wood = std::make_unique<Wood>(v.GetX(), v.GetY());
       level->AddPhysical(std::move(wood));
     } break;
 
     case 'G': {
       Vector v = ParseCoords(ss, str);
-      auto glass = std::make_unique<Glass>(v.GetX(), v.GetY(), level->GetTextures());
+      auto glass = std::make_unique<Glass>(v.GetX(), v.GetY());
       level->AddPhysical(std::move(glass));
     } break;
 
     case 'E': {
       Vector v = ParseCoords(ss, str);
-      auto enemy = std::make_unique<Enemy>(v.GetX(), v.GetY(), level->GetTextures());
+      auto enemy = std::make_unique<Enemy>(v.GetX(), v.GetY());
       level->AddPhysical(std::move(enemy));
     } break;
 
@@ -51,12 +56,12 @@ void AddEntityToLevel(char entityType, std::string &info,
       std::getline(ss, str);
       switch (str.front()) {
         case 'A': {
-          auto rifle = std::make_unique<Rifle>(0.0f, -0.2f, level->GetTextures());
+          auto rifle = std::make_unique<Rifle>(0.0f, -0.2f);
           level->AddGun(std::move(rifle));
         } break;
 
         case 'R': {
-          auto launcher = std::make_unique<RocketLauncher>(0.0f, -0.2f, level->GetTextures());
+          auto launcher = std::make_unique<RocketLauncher>(0.0f, -0.2f);
           level->AddGun(std::move(launcher));
         } break;
 
@@ -68,7 +73,7 @@ void AddEntityToLevel(char entityType, std::string &info,
     case '+':
       std::getline(ss, str);
       {
-        auto leader = std::make_unique<Entity>(0.0f, 0.0f, level->GetTextures());
+        auto leader = std::make_unique<Entity>(0.0f, 0.0f);
         leader->SetTexture(str);
         level->AddNonPhysicalEntity(std::move(leader));
       }
@@ -78,7 +83,7 @@ void AddEntityToLevel(char entityType, std::string &info,
       if (level->IsMultiplayer()) {
         std::getline(ss, str);
         {
-          auto leader = std::make_unique<Entity>(40.0f, 0.0f, level->GetTextures());
+          auto leader = std::make_unique<Entity>(40.0f, 0.0f);
           leader->SetTexture(str);
           level->AddNonPhysicalEntity(std::move(leader));
         }
@@ -169,47 +174,73 @@ std::unique_ptr<Level> LoadLevel(const std::string &filename, Game &game) {
   return level;
 }
 
-void LoadTextures(std::map<std::string, sf::Texture> &map,
-                  const std::string path) {
-  map.clear();
+void LoadTextures(const std::string path) {
+  textures_.clear();
 
   int i = 0;
-
   for (const auto &entry : std::filesystem::directory_iterator(path)) {
-    sf::Texture thisTexture;
-    thisTexture.loadFromFile(entry.path());
+    auto thisTexture = std::make_unique<sf::Texture>();
+    thisTexture->loadFromFile(entry.path());
 
     std::string name = entry.path();
     name.erase(0, (int)(path.length() + 1));
     name.erase(name.length() - 4);
 
-    map.insert({name, thisTexture});
-
-    // std::cout << name  << " " << i << std::endl;
-
+    textures_.insert({name, std::move(thisTexture)});
     i++;
   }
 }
 
-void LoadSFX(std::map<std::string, sf::SoundBuffer> &map,
-             const std::string path) {
-  map.clear();
+std::unique_ptr<sf::Texture> &GetTexture(const std::string name) {
+  return textures_.at(name);
+}
+
+void LoadSFX(const std::string path) {
+  soundBuffers_.clear();
 
   int i = 0;
-
   for (const auto &entry : std::filesystem::directory_iterator(path)) {
-    sf::SoundBuffer buffer;
-    buffer.loadFromFile(entry.path());
+    auto buffer = std::make_unique<sf::SoundBuffer>();
+    buffer->loadFromFile(entry.path());
 
     std::string name = entry.path();
     name.erase(0, (int)(path.length() + 1));
     name.erase(name.length() - 4);
 
-    map.insert({name, buffer});
-
-    // std::cout << name << " " << i << std::endl;
-
+    soundBuffers_.insert({name, std::move(buffer)});
     i++;
+  }
+}
+
+void PlaySound(const std::string name) {
+  auto sound = std::make_unique<sf::Sound>(*soundBuffers_.at(name));
+  sound->play();
+
+  bool foundNull = false;
+  for (auto &s : sounds_) {
+    if (s.get() == nullptr) {
+      s.reset(sound.release());
+      foundNull = true;
+      break;
+    }
+  }
+
+  if (!foundNull) {
+    sounds_.push_back(std::move(sound));
+  }
+}
+
+void DestroySFML() {
+  for (auto &t : textures_) {
+    t.second = nullptr;
+  }
+
+  for (auto &sb : soundBuffers_) {
+    sb.second = nullptr;
+  }
+
+  for (auto &s : sounds_) {
+    s = nullptr;
   }
 }
 

@@ -3,24 +3,21 @@
 #include "game.hpp"
 
 Menu::Menu(Game& game) : GameView(game) {
-  background_.setTexture(game_.GetTexture("menu"));
+  background_.setTexture(*FileManager::GetTexture("menu"));
   background_.setScale(1.0f, 1.0f);
 
-  auto logo = std::make_unique<Entity>(4.0f, 2.5f, game.GetTextures());
+  auto logo = std::make_unique<Entity>(4.0f, 2.5f);
   logo->SetTexture("logo");
   AddNonPhysicalEntity(std::move(logo));
 
-  auto singleplayer = std::make_unique<Button>(
-      7.7f, 3.5f, 0.5f, 0.5f, "singleplayer_chosen", game.GetTextures());
-  auto multiplayer = std::make_unique<Button>(
-      8.25f, 3.5f, 0.5f, 0.5f, "multiplayer", game.GetTextures());
+  auto singleplayer =
+      std::make_unique<Button>(7.7f, 3.5f, 0.5f, 0.5f, "singleplayer_chosen");
+  auto multiplayer =
+      std::make_unique<Button>(8.25f, 3.5f, 0.5f, 0.5f, "multiplayer");
 
-  auto level1 = std::make_unique<Button>(2.0f, 0.0f, 1.0f, 1.0f, "button1",
-                                         game.GetTextures());
-  auto level2 = std::make_unique<Button>(4.0f, 0.0f, 1.0f, 1.0f, "button2",
-                                         game.GetTextures());
-  auto level3 = std::make_unique<Button>(6.0f, 0.0f, 1.0f, 1.0f, "button3",
-                                         game.GetTextures());
+  auto level1 = std::make_unique<Button>(2.0f, 0.0f, 1.0f, 1.0f, "button1");
+  auto level2 = std::make_unique<Button>(4.0f, 0.0f, 1.0f, 1.0f, "button2");
+  auto level3 = std::make_unique<Button>(6.0f, 0.0f, 1.0f, 1.0f, "button3");
 
   AddButton(std::move(singleplayer));
   AddButton(std::move(multiplayer));

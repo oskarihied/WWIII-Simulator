@@ -5,7 +5,7 @@
 
 class Ground : public Physical {
  public:
-  Ground(float x, float y, std::map<std::string, sf::Texture>& textures);
+  Ground(float x, float y);
 };
 
 #endif
