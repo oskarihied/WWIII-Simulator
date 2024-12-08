@@ -11,17 +11,17 @@ Level::Level(Game& game) : GameView(game) {
 }
 
 void Level::AddGround(std::unique_ptr<Ground> ground) {
-  physics_->AddGround(ground);
+  physics_->AddBoxBody(ground, false);
   physicals_.push_back(std::move(ground));
 }
 
 void Level::AddBox(std::unique_ptr<Box> box) {
-  physics_->AddBox(box);
+  physics_->AddBoxBody(box, true);
   physicals_.push_back(std::move(box));
 }
 
 void Level::AddEnemy(std::unique_ptr<Enemy> enemy) {
-  physics_->AddEnemy(enemy);
+  physics_->AddBoxBody(enemy, true);
   physicals_.push_back(std::move(enemy));
 }
 
@@ -51,7 +51,7 @@ void Level::Fire(float speed) {
     b->UpdateVel(x * speed * 30, y * speed * 30);
     b->RotationTo(-gunRot);
 
-    physics_->AddBullet(b);
+    physics_->AddBoxBody(b, true);
     currentBullet_ = b.get();
     physicals_.push_back(std::move(b));
 

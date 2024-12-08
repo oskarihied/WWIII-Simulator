@@ -24,10 +24,10 @@ class Entity {
 
   void RotationTo(float x);
 
-  float GetRotation();
+  const float& GetRotation();
 
-  float GetHealth();
-  float GetMaxHealth();
+  const float& GetHealth();
+  const float& GetMaxHealth();
 
   virtual void BecomeDamaged();
 
@@ -58,7 +58,7 @@ class Entity {
   sf::Sprite sprite_;
 
   Vector pos_;
-  Vector vel_;
+  Vector vel_ = Vector();
 
   float rotation_ = 0.0f;
   float health_ = 1000;

@@ -2,7 +2,7 @@
 
 Enemy::Enemy(float x, float y, std::map<std::string, sf::Texture>& textures)
     : Physical(x, y, textures) {
-  mass_ = 100;
+  mass_ = 10;
   maxHealth_ = 1000;
   health_ = 1000;
   points_ = 1000;
