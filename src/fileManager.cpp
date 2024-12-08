@@ -26,41 +26,25 @@ void AddEntityToLevel(char entityType, std::string &info,
     case 'C': {
       Vector v = ParseCoords(ss, str);
       auto concrete = std::make_unique<Concrete>(v.GetX(), v.GetY(), level->GetTextures());
-      level->AddBox(std::move(concrete));
-      if (level->IsMultiplayer()) {
-        auto mirrorConcrete = std::make_unique<Concrete>(40.0f - v.GetX(), v.GetY(), level->GetTextures());
-        level->AddBox(std::move(mirrorConcrete));
-      }
+      level->AddPhysical(std::move(concrete));
     } break;
 
     case 'W': {
       Vector v = ParseCoords(ss, str);
       auto wood = std::make_unique<Wood>(v.GetX(), v.GetY(), level->GetTextures());
-      level->AddBox(std::move(wood));
-      if (level->IsMultiplayer()) {
-        auto mirrorWood = std::make_unique<Wood>(40.0f - v.GetX(), v.GetY(), level->GetTextures());
-        level->AddBox(std::move(mirrorWood));
-      }
+      level->AddPhysical(std::move(wood));
     } break;
 
     case 'G': {
       Vector v = ParseCoords(ss, str);
       auto glass = std::make_unique<Glass>(v.GetX(), v.GetY(), level->GetTextures());
-      level->AddBox(std::move(glass));
-      if (level->IsMultiplayer()) {
-        auto mirrorGlass = std::make_unique<Glass>(40.0f - v.GetX(), v.GetY(), level->GetTextures());
-        level->AddBox(std::move(mirrorGlass));
-      }
+      level->AddPhysical(std::move(glass));
     } break;
 
     case 'E': {
       Vector v = ParseCoords(ss, str);
       auto enemy = std::make_unique<Enemy>(v.GetX(), v.GetY(), level->GetTextures());
-      level->AddEnemy(std::move(enemy));
-      if (level->IsMultiplayer()) {
-        auto mirrorEnemy = std::make_unique<Enemy>(40.0f - v.GetX(), v.GetY(), level->GetTextures());
-        level->AddEnemy(std::move(mirrorEnemy));
-      }
+      level->AddPhysical(std::move(enemy));
     } break;
 
     case '*':
@@ -69,19 +53,11 @@ void AddEntityToLevel(char entityType, std::string &info,
         case 'A': {
           auto rifle = std::make_unique<Rifle>(0.0f, -0.2f, level->GetTextures());
           level->AddGun(std::move(rifle));
-          if (level->IsMultiplayer()) {
-            auto mirrorRifle = std::make_unique<Rifle>(40.0f, -0.2f, level->GetTextures());
-            level->AddGun(std::move(mirrorRifle));
-          }
         } break;
 
         case 'R': {
           auto launcher = std::make_unique<RocketLauncher>(0.0f, -0.2f, level->GetTextures());
           level->AddGun(std::move(launcher));
-          if (level->IsMultiplayer()) {
-            auto mirrorLauncher = std::make_unique<RocketLauncher>(40.0f, -0.2f, level->GetTextures());
-            level->AddGun(std::move(mirrorLauncher));
-          }
         } break;
 
         default:

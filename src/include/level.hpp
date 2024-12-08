@@ -16,10 +16,6 @@ class Level : public GameView {
  public:
   Level(Game& game);
 
-  void AddBox(std::unique_ptr<Box> box);
-  void AddGround(std::unique_ptr<Ground> ground);
-  void AddEnemy(std::unique_ptr<Enemy> enemy);
-  void AddGun(std::unique_ptr<Gun> gun);
   void AddExplosion(Explosion* explosion, float force);
 
   void AddScore(std::string name, int score);
@@ -48,9 +44,36 @@ class Level : public GameView {
 
   void StepInTime(sf::RenderWindow& window);
 
-  void RenderAmmo(sf::RenderWindow& window, std::unique_ptr<Gun>& gun, const int& index);
+  void RenderAmmo(sf::RenderWindow& window, std::unique_ptr<Gun>& gun,
+                  const int& index);
 
   void Render(sf::RenderWindow& window);
+
+  template <typename T>
+  void AddPhysical(std::unique_ptr<T> physical) {
+    if (IsMultiplayer() && physical->GetType() != Entity::EntityType::GROUND) {
+      float x = physical->GetPos().GetX();
+      float y = physical->GetPos().GetY();
+      std::unique_ptr<T> mirrored =
+          std::make_unique<T>(40.0f - x, y, GetTextures());
+      AddPhysicalForReal(std::move(mirrored));
+    }
+    AddPhysicalForReal(std::move(physical));
+  }
+
+  template <typename T>
+  void AddGun(std::unique_ptr<T> gun) {
+    if (IsMultiplayer()) {
+      float x = gun->GetPos().GetX();
+      float y = gun->GetPos().GetY();
+      std::unique_ptr<T> mirrored =
+          std::make_unique<T>(40.0f - x, y, GetTextures());
+      guns_.push_back(std::move(gun));
+      guns_.push_back(std::move(mirrored));
+    } else {
+      guns_.push_back(std::move(gun));
+    }
+  }
 
  protected:
   std::unique_ptr<Physics> physics_;
@@ -69,6 +92,16 @@ class Level : public GameView {
   float timer_ = 0;
 
   bool bulletTimer_ = false;
+
+  template <typename T>
+  void AddPhysicalForReal(std::unique_ptr<T> physical) {
+    if (physical->GetType() == Entity::EntityType::GROUND) {
+      physics_->AddBoxBody(physical, false);
+    } else {
+      physics_->AddBoxBody(physical, true);
+    }
+    physicals_.push_back(std::move(physical));
+  }
 };
 
 #endif

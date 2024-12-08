@@ -50,6 +50,10 @@ const float& Entity::GetHealth() { return health_; }
 
 const float& Entity::GetMaxHealth() { return maxHealth_; }
 
+const float& Entity::GetWidth() { return width_; };
+
+const float& Entity::GetHeight() { return height_; };
+
 void Entity::SetHealth(float health) {
   if (health > maxHealth_) {
     health_ = maxHealth_;
