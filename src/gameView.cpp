@@ -8,6 +8,8 @@ GameView::GameView(Game& game) : game_(game) {
   camera_ = std::make_unique<Camera>(-1, 4);
 }
 
+GameView::~GameView() {};
+
 void GameView::AddButton(std::unique_ptr<Button> button) {
   buttons_.push_back(std::move(button));
 }
