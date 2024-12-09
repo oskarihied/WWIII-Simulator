@@ -283,50 +283,49 @@ Going well. Now starts the grind
 4. Ristimäki UI
 
 
-
-
-
-
-
-# Meeting dd.mm.2021 HH:MM
+# Meeting 09.12.2024 14:30
 
 **Participants**: 
-1. Member 1
-2. Member 2
-3. Member 3
-4. Member 4 
+1. Leo Blomqvist
+2. Oskari Hiedanpää
+3. Oskari Kokkonen
+4. Väinö Ristimäki 
 
 ## Summary of works
-1. Member 1 
+1. Blomqvist
    
-   Implementing the class XX. Tested the class XX. 
-   Results are in `tests/<class-xx-tests>`. Resolved the identified problems.
+   implemented unique_ptrs, done lot of cleaning up, multiplayer
 
-2. Member 2
+2. Hiedanpää
 
-   Same as above
+   Created new levels
 
-3. ...
+3. Kokkonen
+
+   Box2D bugfixing
+
+4. Ristimäki
+
+   Graphics and UI, animations
 
 ## Challenges
 
-1. The integration of UI with the monsters requires an abstract interface.
-2. ...
+1. MacOS
+2. New line characters
+3. Box2D (program in C)
+4. All else
 
 ## Actions
-1. Member 1 is going to look into defining an abstract interface for monsters 
-   to enable easy UI integration.
-2. Member 2 is going to work with Member 1 to use abstract interface in derived 
-   monster classes.
-3. Member 3 is going to test the interface.
-4. Member 4 is going to use ...
-
-> Please reflect these action decisions in your git commit messages so that 
-> your group members and advisor can follow the progress.
+1. Blomqvist Valgrind
+2. Hiedanpää Sound Effects, Commenting, Document
+3. Kokkonen Physics bodys, tests
+4. Ristimäki Exploding rocket, points, stars
 
 ## Project status 
-Short summary of current project status. 
+Very ready
 
 ### TODOs
-1. Member 1: Write an action.
-2. ...
+1. Blomqvist Valgrind
+2. Hiedanpää Document
+3. Kokkonen tests
+4. Ristimäki points and UI
