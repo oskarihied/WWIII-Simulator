@@ -57,7 +57,7 @@ void AddEntityToLevel(char entityType, std::string &info,
       Vector v = ParseCoords(ss, str);
       auto ground = std::make_unique<Ground>(v.GetX(), v.GetY());
       level->AddPhysical(std::move(ground));
-    }
+    } break;
 
     case '*':
       std::getline(ss, str);

@@ -29,10 +29,11 @@ std::vector<std::unique_ptr<Entity>>& GameView::GetNonPhysicals() {
 }
 
 template <typename T>
-void GameView::RenderEntity(std::unique_ptr<T>& entity, sf::RenderWindow& window) {
+void GameView::RenderEntity(std::unique_ptr<T>& entity,
+                            sf::RenderWindow& window) {
   Vector pos = game_.ToScreenPos(entity->GetPos(), *camera_);
 
-  float scale = (1300.0f / 200.0f) / camera_->GetZoom();
+  float scale = (game_.GetDimensions().GetX() / 200.0f) / camera_->GetZoom();
   float rotation;
   if (entity->GetType() == Entity::EntityType::UNDEFINED) {
     rotation = entity->GetRotation();
@@ -47,10 +48,14 @@ void GameView::RenderEntity(std::unique_ptr<T>& entity, sf::RenderWindow& window
   window.draw(entity->GetSprite());
 }
 
-template void GameView::RenderEntity<Entity>(std::unique_ptr<Entity>&, sf::RenderWindow&);
+template void GameView::RenderEntity<Entity>(std::unique_ptr<Entity>&,
+                                             sf::RenderWindow&);
 
-template void GameView::RenderEntity<Physical>(std::unique_ptr<Physical>&, sf::RenderWindow&);
+template void GameView::RenderEntity<Physical>(std::unique_ptr<Physical>&,
+                                               sf::RenderWindow&);
 
-template void GameView::RenderEntity<Gun>(std::unique_ptr<Gun>&, sf::RenderWindow&);
+template void GameView::RenderEntity<Gun>(std::unique_ptr<Gun>&,
+                                          sf::RenderWindow&);
 
-template void GameView::RenderEntity<Button>(std::unique_ptr<Button>&, sf::RenderWindow&);
+template void GameView::RenderEntity<Button>(std::unique_ptr<Button>&,
+                                             sf::RenderWindow&);

@@ -10,15 +10,15 @@ int main() {
   std::cout << "Current working directory: " << std::filesystem::current_path()
             << std::endl;
 
-  int w = 1300;
-  int h = 700;
+  sf::RenderWindow window(sf::VideoMode(), "WWIII Simulator",
+                          sf::Style::Fullscreen);
+
+  int w = window.getSize().x;
+  int h = window.getSize().y;
 
   Game game = Game(w, h);
 
   game.StartMenu();
-
-  sf::RenderWindow window(sf::VideoMode(), "WWIII Simulator",
-                          sf::Style::Fullscreen);
 
   window.setFramerateLimit(60);
   // Start the game loop
