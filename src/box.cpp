@@ -1,23 +1,45 @@
 #include "box.hpp"
 
-Box::Box(float x, float y, sf::Texture& texture, float mass, int hp)
-    : Rigid(x, y, texture, mass, hp) {}
+Box::Box(float x, float y) : Physical(x, y) { SetType(EntityType::BOX); }
 
-Concrete::Concrete(float x, float y,
-                   std::map<std::string, sf::Texture> textures)
-    : Box(x, y, textures.at("concrete"), 100, 1000) {
-  damaged_ = std::make_optional(textures.at("concrete_damaged"));
+Concrete::Concrete(float x, float y) : Box(x, y) {
+  maxHealth_ = 1000;
+  health_ = 1000;
+  mass_ = 100;
   points_ = 100;
+  SetTexture("concrete");
 }
 
-Wood::Wood(float x, float y, std::map<std::string, sf::Texture> textures)
-    : Box(x, y, textures.at("wood"), 50, 500) {
-  damaged_ = std::make_optional(textures.at("wood_damaged"));
+void Concrete::BecomeDamaged() {
+  if (health_ < maxHealth_ * 0.9f) {
+    SetTexture("concrete_damaged");
+  }
+}
+
+Wood::Wood(float x, float y) : Box(x, y) {
+  maxHealth_ = 500;
+  health_ = 500;
+  mass_ = 50;
   points_ = 70;
+  SetTexture("wood");
 }
 
-Glass::Glass(float x, float y, std::map<std::string, sf::Texture> textures)
-    : Box(x, y, textures.at("glass"), 40, 300) {
-  damaged_ = std::make_optional(textures.at("glass_damaged"));
+void Wood::BecomeDamaged() {
+  if (health_ < maxHealth_ * 0.9f) {
+    SetTexture("wood_damaged");
+  }
+}
+
+Glass::Glass(float x, float y) : Box(x, y) {
+  maxHealth_ = 300;
+  health_ = 300;
+  mass_ = 40;
   points_ = 50;
+  SetTexture("glass");
+}
+
+void Glass::BecomeDamaged() {
+  if (health_ < maxHealth_ * 0.9f) {
+    SetTexture("glass_damaged");
+  }
 }

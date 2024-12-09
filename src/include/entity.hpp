@@ -7,82 +7,79 @@
 #include <string>
 #include <vector>
 
-#include "pos.hpp"
+#include "vector.hpp"
 
 class Entity {
  public:
-  enum class EntityType { UNDEFINED, BOX, GROUND, BULLET, ENEMY };
+  enum class EntityType {
+    UNDEFINED,
+    BOX,
+    GROUND,
+    BULLET,
+    ENEMY,
+    EXPLOSION,
+    GUN
+  };
 
-  // Entity();
-  // Entity(float x, float y);
-  Entity(float x, float y, std::string sprite);
-  Entity(float x, float y, sf::Texture& texture);
-  Entity(float x, float y, float xVel, float yVel, sf::Texture& texture);
-  Entity(float x, float y, float xVel, float yVel, std::string sprite);
+  Entity(float x, float y);
 
-  Pos GetPos();
-  Pos GetVel();
+  Vector& GetPos();
+  Vector& GetVel();
 
   void UpdateVel(float xVel, float yVel);
 
   void MoveTo(float x, float y);
-  void MoveTo(Pos pos);
 
   void RotationTo(float x);
 
-  float GetRotation();
+  const float& GetRotation();
 
-  float GetHealth();
-  float GetMaxHealth();
+  const float& GetHealth();
+  const float& GetMaxHealth();
 
-  void ChangeToDamaged();
+  virtual void BecomeDamaged();
 
   void SetHealth(float health);
-  float ChangeHealth(float amount);
+  void ChangeHealth(float amount);
 
-  void ChangeTexture(sf::Texture& texture);
+  void SetTexture(const std::string name);
 
-  std::string GetImage();
+  sf::Sprite& GetSprite();
 
-  bool CanBeDamaged();
-
-  std::optional<sf::Texture> GetDamagedTexture();
-
-  sf::Sprite* GetSprite();
-
-  std::pair<float, float> Move(float x, float y);
-  std::pair<float, float> Move(Pos pos);
+  sf::Sprite CopySprite();
 
   void SetType(enum EntityType type);
   enum EntityType GetType();
 
-  bool Explodes();
-
   int GetPoints();
 
+  const float& GetWidth();
+  const float& GetHeight();
+
   void Die();
+
+  bool Explodes();
   bool IsDead();
 
  protected:
-  std::string image_ = "";
-  Pos pos_;
-  Pos vel_;
-  float rotation_ = 0.0f;
-  sf::Texture texture_;
-  std::optional<sf::Texture> damaged_ = std::nullopt;
-  sf::Sprite sprite_;
   enum EntityType type_ = EntityType::UNDEFINED;
+
+  sf::Sprite sprite_;
+
+  Vector pos_;
+  Vector vel_ = Vector();
+
+  float width_ = 1.0f;
+  float height_ = 1.0f;
+  float rotation_ = 0.0f;
+
   float health_ = 1000;
-  float maxHealth = 1000;
-  float mass = 10;
-
-  bool damagedTexture_ = false;
-
-  bool explode_ = false;
+  float maxHealth_ = 1000;
 
   int points_ = 0;
 
   bool dead_ = false;
+  bool explodes_ = false;
 };
 
 #endif

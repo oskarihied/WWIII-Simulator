@@ -1,11 +1,11 @@
 #ifndef GROUND_HPP
 #define GROUND_HPP
 
-#include "static.hpp"
+#include "physical.hpp"
 
-class Ground : public Static {
-    public:
-        Ground(float x, float y);
+class Ground : public Physical {
+ public:
+  Ground(float x, float y);
 };
 
 #endif

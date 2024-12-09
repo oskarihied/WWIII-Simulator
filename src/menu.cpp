@@ -1,16 +1,80 @@
 #include "menu.hpp"
 
-Menu::Menu(std::map<std::string, sf::Texture>& textures,
-           std::map<std::string, sf::SoundBuffer>& sfx, int width)
-    : Level(textures.at("menu"), sfx, true) {
-  background_.setScale(width/1599.0f, width * 1.3f /1599.0f);
+#include "game.hpp"
 
-  AddNonPhysicalEntity(new Entity(4, 2.5, textures.at("logo")));
+Menu::Menu(Game& game) : GameView(game) {
+  background_.setTexture(*FileManager::GetTexture("menu"));
+  background_.setScale(1.0f, 1.0f);
 
-  AddButton(new Button(7.7, 3.5, 0.5, 0.5, textures.at("singleplayer_chosen")));
-  AddButton(new Button(8.25, 3.5, 0.5, 0.5, textures.at("multiplayer")));
+  auto logo = std::make_unique<Entity>(4.0f, 2.5f);
+  logo->SetTexture("logo");
+  AddNonPhysicalEntity(std::move(logo));
 
-  AddButton(new Button(2, 0, 1, 1, textures.at("button1")));
-  AddButton(new Button(4, 0, 1, 1, textures.at("button2")));
-  AddButton(new Button(6, 0, 1, 1, textures.at("button3")));
+  auto singleplayer =
+      std::make_unique<Button>(7.7f, 3.5f, 0.5f, 0.5f, "singleplayer_chosen");
+  auto multiplayer =
+      std::make_unique<Button>(8.25f, 3.5f, 0.5f, 0.5f, "multiplayer");
+
+  auto level1 = std::make_unique<Button>(2.0f, 0.0f, 1.0f, 1.0f, "button1");
+  auto level2 = std::make_unique<Button>(4.0f, 0.0f, 1.0f, 1.0f, "button2");
+  auto level3 = std::make_unique<Button>(6.0f, 0.0f, 1.0f, 1.0f, "button3");
+
+  AddButton(std::move(singleplayer));
+  AddButton(std::move(multiplayer));
+
+  AddButton(std::move(level1));
+  AddButton(std::move(level2));
+  AddButton(std::move(level3));
+}
+
+void Menu::StepInTime(sf::RenderWindow& window) {
+  sf::Event event;
+
+  sf::Vector2i mousePos = sf::Mouse::getPosition(window);
+  Vector mouseVec = Vector(mousePos.x, mousePos.y);
+
+  while (window.pollEvent(event)) {
+    if (event.type == sf::Event::MouseButtonReleased) {
+      Vector gamePos = game_.ToGamePos(mouseVec, *camera_);
+
+      int index = 0;
+
+      for (std::unique_ptr<Button>& button : buttons_) {
+        if (button->IsTouching(gamePos.GetX(), gamePos.GetY())) {
+          if (index == 0) {
+            button->SetTexture("singleplayer_chosen");
+            buttons_[1]->SetTexture("multiplayer");
+            game_.SetMultiplayer(false);
+          }
+
+          else if (index == 1) {
+            button->SetTexture("multiplayer_chosen");
+            buttons_[0]->SetTexture("singleplayer");
+            game_.SetMultiplayer(true);
+          }
+
+          else {
+            game_.StartLevel(1);
+            break;
+          }
+        }
+        index++;
+      }
+    }
+    if (event.key.scancode == sf::Keyboard::Scan::Escape) {
+      window.close();
+    }
+  }
+}
+
+void Menu::Render(sf::RenderWindow& window) {
+  window.draw(background_);
+
+  for (std::unique_ptr<Entity>& entity : nonPhysicals_) {
+    RenderEntity(entity, window);
+  }
+
+  for (std::unique_ptr<Button>& button : buttons_) {
+    RenderEntity(button, window);
+  }
 }

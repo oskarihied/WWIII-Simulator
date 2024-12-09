@@ -4,96 +4,101 @@
 #include <SFML/Audio.hpp>
 #include <vector>
 
-#include "button.hpp"
-#include "camera.hpp"
 #include "enemy.hpp"
-#include "entity.hpp"
 #include "explosion.hpp"
+#include "gameView.hpp"
 #include "gun.hpp"
 #include "physics.hpp"
 
-class Level {
+class Game;
+
+class Level : public GameView {
  public:
-  Level(sf::Texture& background, std::map<std::string, sf::SoundBuffer>& sfx,
-        bool isMenu = false);
+  Level(Game& game);
 
-  ~Level();
-
-  Camera* GetCam();
-
-  bool IsMenu();
-
-  void AddBox(Box* box);
-  void AddBoxes(std::vector<Box*> boxes);
-  void AddGround(Ground* ground);
-  void AddEnemy(Enemy* enemy);
-  void AddGun(Gun* gun);
   void AddExplosion(Explosion* explosion, float force);
-
-  void AddNonPhysicalEntity(Entity* entity);
-
-  void AddButton(Button* button);
 
   void AddScore(std::string name, int score);
   void AddScores(std::vector<std::pair<std::string, int>> scores);
 
-  Physics* GetPhysics();
-
   void Fire(float speed);
 
-  sf::Sprite& GetBackground();
-
-  std::vector<Entity*> GetEntities();
-  std::vector<Entity*> GetNonPhysicalEntities();
-
   void RemoveNonPhysicalEntity(Entity* entity);
-  std::vector<Entity*>::const_iterator RemovePhysicalEntity(Entity* entity);
   void RemoveExplosion(Explosion* entity);
-
-  std::vector<Button*> GetButtons();
 
   std::vector<Explosion*> GetExplosions();
 
   std::vector<std::pair<std::string, int>> GetLeaderboard();
-  Gun* CurrentGun();
-  // std::vector<Entity*> GetGuns();
 
-  void AddBulletTimer(float time);
+  void IncrementBulletTimer(float time);
   float GetTimer();
   void SetTimer(bool timer);
 
   void AddPoints(int points);
   int GetPoints();
 
-  void PlaySound(const std::string name);
+  std::vector<std::unique_ptr<Gun>>& GetGuns();
 
-  std::vector<sf::Sound*>& GetSounds();
+  const bool& IsMultiplayer();
 
-  std::vector<Gun*> GetGuns();
+  void StepInTime(sf::RenderWindow& window);
+
+  void RenderAmmo(sf::RenderWindow& window, std::unique_ptr<Gun>& gun,
+                  const int& index);
+
+  void Render(sf::RenderWindow& window);
+
+  template <typename T>
+  void AddPhysical(std::unique_ptr<T> physical) {
+    if (IsMultiplayer() && physical->GetType() != Entity::EntityType::GROUND) {
+      float x = physical->GetPos().GetX();
+      float y = physical->GetPos().GetY();
+      std::unique_ptr<T> mirrored = std::make_unique<T>(40.0f - x, y);
+      AddPhysicalForReal(std::move(mirrored));
+    }
+    AddPhysicalForReal(std::move(physical));
+  }
+
+  template <typename T>
+  void AddGun(std::unique_ptr<T> gun) {
+    if (IsMultiplayer()) {
+      float x = gun->GetPos().GetX();
+      float y = gun->GetPos().GetY();
+      std::unique_ptr<T> mirrored = std::make_unique<T>(40.0f - x, y);
+      guns_.push_back(std::move(gun));
+      guns_.push_back(std::move(mirrored));
+    } else {
+      guns_.push_back(std::move(gun));
+    }
+  }
 
  protected:
-  sf::Sprite background_;
+  std::unique_ptr<Physics> physics_;
+  Bullet* currentBullet_ = nullptr;
 
-  Camera* camera_;
-  Physics* physics_;
-  Gun* currentGun_ = nullptr;
-
-  const std::vector<Entity*>& entities_;
-  std::map<std::string, sf::SoundBuffer>& sfx_;
-
-  std::vector<Entity*> nonPhysicals_;
-  std::vector<Gun*> guns_;
+  std::vector<std::unique_ptr<Physical>> physicals_;
+  std::vector<std::unique_ptr<Gun>> guns_;
   std::vector<Explosion*> explosions_;
-  std::vector<Button*> buttons_;
-  std::vector<sf::Sound*> onGoingSounds_;
 
   std::vector<std::pair<std::string, int>> leaderboard_;
 
   int points_ = 0;
+
+  sf::Clock gunTimer_;
+
   float timer_ = 0;
 
   bool bulletTimer_ = false;
-  bool isMenu_;
+
+  template <typename T>
+  void AddPhysicalForReal(std::unique_ptr<T> physical) {
+    if (physical->GetType() == Entity::EntityType::GROUND) {
+      physics_->AddBoxBody(physical, false);
+    } else {
+      physics_->AddBoxBody(physical, true);
+    }
+    physicals_.push_back(std::move(physical));
+  }
 };
 
 #endif

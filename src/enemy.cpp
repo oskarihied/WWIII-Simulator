@@ -1,7 +1,16 @@
 #include "enemy.hpp"
 
-Enemy::Enemy(float x, float y, std::map<std::string, sf::Texture> textures)
-    : Rigid(x, y, textures.at("enemy"), 100, 1000) {
-        damaged_ = std::make_optional(textures.at("enemy_damaged"));
-        points_ = 1000;
-    }
+Enemy::Enemy(float x, float y) : Physical(x, y) {
+  mass_ = 10;
+  maxHealth_ = 1000;
+  health_ = 1000;
+  points_ = 1000;
+  SetType(EntityType::ENEMY);
+  SetTexture("enemy");
+}
+
+void Enemy::BecomeDamaged() {
+  if (health_ < maxHealth_ * 0.9f) {
+    SetTexture("enemy_damaged");
+  }
+}

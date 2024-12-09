@@ -6,32 +6,30 @@
 #include <string>
 #include <vector>
 
-#include "box.hpp"
 #include "level.hpp"
 
-class FileManager {
- public:
-  bool SaveScore(const std::string& filename,
-                 std::vector<std::pair<std::string, int>> scores);
-  std::vector<std::pair<std::string, int>> LoadScore(
-      const std::string& filename);
+namespace FileManager {
 
-  /*bool SaveLevel(const std::string& filename, const std::vector<Entity*>&
-   * entities);*/
+bool SaveScore(const std::string& filename,
+               std::vector<std::pair<std::string, int>> scores);
 
-  void AddEntityToLevel(Level* level, std::string type, float x, float y,
-                        std::map<std::string, sf::Texture> textures);
+std::vector<std::pair<std::string, int>> LoadScore(const std::string& filename);
 
-  Level* LoadLevel(const std::string& filename,
-                   std::map<std::string, sf::Texture>& textures,
-                   std::map<std::string, sf::SoundBuffer>& sfx,
-                   const bool& multiplayer);
+/*bool SaveLevel(const std::string& filename, const std::vector<Entity*>&
+ * entities);*/
 
-  void LoadTextures(std::map<std::string, sf::Texture>& map,
-                    const std::string path);
+std::unique_ptr<Level> LoadLevel(const std::string& filename, Game& game);
 
-  void LoadSFX(std::map<std::string, sf::SoundBuffer>& map,
-               const std::string path);
-};
+void LoadTextures(const std::string path);
+
+std::unique_ptr<sf::Texture>& GetTexture(const std::string name);
+
+void LoadSFX(const std::string path);
+
+void PlaySound(const std::string name);
+
+void DestroySFML();
+
+};  // namespace FileManager
 
 #endif

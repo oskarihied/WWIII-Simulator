@@ -2,7 +2,7 @@
 #define PHYSICS_HPP
 
 #include <box2cpp/box2cpp.h>
-// #include <box2d/box2d.h>
+
 #include "box.hpp"
 #include "bullet.hpp"
 #include "enemy.hpp"
@@ -10,36 +10,47 @@
 
 class Physics {
  public:
-  Physics();
+  Physics(std::vector<std::unique_ptr<Physical>>& entities);
 
-  ~Physics();
-
-  // simulate the simulation one simulation step
   void SimulateWorld(float simulationStep);
 
-  b2BodyId AddBox(Box* box);
-  b2BodyId AddGround(Ground* ground);
-  b2BodyId AddBullet(Bullet* bullet);
-  b2BodyId AddEnemy(Enemy* enemy);
+  template <typename T>
+  void AddBoxBody(std::unique_ptr<T>& body, const bool isDynamic) {
+    b2BodyDef bodyDef = b2DefaultBodyDef();
+    bodyDef.position = (b2Vec2){body->GetPos().GetX(), body->GetPos().GetY()};
 
-  void SetVelocity(b2BodyId body, float xVel, float yVel);
-  void SetPosition(b2BodyId body, float xPos, float yPos, b2Rot rotation);
+    b2Polygon bodyBox = b2MakeBox(body->GetWidth() / 2.0f, body->GetHeight() / 2.0f);
 
-  const std::vector<Entity*>& GetEntities() const { return entities_; }
-  const std::vector<b2BodyId>& GetBodies() const { return b2bodies_; }
+    b2ShapeDef bodyShapeDef = b2DefaultShapeDef();
 
-  void SpawnExplosion(Pos pos, float force);
+    if (isDynamic) {
+      bodyDef.type = b2_dynamicBody;
+      bodyDef.linearVelocity = (b2Vec2){body->GetVel().GetX(), body->GetVel().GetY()};
+      
+      const float& bodyRot = body->GetRotation() * (M_PI / 180);
+      bodyDef.rotation = (b2Rot){cos(bodyRot), sin(bodyRot)};
 
-  std::vector<Entity*>::const_iterator RemovePhysicalEntity(Entity* entity);
+      bodyShapeDef.density = body->GetMass();
+      bodyShapeDef.friction = 0.3f;
+      bodyShapeDef.enableHitEvents = true;
+    }
+
+    b2BodyId bodyId = b2CreateBody(simulationWorld_, &bodyDef);
+
+    b2CreatePolygonShape(bodyId, &bodyShapeDef, &bodyBox);
+
+    b2bodies_.push_back(bodyId);
+  }
+
+  void SpawnExplosion(Vector pos, float force);
+
+  void RemovePhysicalEntity(std::unique_ptr<Physical>& entity);
 
  private:
-  void Contact(b2ContactHitEvent hit);
-
   b2WorldId simulationWorld_;
-  std::vector<Entity*> entities_;
+
+  std::vector<std::unique_ptr<Physical>>& entities_;
   std::vector<b2BodyId> b2bodies_;
-  // std::vector<int32_t> bullets_;
-  // std::vector<int32_t> grounds_;
 };
 
 #endif

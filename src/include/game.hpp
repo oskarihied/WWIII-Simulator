@@ -4,41 +4,35 @@
 #include <map>
 
 #include "fileManager.hpp"
-#include "level.hpp"
-#include "menu.hpp"
+#include "gameView.hpp"
 
 class Game {
  public:
   Game(int w, int h);
 
-  void StartLevel(int levelIndex);
+  std::unique_ptr<GameView>& GetCurrentView();
 
   void StartMenu();
+  void StartLevel(int levelIndex);
 
-  Level* GetCurrentLevel();
-
-  std::pair<int, int> ToScreenPos(Pos pos, Camera cam);
-  Pos ToGamePos(int x, int y, Camera cam);
-
-  std::vector<Entity*> LevelEntities() { return currentLevel_->GetEntities(); }
-
-  sf::Texture& GetTexture(std::string name);
-  std::map<std::string, sf::Texture> GetTextures();
+  Vector ToScreenPos(Vector& gamePos, Camera cam);
+  Vector ToGamePos(Vector& screenPos, Camera cam);
 
   void SetMultiplayer(bool multi);
-  bool GetMultiplayer();
+
+  const bool& IsMultiplayer();
 
  private:
-  std::string playerName_;
-  Level* currentLevel_ = nullptr;
+  std::unique_ptr<GameView> currentView_ = nullptr;
+
+  std::vector<sf::Sound*> onGoingSounds_;
 
   int windowWidth_;
   int windowHeight_;
 
-  std::map<std::string, sf::Texture> textures_;
-  std::map<std::string, sf::SoundBuffer> sfx_;
+  std::string playerName_;
 
-  FileManager manager_ = FileManager();
   bool multiplayer_ = false;
 };
+
 #endif

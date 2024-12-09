@@ -1,120 +1,69 @@
 #include "entity.hpp"
 
-// Entity::Entity() : pos_(Pos()) {}
+#include "fileManager.hpp"
 
-// Entity::Entity(float x, float y) : pos_(Pos(x, y)) {}
+Entity::Entity(float x, float y) { pos_ = Vector(x, y); }
 
-Entity::Entity(float x, float y, std::string image)
-    : image_(image), pos_(Pos(x, y)) {
-  if (image_ != "") {
-    texture_.loadFromFile(image_);
-    sprite_.setTexture(texture_);
-    sprite_.setOrigin(texture_.getSize().x / 2, texture_.getSize().y / 2);
-    // std::cout << &sprite_ << std::endl;
-  }
+Vector& Entity::GetPos() { return pos_; }
+
+Vector& Entity::GetVel() { return vel_; }
+
+void Entity::UpdateVel(float xVel, float yVel) { vel_ = Vector(xVel, yVel); }
+
+void Entity::SetTexture(const std::string name) {
+  std::unique_ptr<sf::Texture>& t = FileManager::GetTexture(name);
+  sprite_.setTexture(*t);
+  sprite_.setOrigin((*t).getSize().x / 2, (*t).getSize().y / 2);
 }
 
-Entity::Entity(float x, float y, sf::Texture& texture)
-    : image_(""), texture_(texture), pos_(Pos(x, y)) {
-  sprite_.setTexture(texture_);
-  sprite_.setOrigin(texture_.getSize().x / 2, texture_.getSize().y / 2);
-  // std::cout << &sprite_ << std::endl;
-}
+void Entity::MoveTo(float x, float y) { pos_.Update(x, y); }
 
-Entity::Entity(float x, float y, float xVel, float yVel, std::string image)
-    : image_(image), pos_(Pos(x, y)), vel_(Pos(xVel, yVel)) {
-  if (image_ != "") {
-    texture_.loadFromFile(image_);
-    sprite_.setTexture(texture_);
-    sprite_.setOrigin(texture_.getSize().x / 2, texture_.getSize().y / 2);
-    // std::cout << &sprite_ << std::endl;
-  }
-}
+sf::Sprite& Entity::GetSprite() { return sprite_; }
 
-Entity::Entity(float x, float y, float xVel, float yVel, sf::Texture& texture)
-    : image_(""), texture_(texture), pos_(Pos(x, y)), vel_(Pos(xVel, yVel)) {
-  sprite_.setTexture(texture_);
-  sprite_.setOrigin(texture_.getSize().x / 2, texture_.getSize().y / 2);
-  // std::cout << &sprite_ << std::endl;
-}
+sf::Sprite Entity::CopySprite() { return sprite_; }
 
-bool Entity::CanBeDamaged() {
-  if (damaged_)
-    return true;
-  else
-    return false;
-}
-
-std::optional<sf::Texture> Entity::GetDamagedTexture() { return damaged_; }
-
-Pos Entity::GetPos() { return pos_; }
-
-Pos Entity::GetVel() { return vel_; }
-
-void Entity::UpdateVel(float xVel, float yVel) { vel_ = Pos(xVel, yVel); }
-
-void Entity::ChangeTexture(sf::Texture& texture) {
-  texture_ = texture;
-  sprite_.setTexture(texture_);
-}
-
-void Entity::ChangeToDamaged() {
-  if (CanBeDamaged() && !damagedTexture_) {
-    ChangeTexture(damaged_.value());
-    damagedTexture_ = true;
-  }
-}
-
-std::string Entity::GetImage() { return image_; }
-
-void Entity::MoveTo(float x, float y) { pos_.Change(x, y); }
-
-void Entity::MoveTo(Pos pos) { pos_.Change(pos); }
-
-std::pair<float, float> Entity::Move(float x, float y) {
-  return pos_.Add(x, y);
-}
-
-std::pair<float, float> Entity::Move(Pos pos) { return pos_.Add(pos); }
-
-sf::Sprite* Entity::GetSprite() {
-  sprite_.setTexture(texture_);
-  return (&sprite_);
-}
+void Entity::BecomeDamaged() {}
 
 void Entity::RotationTo(float x) { rotation_ = x; }
 
-float Entity::GetRotation() { return rotation_; }
+const float& Entity::GetRotation() { return rotation_; }
 
 void Entity::SetType(enum EntityType type) { type_ = type; }
 
 enum Entity::EntityType Entity::GetType() { return type_; }
 
-float Entity::ChangeHealth(float amount) {
+void Entity::ChangeHealth(float amount) {
   if (type_ != EntityType::UNDEFINED && type_ != EntityType::GROUND) {
-    health_ += amount;
-    if (health_ < 0) {
+    float futureHealth = health_ + amount;
+    if (futureHealth < 0) {
       health_ = 0;
-      return 0;
-    } else if (health_ > maxHealth) {
-      health_ = maxHealth;
-      return maxHealth;
+    } else if (futureHealth > maxHealth_) {
+      health_ = maxHealth_;
     } else {
-      return health_;
+      health_ = futureHealth;
     }
   }
 }
 
-float Entity::GetHealth() { return health_; }
-float Entity::GetMaxHealth() { return maxHealth; }
+const float& Entity::GetHealth() { return health_; }
+
+const float& Entity::GetMaxHealth() { return maxHealth_; }
+
+const float& Entity::GetWidth() { return width_; };
+
+const float& Entity::GetHeight() { return height_; };
 
 void Entity::SetHealth(float health) {
-  health_ = health;
-  if (health_ > maxHealth) health_ = maxHealth;
-  if (health_ < 0) health = 0;
+  if (health > maxHealth_) {
+    health_ = maxHealth_;
+  } else if (health < 0) {
+    health_ = 0;
+  } else {
+    health_ = health;
+  }
 }
 
-bool Entity::Explodes() { return explode_; }
+bool Entity::Explodes() { return explodes_; }
 
 int Entity::GetPoints() { return points_; }
 

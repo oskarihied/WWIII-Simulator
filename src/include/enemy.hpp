@@ -1,11 +1,13 @@
 #ifndef ENEMY_HPP
 #define ENEMY_HPP
 
-#include "rigid.hpp"
+#include "physical.hpp"
 
-class Enemy : public Rigid {
+class Enemy : public Physical {
  public:
-  Enemy(float x, float y, std::map<std::string, sf::Texture> textures);
+  Enemy(float x, float y);
+
+  void BecomeDamaged() override;
 };
 
 #endif
