@@ -5,4 +5,11 @@ Ground::Ground(float x, float y) : Physical(x, y) {
   height_ = 2.0f;
   SetType(EntityType::GROUND);
   SetTexture("ground");
+}~
+
+Ground::GroundBox(float x, float y): Physical(x,y) {
+  width_ = 1.0f;
+  height_ = 1.0f;
+  SetType(EntityType::GROUND);
+  SetTexture("ground_box");
 }

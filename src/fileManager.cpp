@@ -52,6 +52,12 @@ void AddEntityToLevel(char entityType, std::string &info,
       level->AddPhysical(std::move(enemy));
     } break;
 
+    case 'H': {
+      Vector v = ParseCoords(ss, str);
+      auto ground = std::make_unique<Ground>(v.Getx(), v.GetY());
+      level->AddPhysical(std::move(ground));
+    }
+
     case '*':
       std::getline(ss, str);
       switch (str.front()) {
