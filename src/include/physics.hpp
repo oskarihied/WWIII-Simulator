@@ -42,8 +42,6 @@ class Physics {
 
     b2bodies_.push_back(bodyId);
 
-    
-
   }
 
   void SpawnExplosion(Vector pos, float force);

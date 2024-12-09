@@ -15,7 +15,7 @@ Physics::Physics(std::vector<std::unique_ptr<Physical>>& entities)
 }
 
 Physics::~Physics() {
-  // b2DestroyWorld(simulationWorld_);
+  b2DestroyWorld(simulationWorld_);
 }
 
 void Physics::SimulateWorld(float simulationStep) {
