@@ -27,6 +27,7 @@ void AddEntityToLevel(char entityType, std::string &info,
                       std::unique_ptr<Level> &level) {
   std::istringstream ss(info);
   std::string str;
+
   switch (entityType) {
     case 'C': {
       Vector v = ParseCoords(ss, str);
@@ -54,7 +55,7 @@ void AddEntityToLevel(char entityType, std::string &info,
 
     case 'H': {
       Vector v = ParseCoords(ss, str);
-      auto ground = std::make_unique<Ground>(v.Getx(), v.GetY());
+      auto ground = std::make_unique<Ground>(v.GetX(), v.GetY());
       level->AddPhysical(std::move(ground));
     }
 
@@ -169,6 +170,10 @@ std::unique_ptr<Level> LoadLevel(const std::string &filename, Game &game) {
     while (std::getline(file, info, ';')) {
       AddEntityToLevel(entityType, info, level);
       if (file.peek() == '\n') {
+        file.ignore();
+        break;
+      } else if (file.peek() == '\r') {
+        file.ignore();
         file.ignore();
         break;
       }

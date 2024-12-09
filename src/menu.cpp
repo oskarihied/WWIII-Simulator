@@ -55,7 +55,7 @@ void Menu::StepInTime(sf::RenderWindow& window) {
           }
 
           else {
-            game_.StartLevel(1);
+            game_.StartLevel(index - 1);
             break;
           }
         }
