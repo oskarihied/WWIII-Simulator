@@ -4,7 +4,8 @@
 
 Menu::Menu(Game& game) : GameView(game) {
   background_.setTexture(*FileManager::GetTexture("menu"));
-  background_.setScale(1.0f, 1.0f);
+  //std::cout << game.GetDimensions().GetX() << " " << game.GetDimensions().GetY() << std::endl;
+  background_.setScale(game.GetDimensions().GetX()/1599.0f, game.GetDimensions().GetY() * 1.3f /808.0f);
 
   auto logo = std::make_unique<Entity>(4.0f, 2.5f);
   logo->SetTexture("logo");

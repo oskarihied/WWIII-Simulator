@@ -12,6 +12,7 @@ std::unique_ptr<GameView>& Game::GetCurrentView() { return currentView_; }
 void Game::StartMenu() {
   currentView_ = nullptr;
   currentView_.reset(new Menu(*this));
+
 }
 
 void Game::StartLevel(int levelIndex) {
@@ -66,3 +67,5 @@ Vector Game::ToGamePos(Vector& screenPos, Camera cam) {
 void Game::SetMultiplayer(bool multi) { multiplayer_ = multi; }
 
 const bool& Game::IsMultiplayer() { return multiplayer_; }
+
+Vector Game::GetDimensions() {return Vector(windowWidth_, windowHeight_);}
