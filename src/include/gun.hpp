@@ -10,6 +10,8 @@ class Gun : public Entity {
 
   Gun(float x, float y);
 
+  virtual ~Gun() = 0;
+
   std::unique_ptr<Bullet>& GetBullet();
 
   virtual enum GunType GunType() = 0;
