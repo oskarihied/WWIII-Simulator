@@ -9,7 +9,7 @@ RifleBullet::RifleBullet(float x, float y) : Bullet(x, y) {
   height_ = 0.1f;
   maxHealth_ = 1;
   health_ = 1;
-  mass_ = 150;
+  mass_ = 200;
   SetTexture("bullet");
 }
 

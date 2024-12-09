@@ -11,6 +11,7 @@
 class Physics {
  public:
   Physics(std::vector<std::unique_ptr<Physical>>& entities);
+  ~Physics();
 
   void SimulateWorld(float simulationStep);
 
@@ -40,6 +41,9 @@ class Physics {
     b2CreatePolygonShape(bodyId, &bodyShapeDef, &bodyBox);
 
     b2bodies_.push_back(bodyId);
+
+    
+
   }
 
   void SpawnExplosion(Vector pos, float force);

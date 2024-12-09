@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-constexpr float BULLET_DAMAGE = 10.0f;
+constexpr float EXPLOSION_DAMAGE = 3.0f;
 constexpr float ENTITY_DAMAGE = 0.2f;
 constexpr bool PRINT_DEBUG = false;
 
@@ -12,6 +12,10 @@ Physics::Physics(std::vector<std::unique_ptr<Physical>>& entities)
   worldDef.gravity = (b2Vec2){0.0f, -9.81f};
   worldDef.hitEventThreshold = 0.5f;
   simulationWorld_ = b2CreateWorld(&worldDef);
+}
+
+Physics::~Physics() {
+  // b2DestroyWorld(simulationWorld_);
 }
 
 void Physics::SimulateWorld(float simulationStep) {
@@ -34,20 +38,17 @@ void Physics::SimulateWorld(float simulationStep) {
 
     float damageMultiplier = -(events.hitEvents[j].approachSpeed *
                                events.hitEvents[j].approachSpeed);
-    float bulletDamage = damageMultiplier * BULLET_DAMAGE;
     float entityDamage = damageMultiplier * ENTITY_DAMAGE;
     bool is1Ground = entities_[inx1]->GetType() == Entity::EntityType::GROUND;
     bool is2Ground = entities_[inx2]->GetType() == Entity::EntityType::GROUND;
-    bool is1Bullet = entities_[inx1]->GetType() == Entity::EntityType::BULLET;
-    bool is2Bullet = entities_[inx2]->GetType() == Entity::EntityType::BULLET;
 
     float mass1, mass2;
     if (is1Ground)
-      mass1 = 1000;
+      mass1 = 500;
     else
       mass1 = b2Body_GetMass(bid1);
     if (is2Ground)
-      mass2 = 1000;
+      mass2 = 500;
     else
       mass2 = b2Body_GetMass(bid2);
 
@@ -96,7 +97,7 @@ void Physics::SpawnExplosion(Vector pos, float force) {
     b2Vec2 position = b2Vec2{pos.GetX(), pos.GetY()};
 
     b2Body_ApplyForce(b2bodies_[i], forceVec, position, true);
-    ground->ChangeHealth(-(force * 10) / distance);
+    ground->ChangeHealth(-(force * EXPLOSION_DAMAGE) / distance);
 
     i++;
   }
