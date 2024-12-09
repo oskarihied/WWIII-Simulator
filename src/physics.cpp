@@ -4,7 +4,7 @@
 
 constexpr int BULLET_DAMAGE = 10;
 constexpr float ENTITY_DAMAGE = 0.2;
-constexpr bool PRINT_DEBUG = false;
+constexpr bool PRINT_DEBUG = true;
 
 Physics::Physics() {
   b2WorldDef worldDef = b2DefaultWorldDef();
