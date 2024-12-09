@@ -8,4 +8,9 @@ class Ground : public Physical {
   Ground(float x, float y);
 };
 
+class GroundBox : public Physical {
+  public:
+    GroundBox(float x, float y);
+};
+
 #endif
