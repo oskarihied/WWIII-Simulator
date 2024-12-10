@@ -10,6 +10,7 @@ namespace FileManager {
 
 namespace {
 
+std::map<std::string, std::unique_ptr<sf::Music>> music_;
 std::map<std::string, std::unique_ptr<sf::Texture>> textures_;
 std::map<std::string, std::unique_ptr<sf::SoundBuffer>> soundBuffers_;
 
@@ -55,8 +56,8 @@ void AddEntityToLevel(char entityType, std::string &info,
 
     case 'H': {
       Vector v = ParseCoords(ss, str);
-      auto ground = std::make_unique<GroundBox>(v.GetX(), v.GetY());
-      level->AddPhysical(std::move(ground));
+      auto groundBox = std::make_unique<GroundBox>(v.GetX(), v.GetY());
+      level->AddPhysical(std::move(groundBox));
     } break;
 
     case '*':
@@ -182,14 +183,15 @@ std::unique_ptr<Level> LoadLevel(const std::string &filename, Game &game) {
 
   file.close();
 
-  for (auto it = level->GetPhysicals().begin(); it != level->GetPhysicals().end(); ++it) {
-    std::unique_ptr<Physical>& entity = *it;
-    //std::cout<< "points: " << entity.get()->GetPoints() << std::endl;
+  for (auto it = level->GetPhysicals().begin();
+       it != level->GetPhysicals().end(); ++it) {
+    std::unique_ptr<Physical> &entity = *it;
+    // std::cout<< "points: " << entity.get()->GetPoints() << std::endl;
     level->AddMaxPoints(entity.get()->GetPoints());
   }
 
   for (auto it = level->GetGuns().begin(); it != level->GetGuns().end(); ++it) {
-    std::unique_ptr<Gun>& entity = *it;
+    std::unique_ptr<Gun> &entity = *it;
     level->AddMaxPoints(entity.get()->GetPoints());
   }
 
@@ -252,7 +254,35 @@ void PlaySound(const std::string name) {
   }
 }
 
+void LoadMusic(const std::string path) {
+  music_.clear();
+
+  int i = 0;
+  for (const auto &entry : std::filesystem::directory_iterator(path)) {
+    auto track = std::make_unique<sf::Music>();
+    track->openFromFile(entry.path());
+
+    std::string name = entry.path();
+    name.erase(0, (int)(path.length() + 1));
+    name.erase(name.length() - 4);
+
+    music_.insert({name, std::move(track)});
+    i++;
+  }
+}
+
+void PlayMusic(const std::string name) {
+  auto &track = music_.at(name);
+  track->play();
+  track->setLoop(true);
+  track->setVolume(70.0f);
+}
+
 void DestroySFML() {
+  for (auto &m : music_) {
+    m.second = nullptr;
+  }
+
   for (auto &t : textures_) {
     t.second = nullptr;
   }

@@ -28,6 +28,10 @@ void LoadSFX(const std::string path);
 
 void PlaySound(const std::string name);
 
+void LoadMusic(const std::string path);
+
+void PlayMusic(const std::string name);
+
 void DestroySFML();
 
 };  // namespace FileManager

@@ -3,8 +3,10 @@
 #include "menu.hpp"
 
 Game::Game(int w, int h) : windowWidth_(w), windowHeight_(h) {
+  FileManager::LoadMusic("music");
   FileManager::LoadTextures("images");
   FileManager::LoadSFX("sfx");
+  FileManager::PlayMusic("war-of-victory-2");
 }
 
 std::unique_ptr<GameView>& Game::GetCurrentView() { return currentView_; }
@@ -12,7 +14,6 @@ std::unique_ptr<GameView>& Game::GetCurrentView() { return currentView_; }
 void Game::StartMenu() {
   currentView_ = nullptr;
   currentView_.reset(new Menu(*this));
-
 }
 
 void Game::StartLevel(int levelIndex) {
@@ -68,4 +69,4 @@ void Game::SetMultiplayer(bool multi) { multiplayer_ = multi; }
 
 const bool& Game::IsMultiplayer() { return multiplayer_; }
 
-Vector Game::GetDimensions() {return Vector(windowWidth_, windowHeight_);}
+Vector Game::GetDimensions() { return Vector(windowWidth_, windowHeight_); }
