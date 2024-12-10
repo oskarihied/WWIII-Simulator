@@ -8,6 +8,17 @@ Level::Level(Game& game) : GameView(game) {
   physics_ = std::make_unique<Physics>(physicals_);
   background_.setTexture(*FileManager::GetTexture("background1"));
   background_.setScale(1.0f, 1.0f);
+
+  font_.loadFromFile("fonts/AmericanTypewriter.ttc");
+  pointsText_.setFont(font_);
+  pointsText_.setString("0");
+  pointsText_.setCharacterSize(50);
+  pointsText_.setPosition(200, 0);
+
+  complete_.SetTexture("mission_complete");
+  star1_.SetTexture("star_black");
+  star2_.SetTexture("star_black");
+  star3_.SetTexture("star_black");
 }
 
 void Level::Fire(float speed) {
@@ -123,9 +134,15 @@ void Level::SetTimer(bool timer) {
   bulletTimer_ = timer;
 }
 
+void Level::AddMaxPoints(int points) {
+  maxPoints_ += points;
+}
+
 void Level::AddPoints(int points) { points_ += points; }
 
 int Level::GetPoints() { return points_; }
+
+std::vector<std::unique_ptr<Physical>>& Level::GetPhysicals() { return physicals_;}
 
 std::vector<std::unique_ptr<Gun>>& Level::GetGuns() { return guns_; }
 
@@ -225,6 +242,18 @@ void Level::StepInTime(sf::RenderWindow& window) {
       }
     }
   }
+
+  for (auto it = physicals_.begin(); it != physicals_.end(); ++it) {
+    over_ = true;
+
+    bool deleted = false;
+    std::unique_ptr<Physical>& entity = *it;
+    if (entity->GetType() == Entity::EntityType::ENEMY && entity->GetHealth() > 0) {
+      over_ = false;
+      break;
+    }
+  }
+
 }
 
 void Level::RenderAmmo(sf::RenderWindow& window, std::unique_ptr<Gun>& gun,
@@ -311,5 +340,45 @@ void Level::Render(sf::RenderWindow& window) {
       }
       n++;
     }
+
+    pointsText_.setString(std::to_string(points_));
+    window.draw(pointsText_);
+
+    if (over_) {
+      if (!win_) {
+
+        for (auto it = guns_.begin(); it != guns_.end(); ++it) {
+          std::unique_ptr<Gun>& entity = *it;
+          AddPoints(entity.get()->GetPoints());
+        }
+
+
+        win_ = true;
+        complete_.GetSprite().setPosition(600, 200);
+        star1_.GetSprite().setPosition(320, 450);
+        star2_.GetSprite().setPosition(600, 450);
+        star3_.GetSprite().setPosition(880, 450);
+
+        //std::cout << "max: " << maxPoints_ << std::endl;
+
+        if ((float)points_/maxPoints_ > 0.1f) {
+          star1_.SetTexture("star");
+        }
+
+        if ((float)points_/maxPoints_ > 0.3f) {
+          star2_.SetTexture("star");
+        }
+
+        if ((float)points_/maxPoints_ > 0.6f) {
+          star3_.SetTexture("star");
+        }
+      }
+
+      window.draw(complete_.GetSprite());
+      window.draw(star1_.GetSprite());
+      window.draw(star2_.GetSprite());
+      window.draw(star3_.GetSprite());
+    }
+
   }
 }

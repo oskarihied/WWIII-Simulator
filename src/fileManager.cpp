@@ -182,6 +182,17 @@ std::unique_ptr<Level> LoadLevel(const std::string &filename, Game &game) {
 
   file.close();
 
+  for (auto it = level->GetPhysicals().begin(); it != level->GetPhysicals().end(); ++it) {
+    std::unique_ptr<Physical>& entity = *it;
+    //std::cout<< "points: " << entity.get()->GetPoints() << std::endl;
+    level->AddMaxPoints(entity.get()->GetPoints());
+  }
+
+  for (auto it = level->GetGuns().begin(); it != level->GetGuns().end(); ++it) {
+    std::unique_ptr<Gun>& entity = *it;
+    level->AddMaxPoints(entity.get()->GetPoints());
+  }
+
   return level;
 }
 

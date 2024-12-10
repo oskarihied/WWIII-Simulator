@@ -37,6 +37,8 @@ class Level : public GameView {
   void AddPoints(int points);
   int GetPoints();
 
+  std::vector<std::unique_ptr<Physical>>& GetPhysicals();
+
   std::vector<std::unique_ptr<Gun>>& GetGuns();
 
   const bool& IsMultiplayer();
@@ -47,6 +49,8 @@ class Level : public GameView {
                   const int& index);
 
   void Render(sf::RenderWindow& window);
+
+  void AddMaxPoints(int points);
 
   template <typename T>
   void AddPhysical(std::unique_ptr<T> physical) {
@@ -76,6 +80,14 @@ class Level : public GameView {
   std::unique_ptr<Physics> physics_;
   Bullet* currentBullet_ = nullptr;
 
+  sf::Font font_;
+  sf::Text pointsText_;
+
+  Entity complete_ = Entity(0, 0);
+  Entity star1_ = Entity(0, 0);
+  Entity star2_ = Entity(0, 0);
+  Entity star3_ = Entity(0, 0);
+
   std::vector<std::unique_ptr<Physical>> physicals_;
   std::vector<std::unique_ptr<Gun>> guns_;
   std::vector<Explosion*> explosions_;
@@ -83,11 +95,14 @@ class Level : public GameView {
   std::vector<std::pair<std::string, int>> leaderboard_;
 
   int points_ = 0;
+  int maxPoints_ = 0;
 
   sf::Clock gunTimer_;
 
-  float timer_ = 0;
+  bool over_ = false;
+  bool win_ = false;
 
+  float timer_ = 0;
   bool bulletTimer_ = false;
 
   template <typename T>
