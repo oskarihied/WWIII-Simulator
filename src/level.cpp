@@ -19,6 +19,11 @@ Level::Level(Game& game) : GameView(game) {
   star1_.SetTexture("star_black");
   star2_.SetTexture("star_black");
   star3_.SetTexture("star_black");
+
+  powerText_.setFont(font_);
+  powerText_.setString("0");
+  powerText_.setCharacterSize(50);
+  powerText_.setPosition(200, 70);
 }
 
 void Level::Fire(float speed) {
@@ -214,25 +219,40 @@ void Level::StepInTime(sf::RenderWindow& window) {
 
     if (event.type == sf::Event::KeyPressed) {
       if (!camera_->GetAnimation()) {
+        /*
         if (event.key.scancode == sf::Keyboard::Scan::Up) {
           camera_->ShiftBy(0.0f, camMoveSpeed);
         }
         if (event.key.scancode == sf::Keyboard::Scan::Down) {
           camera_->ShiftBy(0.0f, -camMoveSpeed);
         }
+        */
         if (event.key.scancode == sf::Keyboard::Scan::Right) {
           camera_->ShiftBy(camMoveSpeed, 0.0f);
         }
         if (event.key.scancode == sf::Keyboard::Scan::Left) {
           camera_->ShiftBy(-camMoveSpeed, 0.0f);
         }
-
+        if (event.key.scancode == sf::Keyboard::Scan::Space) {
+          for (auto it = physicals_.begin(); it != physicals_.end(); ++it) {
+            std::unique_ptr<Physical>& entity = *it;
+            if (entity->Explodes()) {
+              entity->SetHealth(0);
+              AddExplosion(new Explosion(entity->GetPos().GetX() + 0.01f,
+                                     entity->GetPos().GetY() + 0.01f),
+                       500.0f);
+              FileManager::PlaySound("explosion");
+            }
+          }
+        }
+    /*
         if (event.key.scancode == sf::Keyboard::Scan::Comma) {
           camera_->Zoom(1 - camZoomSpeed);
         }
         if (event.key.scancode == sf::Keyboard::Scan::Period) {
           camera_->Zoom(1 + camZoomSpeed);
         }
+        */
       }
     }
 
@@ -245,6 +265,7 @@ void Level::StepInTime(sf::RenderWindow& window) {
 
     if (event.type == sf::Event::MouseButtonPressed) {
       gunTimer_.restart();
+      showPower_ = true;
     }
 
     if (event.type == sf::Event::MouseButtonReleased) {
@@ -252,6 +273,7 @@ void Level::StepInTime(sf::RenderWindow& window) {
       if (!guns_.empty()) {
         Fire(vel);
       }
+      showPower_ = false;
     }
   }
 
@@ -387,6 +409,13 @@ void Level::Render(sf::RenderWindow& window) {
       window.draw(star1_.GetSprite());
       window.draw(star2_.GetSprite());
       window.draw(star3_.GetSprite());
+    }
+
+    if (showPower_) {
+      int pow = std::min(gunTimer_.getElapsedTime().asMilliseconds() / 2, 1000);
+      powerText_.setString(std::to_string(pow));
+      powerText_.setColor(sf::Color(pow / 4, 250 - pow / 4, 0));
+      window.draw(powerText_);
     }
   }
 }

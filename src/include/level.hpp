@@ -82,6 +82,8 @@ class Level : public GameView {
 
   sf::Font font_;
   sf::Text pointsText_;
+  sf::Text powerText_;
+  bool showPower_ = false;
 
   Entity complete_ = Entity(0, 0);
   Entity star1_ = Entity(0, 0);

@@ -22,9 +22,11 @@ void Game::StartLevel(int levelIndex) {
   std::string filename = "src/levels/level_" + std::to_string(levelIndex);
 
   std::unique_ptr<Level> level = FileManager::LoadLevel(filename, *this);
-  for (int i = 0; i < 5; i++) {
-    auto ground = std::make_unique<Ground>(i * 10.0f, -1.5f);
-    level->AddPhysical(std::move(ground));
+  for (int i = 0; i < 15; i++) {
+    for (int j = 0; j < 5; j++) {
+      auto ground = std::make_unique<Ground>(-20.0f + i * 10.0f, -1.5f - j * 2.0f);
+      level->AddPhysical(std::move(ground));
+    }
   }
 
   currentView_ = std::move(level);
