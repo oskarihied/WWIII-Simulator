@@ -171,11 +171,11 @@ void Level::StepInTime(sf::RenderWindow& window) {
       Vector v;
 
       if (currentGun->GetPos().GetX() == 0) {
-        v = Vector(currentGun->GetPos().GetX() - 5, 7);
-        camera_->NewAnimation(v, 15, 2);
+        v = Vector(currentGun->GetPos().GetX() - 5, 12);
+        camera_->NewAnimation(v, 25, 2);
       } else {
-        v = Vector(currentGun->GetPos().GetX() - 10, 7);
-        camera_->NewAnimation(v, 15, 2);
+        v = Vector(currentGun->GetPos().GetX() - 10, 12);
+        camera_->NewAnimation(v, 25, 2);
       }
     }
 
@@ -253,7 +253,6 @@ void Level::StepInTime(sf::RenderWindow& window) {
       break;
     }
   }
-
 }
 
 void Level::RenderAmmo(sf::RenderWindow& window, std::unique_ptr<Gun>& gun,
@@ -365,11 +364,11 @@ void Level::Render(sf::RenderWindow& window) {
           star1_.SetTexture("star");
         }
 
-        if ((float)points_/maxPoints_ > 0.3f) {
+        if ((float)points_/maxPoints_ > 0.4f) {
           star2_.SetTexture("star");
         }
 
-        if ((float)points_/maxPoints_ > 0.6f) {
+        if ((float)points_/maxPoints_ > 0.65f) {
           star3_.SetTexture("star");
         }
       }

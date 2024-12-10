@@ -96,6 +96,7 @@ class Level : public GameView {
 
   int points_ = 0;
   int maxPoints_ = 0;
+  int highscore_ = 0;
 
   sf::Clock gunTimer_;
 

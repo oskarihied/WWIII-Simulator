@@ -28,13 +28,13 @@ void Game::StartLevel(int levelIndex) {
 
   currentView_ = std::move(level);
 
-  currentView_->GetCam()->MoveTo(20, 15);
-  currentView_->GetCam()->ZoomTo(30);
+  currentView_->GetCam()->MoveTo(20, 20);
+  currentView_->GetCam()->ZoomTo(40);
 
   if (multiplayer_) {
-    currentView_->GetCam()->NewAnimation(Vector(40 - 10, 7), 15, 2);
+    currentView_->GetCam()->NewAnimation(Vector(40 - 10, 12), 25, 2);
   } else {
-    currentView_->GetCam()->NewAnimation(Vector(0 - 5, 7), 15, 2);
+    currentView_->GetCam()->NewAnimation(Vector(0 - 5, 12), 25, 2);
   }
 }
 

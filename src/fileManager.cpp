@@ -55,7 +55,7 @@ void AddEntityToLevel(char entityType, std::string &info,
 
     case 'H': {
       Vector v = ParseCoords(ss, str);
-      auto ground = std::make_unique<Ground>(v.GetX(), v.GetY());
+      auto ground = std::make_unique<GroundBox>(v.GetX(), v.GetY());
       level->AddPhysical(std::move(ground));
     } break;
 
