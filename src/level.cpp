@@ -134,15 +134,15 @@ void Level::SetTimer(bool timer) {
   bulletTimer_ = timer;
 }
 
-void Level::AddMaxPoints(int points) {
-  maxPoints_ += points;
-}
+void Level::AddMaxPoints(int points) { maxPoints_ += points; }
 
 void Level::AddPoints(int points) { points_ += points; }
 
 int Level::GetPoints() { return points_; }
 
-std::vector<std::unique_ptr<Physical>>& Level::GetPhysicals() { return physicals_;}
+std::vector<std::unique_ptr<Physical>>& Level::GetPhysicals() {
+  return physicals_;
+}
 
 std::vector<std::unique_ptr<Gun>>& Level::GetGuns() { return guns_; }
 
@@ -196,6 +196,18 @@ void Level::StepInTime(sf::RenderWindow& window) {
     currentGun->RotationTo(gunRotation * (180.0f / M_PI));
   }
 
+  for (auto it = physicals_.begin(); it != physicals_.end(); ++it) {
+    over_ = true;
+
+    bool deleted = false;
+    std::unique_ptr<Physical>& entity = *it;
+    if (entity->GetType() == Entity::EntityType::ENEMY &&
+        entity->GetHealth() > 0) {
+      over_ = false;
+      break;
+    }
+  }
+
   while (window.pollEvent(event)) {
     float camMoveSpeed = 0.5f;
     float camZoomSpeed = 0.05f;
@@ -242,18 +254,6 @@ void Level::StepInTime(sf::RenderWindow& window) {
       }
     }
   }
-
-  for (auto it = physicals_.begin(); it != physicals_.end(); ++it) {
-    over_ = true;
-
-    bool deleted = false;
-    std::unique_ptr<Physical>& entity = *it;
-    if (entity->GetType() == Entity::EntityType::ENEMY && entity->GetHealth() > 0) {
-      over_ = false;
-      break;
-    }
-  }
-
 }
 
 void Level::RenderAmmo(sf::RenderWindow& window, std::unique_ptr<Gun>& gun,
@@ -346,12 +346,10 @@ void Level::Render(sf::RenderWindow& window) {
 
     if (over_) {
       if (!win_) {
-
         for (auto it = guns_.begin(); it != guns_.end(); ++it) {
           std::unique_ptr<Gun>& entity = *it;
           AddPoints(entity.get()->GetPoints());
         }
-
 
         win_ = true;
         complete_.GetSprite().setPosition(600, 200);
@@ -359,17 +357,17 @@ void Level::Render(sf::RenderWindow& window) {
         star2_.GetSprite().setPosition(600, 450);
         star3_.GetSprite().setPosition(880, 450);
 
-        //std::cout << "max: " << maxPoints_ << std::endl;
+        // std::cout << "max: " << maxPoints_ << std::endl;
 
-        if ((float)points_/maxPoints_ > 0.1f) {
+        if ((float)points_ / maxPoints_ > 0.1f) {
           star1_.SetTexture("star");
         }
 
-        if ((float)points_/maxPoints_ > 0.3f) {
+        if ((float)points_ / maxPoints_ > 0.3f) {
           star2_.SetTexture("star");
         }
 
-        if ((float)points_/maxPoints_ > 0.6f) {
+        if ((float)points_ / maxPoints_ > 0.6f) {
           star3_.SetTexture("star");
         }
       }
@@ -379,6 +377,5 @@ void Level::Render(sf::RenderWindow& window) {
       window.draw(star2_.GetSprite());
       window.draw(star3_.GetSprite());
     }
-
   }
 }
