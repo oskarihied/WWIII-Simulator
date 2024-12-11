@@ -83,6 +83,10 @@ void AddEntityToLevel(char entityType, std::string &info,
       {
         auto leader = std::make_unique<Entity>(0.0f, 0.0f);
         leader->SetTexture(str);
+        leader->SetSound(str);
+        if (!level->IsMultiplayer()) {
+          FileManager::PlaySound(str);
+        }
         level->AddNonPhysicalEntity(std::move(leader));
       }
       break;
@@ -93,6 +97,8 @@ void AddEntityToLevel(char entityType, std::string &info,
         {
           auto leader = std::make_unique<Entity>(40.0f, 0.0f);
           leader->SetTexture(str);
+          leader->SetSound(str);
+          FileManager::PlaySound(str);
           level->AddNonPhysicalEntity(std::move(leader));
         }
       }
@@ -237,20 +243,22 @@ void LoadSFX(const std::string path) {
 }
 
 void PlaySound(const std::string name) {
-  auto sound = std::make_unique<sf::Sound>(*soundBuffers_.at(name));
-  sound->play();
+  if (name != "") {
+    auto sound = std::make_unique<sf::Sound>(*soundBuffers_.at(name));
+    sound->play();
 
-  bool foundNull = false;
-  for (auto &s : sounds_) {
-    if (s.get() == nullptr) {
-      s.reset(sound.release());
-      foundNull = true;
-      break;
+    bool foundNull = false;
+    for (auto &s : sounds_) {
+      if (s.get() == nullptr) {
+        s.reset(sound.release());
+        foundNull = true;
+        break;
+      }
     }
-  }
 
-  if (!foundNull) {
-    sounds_.push_back(std::move(sound));
+    if (!foundNull) {
+      sounds_.push_back(std::move(sound));
+    }
   }
 }
 
@@ -275,7 +283,7 @@ void PlayMusic(const std::string name) {
   auto &track = music_.at(name);
   track->play();
   track->setLoop(true);
-  track->setVolume(70.0f);
+  track->setVolume(40.0f);
 }
 
 void DestroySFML() {

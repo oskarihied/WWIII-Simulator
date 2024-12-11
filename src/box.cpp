@@ -7,6 +7,7 @@ Concrete::Concrete(float x, float y) : Box(x, y) {
   health_ = 1000;
   mass_ = 100;
   points_ = 100;
+  sound_ = "concrete_break";
   SetTexture("concrete");
 }
 
@@ -21,6 +22,7 @@ Wood::Wood(float x, float y) : Box(x, y) {
   health_ = 500;
   mass_ = 50;
   points_ = 70;
+  sound_ = "wood_break";
   SetTexture("wood");
 }
 
@@ -35,6 +37,7 @@ Glass::Glass(float x, float y) : Box(x, y) {
   health_ = 300;
   mass_ = 40;
   points_ = 50;
+  sound_ = "glass_break";
   SetTexture("glass");
 }
 
