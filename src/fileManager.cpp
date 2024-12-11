@@ -97,6 +97,7 @@ void AddEntityToLevel(char entityType, std::string &info,
         {
           auto leader = std::make_unique<Entity>(40.0f, 0.0f);
           leader->SetTexture(str);
+          leader->GetSprite().setScale(-1, 1);
           leader->SetSound(str);
           FileManager::PlaySound(str);
           level->AddNonPhysicalEntity(std::move(leader));

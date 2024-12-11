@@ -73,3 +73,5 @@ void Game::SetMultiplayer(bool multi) { multiplayer_ = multi; }
 const bool& Game::IsMultiplayer() { return multiplayer_; }
 
 Vector Game::GetDimensions() { return Vector(windowWidth_, windowHeight_); }
+
+bool Game::GetMultiplayer() { return multiplayer_;}

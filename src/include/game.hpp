@@ -24,6 +24,8 @@ class Game {
 
   Vector GetDimensions();
 
+  bool GetMultiplayer();
+
  private:
   std::unique_ptr<GameView> currentView_ = nullptr;
 

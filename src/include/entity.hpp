@@ -59,10 +59,14 @@ class Entity {
   void Die();
 
   bool Explodes();
+  void SetExplodes(bool explodes);
   bool IsDead();
 
   void SetSound(std::string str);
   std::string GetSound();
+
+  bool GetSide();
+  void SetSide(bool side);
 
  protected:
   enum EntityType type_ = EntityType::UNDEFINED;
@@ -85,6 +89,8 @@ class Entity {
   bool explodes_ = false;
 
   std::string sound_ = "";
+
+  bool side_ = false;
 };
 
 #endif
