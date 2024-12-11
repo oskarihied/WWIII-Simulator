@@ -58,6 +58,7 @@ class Level : public GameView {
       float x = physical->GetPos().GetX();
       float y = physical->GetPos().GetY();
       std::unique_ptr<T> mirrored = std::make_unique<T>(40.0f - x, y);
+      mirrored->SetSide(true);
       AddPhysicalForReal(std::move(mirrored));
     }
     AddPhysicalForReal(std::move(physical));
@@ -103,10 +104,13 @@ class Level : public GameView {
   sf::Clock gunTimer_;
 
   bool over_ = false;
+  bool over2_ = false;
   bool win_ = false;
 
   float timer_ = 0;
   bool bulletTimer_ = false;
+
+  Entity winner_ = Entity(0, 0);
 
   template <typename T>
   void AddPhysicalForReal(std::unique_ptr<T> physical) {

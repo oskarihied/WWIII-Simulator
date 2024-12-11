@@ -24,6 +24,8 @@ Level::Level(Game& game) : GameView(game) {
   powerText_.setString("0");
   powerText_.setCharacterSize(50);
   powerText_.setPosition(200, 70);
+
+  winner_.SetTexture("plr1_wins");
 }
 
 void Level::Fire(float speed) {
@@ -204,17 +206,31 @@ void Level::StepInTime(sf::RenderWindow& window) {
   for (auto it = physicals_.begin(); it != physicals_.end(); ++it) {
     over_ = true;
 
-    bool deleted = false;
+    //bool deleted = false;
     std::unique_ptr<Physical>& entity = *it;
     if (entity->GetType() == Entity::EntityType::ENEMY &&
-        entity->GetHealth() > 0) {
+        entity->GetHealth() > 0 && !entity->GetSide()) {
       over_ = false;
       break;
     }
   }
 
+  if (IsMultiplayer()) {
+    for (auto it = physicals_.begin(); it != physicals_.end(); ++it) {
+      over2_ = true;
+
+      //bool deleted = false;
+      std::unique_ptr<Physical>& entity = *it;
+      if (entity->GetType() == Entity::EntityType::ENEMY &&
+          entity->GetHealth() > 0 && entity->GetSide()) {
+        over2_ = false;
+        break;
+      }
+    }
+  }
+
   while (window.pollEvent(event)) {
-    float camMoveSpeed = 0.5f;
+    float camMoveSpeed = 2.0f;
     float camZoomSpeed = 0.05f;
 
     if (event.type == sf::Event::KeyPressed) {
@@ -328,6 +344,7 @@ void Level::Render(sf::RenderWindow& window) {
       entity->BecomeDamaged();
 
       if (entity->GetHealth() <= 0) {
+        
         FileManager::PlaySound(entity->GetSound());
         entity->Die();
         AddPoints(entity->GetPoints());
@@ -348,6 +365,8 @@ void Level::Render(sf::RenderWindow& window) {
           deleted = true;
           physics_->RemovePhysicalEntity(entity);
         }
+
+        entity->SetExplodes(false);
       }
     }
 
@@ -367,7 +386,12 @@ void Level::Render(sf::RenderWindow& window) {
     pointsText_.setString(std::to_string(points_));
     window.draw(pointsText_);
 
-    if (over_) {
+    if (over_ || over2_) {
+      if (over2_) {
+        winner_.SetTexture("plr2_wins");
+      }
+
+
       if (!win_) {
         FileManager::PlaySound("victory1");
 
@@ -375,6 +399,8 @@ void Level::Render(sf::RenderWindow& window) {
           std::unique_ptr<Gun>& entity = *it;
           AddPoints(entity.get()->GetPoints());
         }
+
+        winner_.GetSprite().setPosition(700, 300);
 
         win_ = true;
         complete_.GetSprite().setPosition(600, 200);
@@ -392,15 +418,20 @@ void Level::Render(sf::RenderWindow& window) {
           star2_.SetTexture("star");
         }
 
-        if ((float)points_ / maxPoints_ > 0.65f) {
+        if (((float)points_ + 500)/ maxPoints_ > 0.65f) {
           star3_.SetTexture("star");
         }
       }
 
-      window.draw(complete_.GetSprite());
-      window.draw(star1_.GetSprite());
-      window.draw(star2_.GetSprite());
-      window.draw(star3_.GetSprite());
+      if (!game_.GetMultiplayer()) {
+        window.draw(complete_.GetSprite());
+        window.draw(star1_.GetSprite());
+        window.draw(star2_.GetSprite());
+        window.draw(star3_.GetSprite());
+      }
+      else {
+        window.draw(winner_.GetSprite());
+      }
     }
 
     if (showPower_) {

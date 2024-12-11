@@ -67,6 +67,8 @@ void Entity::SetHealth(float health) {
 
 bool Entity::Explodes() { return explodes_; }
 
+void Entity::SetExplodes(bool explodes) {explodes_ = explodes;}
+
 int Entity::GetPoints() { return points_; }
 
 void Entity::Die() { dead_ = true; }
@@ -76,3 +78,6 @@ bool Entity::IsDead() { return dead_; }
 void Entity::SetSound(std::string str) { sound_ = str;}
 
 std::string Entity::GetSound() {return sound_;}
+
+  bool Entity::GetSide() {return side_;}
+  void Entity::SetSide(bool side) {side_ = side;}
