@@ -4,7 +4,8 @@
 
 constexpr float EXPLOSION_DAMAGE = 3.0f;
 constexpr float ENTITY_DAMAGE = 0.2f;
-constexpr bool PRINT_DEBUG = false;
+constexpr float BULLET_DAMAGE= 10.0f;
+constexpr bool PRINT_DEBUG = true;
 
 Physics::Physics(std::vector<std::unique_ptr<Physical>>& entities)
     : entities_(entities) {
@@ -52,14 +53,26 @@ void Physics::SimulateWorld(float simulationStep) {
     else
       mass2 = b2Body_GetMass(bid2);
 
-    entities_[inx1]->ChangeHealth(entityDamage * mass2);
-    entities_[inx2]->ChangeHealth(entityDamage * mass1);
-    if (PRINT_DEBUG)
+    bool s1 = entities_[inx1]->GetType() == Entity::EntityType::BULLET;
+    bool s2 = entities_[inx2]->GetType() == Entity::EntityType::BULLET;
+
+    if (!s1 && !s2) {
+      entities_[inx1]->ChangeHealth(entityDamage * mass2);
+      entities_[inx2]->ChangeHealth(entityDamage * mass1);
+    } else if (s1) {
+      entities_[inx1]->ChangeHealth(entityDamage * mass2);
+      entities_[inx2]->ChangeHealth(entityDamage * mass1 * BULLET_DAMAGE);
+    } else {
+      entities_[inx1]->ChangeHealth(entityDamage * mass2 * BULLET_DAMAGE);
+      entities_[inx2]->ChangeHealth(entityDamage * mass1);
+    }
+    if (PRINT_DEBUG) {
+      std::cout << s1;
+      std::cout << s2 << std::endl;
       std::cout << "ent1: " << entities_[inx1]->GetHealth() << std::endl;
-    if (PRINT_DEBUG)
       std::cout << "ent2: " << entities_[inx2]->GetHealth() << std::endl;
-    if (PRINT_DEBUG)
       std::cout << events.hitEvents[j].approachSpeed << std::endl;
+    }
   }
 
   // Verify that all entities match simulation bodies
