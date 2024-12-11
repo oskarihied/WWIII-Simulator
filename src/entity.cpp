@@ -2,9 +2,7 @@
 
 #include "fileManager.hpp"
 
-Entity::Entity(float x, float y) { 
-  pos_ = Vector(x, y); 
-  }
+Entity::Entity(float x, float y) { pos_ = Vector(x, y); }
 
 Vector& Entity::GetPos() { return pos_; }
 
@@ -75,9 +73,9 @@ void Entity::Die() { dead_ = true; }
 
 bool Entity::IsDead() { return dead_; }
 
-void Entity::SetSound(std::string str) { sound_ = str;}
+void Entity::SetSound(std::string str) { sound_ = str; }
 
 std::string Entity::GetSound() {return sound_;}
 
-  bool Entity::GetSide() {return side_;}
-  void Entity::SetSide(bool side) {side_ = side;}
+bool Entity::GetSide() {return side_;}
+void Entity::SetSide(bool side) {side_ = side;}

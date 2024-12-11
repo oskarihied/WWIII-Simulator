@@ -43,7 +43,14 @@ void GameView::RenderEntity(std::unique_ptr<T>& entity,
 
   entity->GetSprite().setPosition(pos.GetX(), -pos.GetY());
   entity->GetSprite().setRotation(rotation);
-  entity->GetSprite().setScale(sf::Vector2(scale, scale));
+
+  if (entity->GetSprite().getScale().x < 0) {
+    entity->GetSprite().setScale(sf::Vector2(-scale, scale));
+  } else if (entity->GetSprite().getScale().y < 0) {
+    entity->GetSprite().setScale(sf::Vector2(scale, -scale));
+  } else {
+    entity->GetSprite().setScale(sf::Vector2(scale, scale));
+  }
 
   window.draw(entity->GetSprite());
 }
