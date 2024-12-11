@@ -36,6 +36,7 @@ void Game::StartLevel(int levelIndex) {
 
   if (multiplayer_) {
     currentView_->GetCam()->NewAnimation(Vector(40 - 10, 12), 25, 2);
+    //FileManager::PlaySound(level->GetPhysicals()[level->GetPhysicals().size() - 2]->GetSound());
   } else {
     currentView_->GetCam()->NewAnimation(Vector(0 - 5, 12), 25, 2);
   }

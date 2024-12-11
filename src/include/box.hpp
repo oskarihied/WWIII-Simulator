@@ -11,7 +11,7 @@ class Box : public Physical {
 class Concrete : public Box {
  public:
   Concrete(float x, float y);
-
+  
   void BecomeDamaged() override;
 };
 

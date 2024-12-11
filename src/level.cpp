@@ -339,6 +339,7 @@ void Level::Render(sf::RenderWindow& window) {
       entity->BecomeDamaged();
 
       if (entity->GetHealth() <= 0) {
+        FileManager::PlaySound(entity->GetSound());
         entity->Die();
         AddPoints(entity->GetPoints());
 
@@ -379,6 +380,9 @@ void Level::Render(sf::RenderWindow& window) {
 
     if (over_) {
       if (!win_) {
+
+        FileManager::PlaySound("victory1");
+
         for (auto it = guns_.begin(); it != guns_.end(); ++it) {
           std::unique_ptr<Gun>& entity = *it;
           AddPoints(entity.get()->GetPoints());

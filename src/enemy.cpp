@@ -5,6 +5,7 @@ Enemy::Enemy(float x, float y) : Physical(x, y) {
   maxHealth_ = 1000;
   health_ = 1000;
   points_ = 1000;
+  sound_ = "death";
   SetType(EntityType::ENEMY);
   SetTexture("enemy");
 }
