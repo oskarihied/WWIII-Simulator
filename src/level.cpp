@@ -239,20 +239,20 @@ void Level::StepInTime(sf::RenderWindow& window) {
             if (entity->Explodes()) {
               entity->SetHealth(0);
               AddExplosion(new Explosion(entity->GetPos().GetX() + 0.01f,
-                                     entity->GetPos().GetY() + 0.01f),
-                       500.0f);
+                                         entity->GetPos().GetY() + 0.01f),
+                           500.0f);
               FileManager::PlaySound("explosion");
             }
           }
         }
-    /*
-        if (event.key.scancode == sf::Keyboard::Scan::Comma) {
-          camera_->Zoom(1 - camZoomSpeed);
-        }
-        if (event.key.scancode == sf::Keyboard::Scan::Period) {
-          camera_->Zoom(1 + camZoomSpeed);
-        }
-        */
+        /*
+            if (event.key.scancode == sf::Keyboard::Scan::Comma) {
+              camera_->Zoom(1 - camZoomSpeed);
+            }
+            if (event.key.scancode == sf::Keyboard::Scan::Period) {
+              camera_->Zoom(1 + camZoomSpeed);
+            }
+            */
       }
     }
 
@@ -274,17 +274,6 @@ void Level::StepInTime(sf::RenderWindow& window) {
         Fire(vel);
       }
       showPower_ = false;
-    }
-  }
-
-  for (auto it = physicals_.begin(); it != physicals_.end(); ++it) {
-    over_ = true;
-
-    bool deleted = false;
-    std::unique_ptr<Physical>& entity = *it;
-    if (entity->GetType() == Entity::EntityType::ENEMY && entity->GetHealth() > 0) {
-      over_ = false;
-      break;
     }
   }
 }
@@ -380,7 +369,6 @@ void Level::Render(sf::RenderWindow& window) {
 
     if (over_) {
       if (!win_) {
-
         FileManager::PlaySound("victory1");
 
         for (auto it = guns_.begin(); it != guns_.end(); ++it) {
@@ -400,11 +388,11 @@ void Level::Render(sf::RenderWindow& window) {
           star1_.SetTexture("star");
         }
 
-        if ((float)points_/maxPoints_ > 0.4f) {
+        if ((float)points_ / maxPoints_ > 0.4f) {
           star2_.SetTexture("star");
         }
 
-        if ((float)points_/maxPoints_ > 0.65f) {
+        if ((float)points_ / maxPoints_ > 0.65f) {
           star3_.SetTexture("star");
         }
       }
