@@ -6,7 +6,7 @@ Concrete::Concrete(float x, float y) : Box(x, y) {
   maxHealth_ = 1000;
   health_ = 1000;
   mass_ = 100;
-  points_ = 100;
+  points_ = 90;
   sound_ = "concrete_break";
   SetTexture("concrete");
 }

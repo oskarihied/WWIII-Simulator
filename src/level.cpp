@@ -154,7 +154,11 @@ std::vector<std::unique_ptr<Gun>>& Level::GetGuns() { return guns_; }
 const bool& Level::IsMultiplayer() { return game_.IsMultiplayer(); }
 
 void Level::StepInTime(sf::RenderWindow& window) {
-  physics_->SimulateWorld(1.0f / 60.0f);
+  float subSteps = 4;
+  float step = 1.0f / 60.0f / subSteps;
+  for (int i = 0; i < subSteps; ++i) {
+    physics_->SimulateWorld(step);
+  }
   camera_->AnimationStep(1.0f / 60.0f);
 
   sf::Event event;
@@ -355,7 +359,7 @@ void Level::Render(sf::RenderWindow& window) {
         }
         if (entity->GetType() == Entity::EntityType::BOX ||
             entity->GetType() == Entity::EntityType::ENEMY ||
-            entity->GetType() == Entity::EntityType::ENEMY) {
+            entity->GetType() == Entity::EntityType::BULLET) {
           deleted = true;
           physics_->RemovePhysicalEntity(entity);
         }
