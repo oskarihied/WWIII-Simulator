@@ -69,6 +69,7 @@ class Level : public GameView {
       float x = gun->GetPos().GetX();
       float y = gun->GetPos().GetY();
       std::unique_ptr<T> mirrored = std::make_unique<T>(40.0f - x, y);
+      mirrored->GetSprite().setScale(1, -1);
       guns_.push_back(std::move(gun));
       guns_.push_back(std::move(mirrored));
     } else {
