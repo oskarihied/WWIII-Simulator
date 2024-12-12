@@ -267,15 +267,15 @@ void Level::StepInTime(sf::RenderWindow& window) {
           camera_->ShiftBy(-camMoveSpeed, 0.0f);
         }
         if (event.key.scancode == sf::Keyboard::Scan::Space) {
-          for (auto it = physicals_.begin(); it != physicals_.end(); ++it) {
-            std::unique_ptr<Physical>& entity = *it;
-            if (entity->Explodes()) {
-              entity->Die();
-              float x = entity->GetPos().GetX() + 0.01f;
-              float y = entity->GetPos().GetY() + 0.01f;
+          for (auto& physical : physicals_) {
+            if (physical->Explodes()) {
+              physical->Die();
+              float x = physical->GetPos().GetX() + 0.01f;
+              float y = physical->GetPos().GetY() + 0.01f;
               auto explosion = std::make_unique<Explosion>(x, y);
               AddExplosion(std::move(explosion), 500.0f);
-              entity->SetExplodes(false);
+              physical->SetExplodes(false);
+              break;
             }
           }
         }
@@ -336,10 +336,9 @@ void Level::Render(sf::RenderWindow& window) {
   window.draw(background_);
 
   for (auto& explosion : explosions_) {
-    RenderEntity(explosion, window);
-    explosion->NextSprite();
-    if (explosion->GetCount() > 10) {
-      RemoveExplosion(explosion);
+    if (explosion->GetCount() <= 10) {
+      RenderEntity(explosion, window);
+      explosion->NextSprite();
     }
   }
 

@@ -5,7 +5,7 @@
 constexpr float EXPLOSION_DAMAGE = 3.0f;
 constexpr float ENTITY_DAMAGE = 0.2f;
 constexpr float BULLET_DAMAGE = 10.0f;
-constexpr bool PRINT_DEBUG = true;
+constexpr bool PRINT_DEBUG = false;
 
 Physics::Physics(std::vector<std::unique_ptr<Physical>>& entities)
     : entities_(entities) {
