@@ -382,7 +382,7 @@ void Level::Render(sf::RenderWindow& window) {
   if (showPower_) {
     int pow = std::min(gunTimer_.getElapsedTime().asMilliseconds() / 2, 1000);
     powerText_.setString(std::to_string(pow));
-    powerText_.setColor(sf::Color(pow / 4, 250 - pow / 4, 0));
+    powerText_.setFillColor(sf::Color(pow / 4, 250 - pow / 4, 0));
     window.draw(powerText_);
   }
 }

@@ -19,7 +19,7 @@ void Game::StartMenu() {
 void Game::StartLevel(int levelIndex) {
   currentView_ = nullptr;
 
-  std::string filename = "src/levels/level_" + std::to_string(levelIndex);
+  std::string filename = "levels/level_" + std::to_string(levelIndex);
 
   std::unique_ptr<Level> level = FileManager::LoadLevel(filename, *this);
   for (int i = 0; i < 18; i++) {
