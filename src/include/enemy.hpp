@@ -8,6 +8,8 @@ class Enemy : public Physical {
   Enemy(float x, float y);
 
   void BecomeDamaged() override;
+
+  const bool IsDynamic() override;
 };
 
 #endif

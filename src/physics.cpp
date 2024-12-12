@@ -38,8 +38,8 @@ void Physics::SimulateWorld(float simulationStep) {
     float damageMultiplier = -(events.hitEvents[j].approachSpeed *
                                events.hitEvents[j].approachSpeed);
     float entityDamage = damageMultiplier * ENTITY_DAMAGE;
-    bool is1Ground = entities_[inx1]->GetType() == Entity::EntityType::GROUND;
-    bool is2Ground = entities_[inx2]->GetType() == Entity::EntityType::GROUND;
+    bool is1Ground = !entities_[inx1]->IsDynamic();
+    bool is2Ground = !entities_[inx2]->IsDynamic();
 
     float mass1, mass2;
     if (is1Ground)
@@ -94,12 +94,12 @@ void Physics::SimulateWorld(float simulationStep) {
 
 void Physics::SpawnExplosion(Vector& pos, float force) {
   int i = 0;
-  for (auto& ground : entities_) {
-    if (ground->GetType() == Entity::EntityType::BULLET ||
-        ground->GetType() == Entity::EntityType::GROUND ||
-        ground->GetType() == Entity::EntityType::UNDEFINED)
+  for (auto& entity : entities_) {
+    if (entity->GetType() == Entity::EntityType::BULLET ||
+        !entity->IsDynamic() ||
+        entity->GetType() == Entity::EntityType::UNDEFINED)
       continue;
-    Vector& entPos = ground->GetPos();
+    Vector& entPos = entity->GetPos();
     Vector vector = Vector(entPos);
     float distance = std::max(pos.Distance(entPos), 0.1f);
 
@@ -108,7 +108,7 @@ void Physics::SpawnExplosion(Vector& pos, float force) {
     b2Vec2 position = b2Vec2{pos.GetX(), pos.GetY()};
 
     b2Body_ApplyForce(b2bodies_[i], forceVec, position, true);
-    ground->ChangeHealth(-(force * EXPLOSION_DAMAGE) / distance);
+    entity->ChangeHealth(-(force * EXPLOSION_DAMAGE) / distance);
 
     i++;
   }

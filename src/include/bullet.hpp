@@ -6,6 +6,8 @@
 class Bullet : public Physical {
  public:
   Bullet(float x, float y);
+
+  const bool IsDynamic() override;
 };
 
 class RifleBullet : public Bullet {

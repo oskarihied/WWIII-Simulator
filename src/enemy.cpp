@@ -15,3 +15,5 @@ void Enemy::BecomeDamaged() {
     SetTexture("enemy_damaged");
   }
 }
+
+const bool Enemy::IsDynamic() { return true; }

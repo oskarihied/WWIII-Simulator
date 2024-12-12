@@ -6,12 +6,14 @@
 class Box : public Physical {
  public:
   Box(float x, float y);
+
+  const bool IsDynamic() override;
 };
 
 class Concrete : public Box {
  public:
   Concrete(float x, float y);
-  
+
   void BecomeDamaged() override;
 };
 

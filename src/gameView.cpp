@@ -8,7 +8,7 @@ GameView::GameView(Game& game) : game_(game) {
   camera_ = std::make_unique<Camera>(-1, 4);
 }
 
-GameView::~GameView() {};
+GameView::~GameView() {}
 
 void GameView::AddButton(std::unique_ptr<Button> button) {
   buttons_.push_back(std::move(button));
@@ -34,6 +34,15 @@ void GameView::RenderEntity(std::unique_ptr<T>& entity,
   Vector pos = game_.ToScreenPos(entity->GetPos(), *camera_);
 
   float scale = (game_.GetDimensions().GetX() / 200.0f) / camera_->GetZoom();
+  float scaleX = scale;
+  float scaleY = scale;
+  if (entity->GetSprite().getScale().x < 0) {
+    scaleX = -scale;
+  }
+  if (entity->GetSprite().getScale().y < 0) {
+    scaleY = -scale;
+  }
+
   float rotation;
   if (entity->GetType() == Entity::EntityType::UNDEFINED) {
     rotation = entity->GetRotation();
@@ -43,14 +52,7 @@ void GameView::RenderEntity(std::unique_ptr<T>& entity,
 
   entity->GetSprite().setPosition(pos.GetX(), -pos.GetY());
   entity->GetSprite().setRotation(rotation);
-
-  if (entity->GetSprite().getScale().x < 0) {
-    entity->GetSprite().setScale(sf::Vector2(-scale, scale));
-  } else if (entity->GetSprite().getScale().y < 0) {
-    entity->GetSprite().setScale(sf::Vector2(scale, -scale));
-  } else {
-    entity->GetSprite().setScale(sf::Vector2(scale, scale));
-  }
+  entity->GetSprite().setScale(sf::Vector2(scaleX, scaleY));
 
   window.draw(entity->GetSprite());
 }

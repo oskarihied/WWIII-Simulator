@@ -23,11 +23,8 @@ void Game::StartLevel(int levelIndex) {
 
   std::unique_ptr<Level> level = FileManager::LoadLevel(filename, *this);
   for (int i = 0; i < 18; i++) {
-    for (int j = 0; j < 5; j++) {
-      auto ground =
-          std::make_unique<Ground>(-60.0f + i * 10.0f, -1.5f - j * 2.0f);
-      level->AddPhysical(std::move(ground));
-    }
+    auto ground = std::make_unique<Ground>(-60.0f + i * 10.0f, -1.5f);
+    level->AddPhysical(std::move(ground));
   }
 
   currentView_ = std::move(level);
@@ -37,8 +34,6 @@ void Game::StartLevel(int levelIndex) {
 
   if (multiplayer_) {
     currentView_->GetCam()->NewAnimation(Vector(40 - 10, 12), 25, 2);
-    // FileManager::PlaySound(level->GetPhysicals()[level->GetPhysicals().size()
-    // - 2]->GetSound());
   } else {
     currentView_->GetCam()->NewAnimation(Vector(0 - 5, 12), 25, 2);
   }

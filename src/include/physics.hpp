@@ -11,12 +11,13 @@
 class Physics {
  public:
   Physics(std::vector<std::unique_ptr<Physical>>& entities);
+
   ~Physics();
 
   void SimulateWorld(float simulationStep);
 
   template <typename T>
-  void AddBoxBody(std::unique_ptr<T>& body, const bool isDynamic) {
+  void AddBoxBody(std::unique_ptr<T>& body) {
     b2BodyDef bodyDef = b2DefaultBodyDef();
     bodyDef.position = (b2Vec2){body->GetPos().GetX(), body->GetPos().GetY()};
 
@@ -25,7 +26,7 @@ class Physics {
 
     b2ShapeDef bodyShapeDef = b2DefaultShapeDef();
 
-    if (isDynamic) {
+    if (body->IsDynamic()) {
       bodyDef.type = b2_dynamicBody;
       bodyDef.linearVelocity =
           (b2Vec2){body->GetVel().GetX(), body->GetVel().GetY()};

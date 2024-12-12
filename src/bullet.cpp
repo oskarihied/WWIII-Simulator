@@ -4,6 +4,8 @@ Bullet::Bullet(float x, float y) : Physical(x, y) {
   SetType(EntityType::BULLET);
 }
 
+const bool Bullet::IsDynamic() { return true; }
+
 RifleBullet::RifleBullet(float x, float y) : Bullet(x, y) {
   width_ = 0.4f;
   height_ = 0.1f;

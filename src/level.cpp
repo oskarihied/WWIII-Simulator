@@ -54,7 +54,7 @@ void Level::Fire(float speed) {
     b->UpdateVel(x * speed * 30, y * speed * 30);
     b->RotationTo(gunRot);
 
-    physics_->AddBoxBody(b, true);
+    physics_->AddBoxBody(b);
     currentBullet_ = b.get();
     physicals_.push_back(std::move(b));
 
@@ -86,21 +86,6 @@ void Level::AddScore(std::string name, int score) {
 void Level::AddScores(std::vector<std::pair<std::string, int>> scores) {
   for (auto it : scores) {
     leaderboard_.push_back(it);
-  }
-}
-
-void Level::RemoveExplosion(std::unique_ptr<Explosion>& explosion) {
-  int index = -1;
-  int i = 0;
-  for (auto& ent : explosions_) {
-    if (ent == explosion) {
-      index = i;
-    }
-    i++;
-  }
-
-  if (index != -1) {
-    explosions_.erase(explosions_.begin() + index);
   }
 }
 
@@ -203,10 +188,6 @@ void Level::StepInTime(sf::RenderWindow& window) {
       physical->Die();
       AddPoints(physical->GetPoints());
 
-      Vector position = physical->GetPos();
-      // bool explodes = entity->Explodes();
-      // currentLevel->RemovePhysicalEntity(entity);
-
       if (physical->Explodes()) {
         float x = physical->GetPos().GetX() + 0.01f;
         float y = physical->GetPos().GetY() + 0.01f;
@@ -215,9 +196,7 @@ void Level::StepInTime(sf::RenderWindow& window) {
         physical->SetExplodes(false);
       }
 
-      if (physical->GetType() == Entity::EntityType::BOX ||
-          physical->GetType() == Entity::EntityType::ENEMY ||
-          physical->GetType() == Entity::EntityType::BULLET) {
+      if (physical->IsDynamic()) {
         deleted = true;
         physics_->RemovePhysicalEntity(physical);
       }
@@ -226,7 +205,7 @@ void Level::StepInTime(sf::RenderWindow& window) {
 
   for (auto& physical : physicals_) {
     over_ = true;
-    // bool deleted = false;
+
     if (physical->GetType() == Entity::EntityType::ENEMY &&
         !physical->IsDead() && !physical->GetSide()) {
       over_ = false;
@@ -237,7 +216,7 @@ void Level::StepInTime(sf::RenderWindow& window) {
   if (IsMultiplayer()) {
     for (auto& physical : physicals_) {
       over2_ = true;
-      // bool deleted = false;
+
       if (physical->GetType() == Entity::EntityType::ENEMY &&
           !physical->IsDead() && physical->GetSide()) {
         over2_ = false;
@@ -248,18 +227,9 @@ void Level::StepInTime(sf::RenderWindow& window) {
 
   while (window.pollEvent(event)) {
     float camMoveSpeed = 2.0f;
-    float camZoomSpeed = 0.05f;
 
     if (event.type == sf::Event::KeyPressed) {
       if (!camera_->GetAnimation()) {
-        /*
-        if (event.key.scancode == sf::Keyboard::Scan::Up) {
-          camera_->ShiftBy(0.0f, camMoveSpeed);
-        }
-        if (event.key.scancode == sf::Keyboard::Scan::Down) {
-          camera_->ShiftBy(0.0f, -camMoveSpeed);
-        }
-        */
         if (event.key.scancode == sf::Keyboard::Scan::Right) {
           camera_->ShiftBy(camMoveSpeed, 0.0f);
         }
@@ -279,14 +249,6 @@ void Level::StepInTime(sf::RenderWindow& window) {
             }
           }
         }
-        /*
-            if (event.key.scancode == sf::Keyboard::Scan::Comma) {
-              camera_->Zoom(1 - camZoomSpeed);
-            }
-            if (event.key.scancode == sf::Keyboard::Scan::Period) {
-              camera_->Zoom(1 + camZoomSpeed);
-            }
-            */
       }
     }
 
