@@ -2,7 +2,7 @@
 
 Gun::Gun(float x, float y) : Entity(x, y) { SetType(EntityType::GUN); }
 
-Gun::~Gun() {};
+Gun::~Gun() {}
 
 std::unique_ptr<Bullet>& Gun::GetBullet() { return bullet_; }
 

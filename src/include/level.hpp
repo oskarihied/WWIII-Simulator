@@ -16,17 +16,12 @@ class Level : public GameView {
  public:
   Level(Game& game);
 
-  void AddExplosion(Explosion* explosion, float force);
+  void AddExplosion(std::unique_ptr<Explosion> explosion, float force);
 
   void AddScore(std::string name, int score);
   void AddScores(std::vector<std::pair<std::string, int>> scores);
 
   void Fire(float speed);
-
-  void RemoveNonPhysicalEntity(Entity* entity);
-  void RemoveExplosion(Explosion* entity);
-
-  std::vector<Explosion*> GetExplosions();
 
   std::vector<std::pair<std::string, int>> GetLeaderboard();
 
@@ -45,9 +40,6 @@ class Level : public GameView {
 
   void StepInTime(sf::RenderWindow& window);
 
-  void RenderAmmo(sf::RenderWindow& window, std::unique_ptr<Gun>& gun,
-                  const int& index);
-
   void Render(sf::RenderWindow& window);
 
   void AddMaxPoints(int points);
@@ -59,9 +51,11 @@ class Level : public GameView {
       float y = physical->GetPos().GetY();
       std::unique_ptr<T> mirrored = std::make_unique<T>(40.0f - x, y);
       mirrored->SetSide(true);
-      AddPhysicalForReal(std::move(mirrored));
+      physics_->AddBoxBody(mirrored);
+      physicals_.push_back(std::move(mirrored));
     }
-    AddPhysicalForReal(std::move(physical));
+    physics_->AddBoxBody(physical);
+    physicals_.push_back(std::move(physical));
   }
 
   template <typename T>
@@ -78,7 +72,7 @@ class Level : public GameView {
     }
   }
 
- protected:
+ private:
   std::unique_ptr<Physics> physics_;
   Bullet* currentBullet_ = nullptr;
 
@@ -94,7 +88,7 @@ class Level : public GameView {
 
   std::vector<std::unique_ptr<Physical>> physicals_;
   std::vector<std::unique_ptr<Gun>> guns_;
-  std::vector<Explosion*> explosions_;
+  std::vector<std::unique_ptr<Explosion>> explosions_;
 
   std::vector<std::pair<std::string, int>> leaderboard_;
 
@@ -113,15 +107,8 @@ class Level : public GameView {
 
   Entity winner_ = Entity(0, 0);
 
-  template <typename T>
-  void AddPhysicalForReal(std::unique_ptr<T> physical) {
-    if (physical->GetType() == Entity::EntityType::GROUND) {
-      physics_->AddBoxBody(physical, false);
-    } else {
-      physics_->AddBoxBody(physical, true);
-    }
-    physicals_.push_back(std::move(physical));
-  }
+  void RenderAmmo(sf::RenderWindow& window, std::unique_ptr<Gun>& gun,
+                  const int& index);
 };
 
 #endif

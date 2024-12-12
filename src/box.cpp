@@ -2,6 +2,8 @@
 
 Box::Box(float x, float y) : Physical(x, y) { SetType(EntityType::BOX); }
 
+const bool Box::IsDynamic() { return true; }
+
 Concrete::Concrete(float x, float y) : Box(x, y) {
   maxHealth_ = 1000;
   health_ = 1000;
