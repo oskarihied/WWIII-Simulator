@@ -16,17 +16,14 @@ class Level : public GameView {
  public:
   Level(Game& game);
 
-  void AddExplosion(Explosion* explosion, float force);
+  void AddExplosion(std::unique_ptr<Explosion> explosion, float force);
 
   void AddScore(std::string name, int score);
   void AddScores(std::vector<std::pair<std::string, int>> scores);
 
   void Fire(float speed);
 
-  void RemoveNonPhysicalEntity(Entity* entity);
-  void RemoveExplosion(Explosion* entity);
-
-  std::vector<Explosion*> GetExplosions();
+  void RemoveExplosion(std::unique_ptr<Explosion>& explosion);
 
   std::vector<std::pair<std::string, int>> GetLeaderboard();
 
@@ -94,7 +91,7 @@ class Level : public GameView {
 
   std::vector<std::unique_ptr<Physical>> physicals_;
   std::vector<std::unique_ptr<Gun>> guns_;
-  std::vector<Explosion*> explosions_;
+  std::vector<std::unique_ptr<Explosion>> explosions_;
 
   std::vector<std::pair<std::string, int>> leaderboard_;
 

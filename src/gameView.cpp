@@ -64,5 +64,8 @@ template void GameView::RenderEntity<Physical>(std::unique_ptr<Physical>&,
 template void GameView::RenderEntity<Gun>(std::unique_ptr<Gun>&,
                                           sf::RenderWindow&);
 
+template void GameView::RenderEntity<Explosion>(std::unique_ptr<Explosion>&,
+                                                sf::RenderWindow&);
+
 template void GameView::RenderEntity<Button>(std::unique_ptr<Button>&,
                                              sf::RenderWindow&);

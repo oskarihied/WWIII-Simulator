@@ -4,7 +4,7 @@
 
 constexpr float EXPLOSION_DAMAGE = 3.0f;
 constexpr float ENTITY_DAMAGE = 0.2f;
-constexpr float BULLET_DAMAGE= 10.0f;
+constexpr float BULLET_DAMAGE = 10.0f;
 constexpr bool PRINT_DEBUG = true;
 
 Physics::Physics(std::vector<std::unique_ptr<Physical>>& entities)
@@ -15,9 +15,7 @@ Physics::Physics(std::vector<std::unique_ptr<Physical>>& entities)
   simulationWorld_ = b2CreateWorld(&worldDef);
 }
 
-Physics::~Physics() {
-  b2DestroyWorld(simulationWorld_);
-}
+Physics::~Physics() { b2DestroyWorld(simulationWorld_); }
 
 void Physics::SimulateWorld(float simulationStep) {
   // Update simulation Objects locations
@@ -94,7 +92,7 @@ void Physics::SimulateWorld(float simulationStep) {
   }
 };
 
-void Physics::SpawnExplosion(Vector pos, float force) {
+void Physics::SpawnExplosion(Vector& pos, float force) {
   int i = 0;
   for (auto& ground : entities_) {
     if (ground->GetType() == Entity::EntityType::BULLET ||

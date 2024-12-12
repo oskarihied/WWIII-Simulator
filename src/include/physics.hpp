@@ -20,14 +20,16 @@ class Physics {
     b2BodyDef bodyDef = b2DefaultBodyDef();
     bodyDef.position = (b2Vec2){body->GetPos().GetX(), body->GetPos().GetY()};
 
-    b2Polygon bodyBox = b2MakeBox(body->GetWidth() / 2.0f, body->GetHeight() / 2.0f);
+    b2Polygon bodyBox =
+        b2MakeBox(body->GetWidth() / 2.0f, body->GetHeight() / 2.0f);
 
     b2ShapeDef bodyShapeDef = b2DefaultShapeDef();
 
     if (isDynamic) {
       bodyDef.type = b2_dynamicBody;
-      bodyDef.linearVelocity = (b2Vec2){body->GetVel().GetX(), body->GetVel().GetY()};
-      
+      bodyDef.linearVelocity =
+          (b2Vec2){body->GetVel().GetX(), body->GetVel().GetY()};
+
       const float& bodyRot = body->GetRotation() * (M_PI / 180);
       bodyDef.rotation = (b2Rot){cos(bodyRot), sin(bodyRot)};
 
@@ -41,10 +43,9 @@ class Physics {
     b2CreatePolygonShape(bodyId, &bodyShapeDef, &bodyBox);
 
     b2bodies_.push_back(bodyId);
-
   }
 
-  void SpawnExplosion(Vector pos, float force);
+  void SpawnExplosion(Vector& pos, float force);
 
   void RemovePhysicalEntity(std::unique_ptr<Physical>& entity);
 

@@ -68,14 +68,12 @@ void Level::Fire(float speed) {
   }
 }
 
-void Level::AddExplosion(Explosion* explosion, float force) {
-  nonPhysicals_.push_back(std::unique_ptr<Entity>((Entity*)explosion));
-  explosions_.push_back(explosion);
-  Vector pos = explosion->GetPos();
+void Level::AddExplosion(std::unique_ptr<Explosion> explosion, float force) {
+  Vector& pos = explosion->GetPos();
+  explosions_.push_back(std::move(explosion));
   physics_->SpawnExplosion(pos, force);
+  FileManager::PlaySound("explosion");
 }
-
-std::vector<Explosion*> Level::GetExplosions() { return explosions_; }
 
 std::vector<std::pair<std::string, int>> Level::GetLeaderboard() {
   return leaderboard_;
@@ -91,26 +89,11 @@ void Level::AddScores(std::vector<std::pair<std::string, int>> scores) {
   }
 }
 
-void Level::RemoveNonPhysicalEntity(Entity* entity) {
+void Level::RemoveExplosion(std::unique_ptr<Explosion>& explosion) {
   int index = -1;
   int i = 0;
-  for (std::unique_ptr<Entity>& ent : nonPhysicals_) {
-    if (ent.get() == entity) {
-      index = i;
-    }
-    i++;
-  }
-
-  if (index != -1) {
-    nonPhysicals_.erase(nonPhysicals_.begin() + index);
-  }
-}
-
-void Level::RemoveExplosion(Explosion* entity) {
-  int index = -1;
-  int i = 0;
-  for (Explosion* ent : explosions_) {
-    if (ent == entity) {
+  for (auto& ent : explosions_) {
+    if (ent == explosion) {
       index = i;
     }
     i++;
@@ -118,7 +101,6 @@ void Level::RemoveExplosion(Explosion* entity) {
 
   if (index != -1) {
     explosions_.erase(explosions_.begin() + index);
-    RemoveNonPhysicalEntity(entity);
   }
 }
 
@@ -207,26 +189,57 @@ void Level::StepInTime(sf::RenderWindow& window) {
     currentGun->RotationTo(gunRotation * (180.0f / M_PI));
   }
 
-  for (auto it = physicals_.begin(); it != physicals_.end(); ++it) {
-    over_ = true;
+  for (auto& physical : physicals_) {
+    bool deleted = false;
 
-    //bool deleted = false;
-    std::unique_ptr<Physical>& entity = *it;
-    if (entity->GetType() == Entity::EntityType::ENEMY &&
-        entity->GetHealth() > 0 && !entity->GetSide()) {
+    if (physical->IsDead()) {
+      continue;
+    }
+
+    physical->BecomeDamaged();
+
+    if (physical->GetHealth() <= 0) {
+      FileManager::PlaySound(physical->GetSound());
+      physical->Die();
+      AddPoints(physical->GetPoints());
+
+      Vector position = physical->GetPos();
+      // bool explodes = entity->Explodes();
+      // currentLevel->RemovePhysicalEntity(entity);
+
+      if (physical->Explodes()) {
+        float x = physical->GetPos().GetX() + 0.01f;
+        float y = physical->GetPos().GetY() + 0.01f;
+        auto explosion = std::make_unique<Explosion>(x, y);
+        AddExplosion(std::move(explosion), 500.0f);
+        physical->SetExplodes(false);
+      }
+
+      if (physical->GetType() == Entity::EntityType::BOX ||
+          physical->GetType() == Entity::EntityType::ENEMY ||
+          physical->GetType() == Entity::EntityType::BULLET) {
+        deleted = true;
+        physics_->RemovePhysicalEntity(physical);
+      }
+    }
+  }
+
+  for (auto& physical : physicals_) {
+    over_ = true;
+    // bool deleted = false;
+    if (physical->GetType() == Entity::EntityType::ENEMY &&
+        !physical->IsDead() && !physical->GetSide()) {
       over_ = false;
       break;
     }
   }
 
   if (IsMultiplayer()) {
-    for (auto it = physicals_.begin(); it != physicals_.end(); ++it) {
+    for (auto& physical : physicals_) {
       over2_ = true;
-
-      //bool deleted = false;
-      std::unique_ptr<Physical>& entity = *it;
-      if (entity->GetType() == Entity::EntityType::ENEMY &&
-          entity->GetHealth() > 0 && entity->GetSide()) {
+      // bool deleted = false;
+      if (physical->GetType() == Entity::EntityType::ENEMY &&
+          !physical->IsDead() && physical->GetSide()) {
         over2_ = false;
         break;
       }
@@ -257,11 +270,12 @@ void Level::StepInTime(sf::RenderWindow& window) {
           for (auto it = physicals_.begin(); it != physicals_.end(); ++it) {
             std::unique_ptr<Physical>& entity = *it;
             if (entity->Explodes()) {
-              entity->SetHealth(0);
-              AddExplosion(new Explosion(entity->GetPos().GetX() + 0.01f,
-                                         entity->GetPos().GetY() + 0.01f),
-                           500.0f);
-              FileManager::PlaySound("explosion");
+              entity->Die();
+              float x = entity->GetPos().GetX() + 0.01f;
+              float y = entity->GetPos().GetY() + 0.01f;
+              auto explosion = std::make_unique<Explosion>(x, y);
+              AddExplosion(std::move(explosion), 500.0f);
+              entity->SetExplodes(false);
             }
           }
         }
@@ -321,7 +335,8 @@ void Level::RenderAmmo(sf::RenderWindow& window, std::unique_ptr<Gun>& gun,
 void Level::Render(sf::RenderWindow& window) {
   window.draw(background_);
 
-  for (Explosion* explosion : explosions_) {
+  for (auto& explosion : explosions_) {
+    RenderEntity(explosion, window);
     explosion->NextSprite();
     if (explosion->GetCount() > 10) {
       RemoveExplosion(explosion);
@@ -336,113 +351,77 @@ void Level::Render(sf::RenderWindow& window) {
     RenderEntity(guns_.back(), window);
   }
 
-  for (auto it = physicals_.begin(); it != physicals_.end(); ++it) {
-    bool deleted = false;
-    std::unique_ptr<Physical>& entity = *it;
+  for (std::unique_ptr<Physical>& physical : physicals_) {
+    if (!physical->IsDead()) {
+      RenderEntity(physical, window);
+    }
+  }
 
-    if (entity->IsDead()) continue;
+  int n = 0;
+  int i = 0;
+  for (std::unique_ptr<Gun>& gun : guns_) {
+    if (game_.IsMultiplayer() && n % 2 == 0) {
+      RenderAmmo(window, gun, i);
+      i++;
+    } else if (!game_.IsMultiplayer()) {
+      RenderAmmo(window, gun, i);
+      i++;
+    }
+    n++;
+  }
 
-    RenderEntity(entity, window);
+  pointsText_.setString(std::to_string(points_));
+  window.draw(pointsText_);
 
-    if (!entity->IsDead()) {
-      entity->BecomeDamaged();
+  if (over_ || over2_) {
+    if (over2_) {
+      winner_.SetTexture("plr2_wins");
+    }
 
-      if (entity->GetHealth() <= 0) {
-        
-        FileManager::PlaySound(entity->GetSound());
-        entity->Die();
-        AddPoints(entity->GetPoints());
+    if (!win_) {
+      FileManager::PlaySound("victory1");
 
-        Vector position = entity->GetPos();
-        // bool explodes = entity->Explodes();
-        // currentLevel->RemovePhysicalEntity(entity);
+      for (auto& gun : guns_) {
+        AddPoints(gun.get()->GetPoints());
+      }
 
-        if (entity->Explodes()) {
-          AddExplosion(new Explosion(entity->GetPos().GetX() + 0.01f,
-                                     entity->GetPos().GetY() + 0.01f),
-                       500.0f);
-          FileManager::PlaySound("explosion");
-        }
-        if (entity->GetType() == Entity::EntityType::BOX ||
-            entity->GetType() == Entity::EntityType::ENEMY ||
-            entity->GetType() == Entity::EntityType::BULLET) {
-          deleted = true;
-          physics_->RemovePhysicalEntity(entity);
-        }
+      winner_.GetSprite().setPosition(700, 300);
 
-        entity->SetExplodes(false);
+      win_ = true;
+      complete_.GetSprite().setPosition(600, 200);
+      star1_.GetSprite().setPosition(320, 450);
+      star2_.GetSprite().setPosition(600, 450);
+      star3_.GetSprite().setPosition(880, 450);
+
+      // std::cout << "max: " << maxPoints_ << std::endl;
+
+      if ((float)points_ / maxPoints_ > 0.1f) {
+        star1_.SetTexture("star");
+      }
+
+      if ((float)points_ / maxPoints_ > 0.4f) {
+        star2_.SetTexture("star");
+      }
+
+      if (((float)points_ + 500) / maxPoints_ > 0.65f) {
+        star3_.SetTexture("star");
       }
     }
 
-    int n = 0;
-    int i = 0;
-    for (std::unique_ptr<Gun>& gun : guns_) {
-      if (game_.IsMultiplayer() && n % 2 == 0) {
-        RenderAmmo(window, gun, i);
-        i++;
-      } else if (!game_.IsMultiplayer()) {
-        RenderAmmo(window, gun, i);
-        i++;
-      }
-      n++;
+    if (!game_.GetMultiplayer()) {
+      window.draw(complete_.GetSprite());
+      window.draw(star1_.GetSprite());
+      window.draw(star2_.GetSprite());
+      window.draw(star3_.GetSprite());
+    } else {
+      window.draw(winner_.GetSprite());
     }
+  }
 
-    pointsText_.setString(std::to_string(points_));
-    window.draw(pointsText_);
-
-    if (over_ || over2_) {
-      if (over2_) {
-        winner_.SetTexture("plr2_wins");
-      }
-
-
-      if (!win_) {
-        FileManager::PlaySound("victory1");
-
-        for (auto it = guns_.begin(); it != guns_.end(); ++it) {
-          std::unique_ptr<Gun>& entity = *it;
-          AddPoints(entity.get()->GetPoints());
-        }
-
-        winner_.GetSprite().setPosition(700, 300);
-
-        win_ = true;
-        complete_.GetSprite().setPosition(600, 200);
-        star1_.GetSprite().setPosition(320, 450);
-        star2_.GetSprite().setPosition(600, 450);
-        star3_.GetSprite().setPosition(880, 450);
-
-        // std::cout << "max: " << maxPoints_ << std::endl;
-
-        if ((float)points_ / maxPoints_ > 0.1f) {
-          star1_.SetTexture("star");
-        }
-
-        if ((float)points_ / maxPoints_ > 0.4f) {
-          star2_.SetTexture("star");
-        }
-
-        if (((float)points_ + 500)/ maxPoints_ > 0.65f) {
-          star3_.SetTexture("star");
-        }
-      }
-
-      if (!game_.GetMultiplayer()) {
-        window.draw(complete_.GetSprite());
-        window.draw(star1_.GetSprite());
-        window.draw(star2_.GetSprite());
-        window.draw(star3_.GetSprite());
-      }
-      else {
-        window.draw(winner_.GetSprite());
-      }
-    }
-
-    if (showPower_) {
-      int pow = std::min(gunTimer_.getElapsedTime().asMilliseconds() / 2, 1000);
-      powerText_.setString(std::to_string(pow));
-      powerText_.setColor(sf::Color(pow / 4, 250 - pow / 4, 0));
-      window.draw(powerText_);
-    }
+  if (showPower_) {
+    int pow = std::min(gunTimer_.getElapsedTime().asMilliseconds() / 2, 1000);
+    powerText_.setString(std::to_string(pow));
+    powerText_.setColor(sf::Color(pow / 4, 250 - pow / 4, 0));
+    window.draw(powerText_);
   }
 }
