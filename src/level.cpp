@@ -369,7 +369,7 @@ void Level::Render(sf::RenderWindow& window) {
       }
     }
 
-    if (!game_.GetMultiplayer()) {
+    if (!game_.IsMultiplayer()) {
       window.draw(complete_.GetSprite());
       window.draw(star1_.GetSprite());
       window.draw(star2_.GetSprite());
