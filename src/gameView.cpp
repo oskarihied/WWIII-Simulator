@@ -33,6 +33,7 @@ void GameView::RenderEntity(std::unique_ptr<T>& entity,
                             sf::RenderWindow& window) {
   Vector pos = game_.ToScreenPos(entity->GetPos(), *camera_);
 
+  //Get entity scale
   float scale = (game_.GetDimensions().GetX() / 200.0f) / camera_->GetZoom();
   float scaleX = scale;
   float scaleY = scale;
@@ -43,6 +44,7 @@ void GameView::RenderEntity(std::unique_ptr<T>& entity,
     scaleY = -scale;
   }
 
+  //Get entity rotation
   float rotation;
   if (entity->GetType() == Entity::EntityType::UNDEFINED) {
     rotation = entity->GetRotation();
@@ -50,6 +52,7 @@ void GameView::RenderEntity(std::unique_ptr<T>& entity,
     rotation = -entity->GetRotation();
   }
 
+  //Set the transforms
   entity->GetSprite().setPosition(pos.GetX(), -pos.GetY());
   entity->GetSprite().setRotation(rotation);
   entity->GetSprite().setScale(sf::Vector2(scaleX, scaleY));

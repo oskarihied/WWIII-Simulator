@@ -19,10 +19,6 @@ class Level : public GameView {
   //params: current game
   Level(Game& game);
 
-  //Adds a new explosion to the scene
-  //params: explosion pointer, force of the explosion
-  void AddExplosion(std::unique_ptr<Explosion> explosion, float force);
-
   //Adds a single score
   //params: nickname, score
   void AddScore(std::string name, int score);
@@ -53,6 +49,10 @@ class Level : public GameView {
   void AddMaxPoints(int points);
   //returns: points
   int GetPoints();
+
+  //Adds a new explosion to the scene
+  //params: explosion pointer, force of the explosion
+  void AddExplosion(std::unique_ptr<Explosion> explosion, float force);
 
   //returns: list of physical entities in the scene
   std::vector<std::unique_ptr<Physical>>& GetPhysicals();

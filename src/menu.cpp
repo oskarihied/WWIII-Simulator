@@ -3,14 +3,17 @@
 #include "game.hpp"
 
 Menu::Menu(Game& game) : GameView(game) {
+  //Setup Background texture
   background_.setTexture(*FileManager::GetTexture("menu"));
-  //std::cout << game.GetDimensions().GetX() << " " << game.GetDimensions().GetY() << std::endl;
+  //Scale background
   background_.setScale(game.GetDimensions().GetX()/1599.0f, game.GetDimensions().GetY() * 1.3f /808.0f);
 
+  //Create logo
   auto logo = std::make_unique<Entity>(4.0f, 2.5f);
   logo->SetTexture("logo");
   AddNonPhysicalEntity(std::move(logo));
 
+  //create buttons
   auto singleplayer =
       std::make_unique<Button>(7.7f, 3.5f, 0.5f, 0.5f, "singleplayer_chosen");
   auto multiplayer =
@@ -20,6 +23,7 @@ Menu::Menu(Game& game) : GameView(game) {
   auto level2 = std::make_unique<Button>(4.0f, 0.0f, 1.0f, 1.0f, "button2");
   auto level3 = std::make_unique<Button>(6.0f, 0.0f, 1.0f, 1.0f, "button3");
 
+  //Add buttons to the menu
   AddButton(std::move(singleplayer));
   AddButton(std::move(multiplayer));
 
@@ -40,20 +44,22 @@ void Menu::StepInTime(sf::RenderWindow& window) {
 
       int index = 0;
 
+      //Go through the buttons and check if they were pressed
       for (std::unique_ptr<Button>& button : buttons_) {
         if (button->IsTouching(gamePos.GetX(), gamePos.GetY())) {
+          //singleplayer
           if (index == 0) {
             button->SetTexture("singleplayer_chosen");
             buttons_[1]->SetTexture("multiplayer");
             game_.SetMultiplayer(false);
           }
-
+          //multiplayer
           else if (index == 1) {
             button->SetTexture("multiplayer_chosen");
             buttons_[0]->SetTexture("singleplayer");
             game_.SetMultiplayer(true);
           }
-
+          //levels
           else {
             game_.StartLevel(index - 1);
             break;
@@ -62,6 +68,7 @@ void Menu::StepInTime(sf::RenderWindow& window) {
         index++;
       }
     }
+    //If esc is pressed, end game
     if (event.key.scancode == sf::Keyboard::Scan::Escape) {
       window.close();
     }
@@ -71,10 +78,12 @@ void Menu::StepInTime(sf::RenderWindow& window) {
 void Menu::Render(sf::RenderWindow& window) {
   window.draw(background_);
 
+  //render statics
   for (std::unique_ptr<Entity>& entity : nonPhysicals_) {
     RenderEntity(entity, window);
   }
 
+  //render buttons
   for (std::unique_ptr<Button>& button : buttons_) {
     RenderEntity(button, window);
   }

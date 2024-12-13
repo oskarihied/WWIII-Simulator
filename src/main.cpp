@@ -5,11 +5,11 @@
 #include "game.hpp"
 
 int main() {
-  // Create the main window
 
   std::cout << "Current working directory: " << std::filesystem::current_path()
             << std::endl;
 
+  //Create window
   sf::RenderWindow window(sf::VideoMode(), "WWIII Simulator",
                           sf::Style::Fullscreen);
 
@@ -20,6 +20,7 @@ int main() {
 
   game.StartMenu();
 
+  //Framerate to 60
   window.setFramerateLimit(60);
   // Start the game loop
   while (window.isOpen()) {
@@ -35,6 +36,7 @@ int main() {
     window.display();
   }
 
+  //Destroy loaded data when the game ends
   FileManager::DestroySFML();
 
   return EXIT_SUCCESS;

@@ -17,6 +17,7 @@ std::map<std::string, std::unique_ptr<sf::SoundBuffer>> soundBuffers_;
 std::vector<std::unique_ptr<sf::Sound>> sounds_;
 
 Vector ParseCoords(std::istringstream &ss, std::string &str) {
+  //Coords are style x,y
   std::getline(ss, str, ',');
   int x = std::stoi(str);
   std::getline(ss, str);
@@ -29,6 +30,12 @@ void AddEntityToLevel(char entityType, std::string &info,
   std::istringstream ss(info);
   std::string str;
 
+  //Checks entity type
+  //  C: Concrete
+  //  W: Wood
+  //  G: Glass
+  //  E: Enemy
+  //  H: GroundBox
   switch (entityType) {
     case 'C': {
       Vector v = ParseCoords(ss, str);
@@ -60,6 +67,9 @@ void AddEntityToLevel(char entityType, std::string &info,
       level->AddPhysical(std::move(groundBox));
     } break;
 
+    //Checks guns
+    //  A: Rifle
+    //  R: RocketLauncher
     case '*':
       std::getline(ss, str);
       switch (str.front()) {
@@ -78,12 +88,16 @@ void AddEntityToLevel(char entityType, std::string &info,
       }
       break;
 
+    //+ means plr1 gunner, - is plr2 gunner
     case '+':
       std::getline(ss, str);
       {
         auto leader = std::make_unique<Entity>(0.0f, 0.0f);
+        //set texture and sound
         leader->SetTexture(str);
         leader->SetSound(str);
+
+        //play plr1 sound if singleplayer
         if (!level->IsMultiplayer()) {
           FileManager::PlaySound(str);
         }
@@ -97,8 +111,12 @@ void AddEntityToLevel(char entityType, std::string &info,
         {
           auto leader = std::make_unique<Entity>(40.0f, 0.0f);
           leader->SetTexture(str);
-          leader->GetSprite().setScale(-1, 1);
           leader->SetSound(str);
+          
+          //scale
+          leader->GetSprite().setScale(-1, 1);
+
+          //play plr2 sound if multiplayer
           FileManager::PlaySound(str);
           level->AddNonPhysicalEntity(std::move(leader));
         }
@@ -193,14 +211,17 @@ void LoadTextures(const std::string path) {
   textures_.clear();
 
   int i = 0;
+  //go through every file in path
   for (const auto &entry : std::filesystem::directory_iterator(path)) {
     auto thisTexture = std::make_unique<sf::Texture>();
     thisTexture->loadFromFile(entry.path());
 
+    //name is the name of the file, except the .png
     std::string name = entry.path();
     name.erase(0, (int)(path.length() + 1));
     name.erase(name.length() - 4);
 
+    //add to dictionary
     textures_.insert({name, std::move(thisTexture)});
     i++;
   }
@@ -214,10 +235,12 @@ void LoadSFX(const std::string path) {
   soundBuffers_.clear();
 
   int i = 0;
+  //iterate through files in path
   for (const auto &entry : std::filesystem::directory_iterator(path)) {
     auto buffer = std::make_unique<sf::SoundBuffer>();
     buffer->loadFromFile(entry.path());
 
+    //name is file name, but not .mp3 ending
     std::string name = entry.path();
     name.erase(0, (int)(path.length() + 1));
     name.erase(name.length() - 4);
@@ -228,8 +251,10 @@ void LoadSFX(const std::string path) {
 }
 
 void PlaySound(const std::string name) {
+  //Don't play if the name is empty
   if (name != "") {
     auto sound = std::make_unique<sf::Sound>(*soundBuffers_.at(name));
+    //play sound
     sound->play();
 
     bool foundNull = false;
@@ -251,14 +276,17 @@ void LoadMusic(const std::string path) {
   music_.clear();
 
   int i = 0;
+  //iterate through musics
   for (const auto &entry : std::filesystem::directory_iterator(path)) {
     auto track = std::make_unique<sf::Music>();
     track->openFromFile(entry.path());
 
+    //set name
     std::string name = entry.path();
     name.erase(0, (int)(path.length() + 1));
     name.erase(name.length() - 4);
 
+    //push to dictionary
     music_.insert({name, std::move(track)});
     i++;
   }
@@ -272,6 +300,7 @@ void PlayMusic(const std::string name) {
 }
 
 void DestroySFML() {
+  //clear the dictionaries
   for (auto &m : music_) {
     m.second = nullptr;
   }

@@ -3,6 +3,7 @@
 #include "menu.hpp"
 
 Game::Game(int w, int h) : windowWidth_(w), windowHeight_(h) {
+  //Load from files
   FileManager::LoadMusic("music");
   FileManager::LoadTextures("images");
   FileManager::LoadSFX("sfx");
@@ -19,6 +20,7 @@ void Game::StartMenu() {
 void Game::StartLevel(int levelIndex) {
   currentView_ = nullptr;
 
+  //get correct level from file
   std::string filename = "levels/level_" + std::to_string(levelIndex);
 
   std::unique_ptr<Level> level = FileManager::LoadLevel(filename, *this);
@@ -27,11 +29,13 @@ void Game::StartLevel(int levelIndex) {
     level->AddPhysical(std::move(ground));
   }
 
+  //set currentView to the level
   currentView_ = std::move(level);
 
   currentView_->GetCam()->MoveTo(20, 20);
   currentView_->GetCam()->ZoomTo(40);
 
+  //Starting animation
   if (multiplayer_) {
     currentView_->GetCam()->NewAnimation(Vector(40 - 10, 12), 25, 2);
   } else {

@@ -9,6 +9,7 @@ Button::Button(float x, float y, float w, float h,
 }
 
 bool Button::IsTouching(float x, float y) {
+  //checks x and y coordinate differently
   bool xOK =
       (x >= pos_.GetX() - width_ / 2.0) && (x <= pos_.GetX() + width_ / 2.0);
   bool yOK =

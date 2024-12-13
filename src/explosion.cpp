@@ -8,6 +8,7 @@ Explosion::Explosion(float x, float y) : Entity(x, y) {
 const int& Explosion::GetCount() const { return count_; }
 
 void Explosion::NextSprite() {
+  //changes texture based on the count
   count_++;
   if (count_ == 4) {
     SetTexture("explosion2");
